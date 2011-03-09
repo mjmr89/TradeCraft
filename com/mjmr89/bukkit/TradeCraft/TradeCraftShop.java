@@ -1,3 +1,9 @@
+package com.mjmr89.bukkit.TradeCraft;
+
+import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+
 public abstract class TradeCraftShop {
     protected final TradeCraft plugin;
     protected final Sign sign;

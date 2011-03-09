@@ -1,3 +1,5 @@
+package com.mjmr89.bukkit.TradeCraft;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -73,6 +75,7 @@ class TradeCraftConfigurationFile {
 
                 infos.put(info.name.toUpperCase(), info);
             }
+            plugin.log.info("Loaded " + infos.size() + " configs");
 
             configurationFile.close();
         } catch (IOException e) {

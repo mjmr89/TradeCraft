@@ -1,3 +1,5 @@
+package com.mjmr89.bukkit.TradeCraft;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.bukkit.block.Sign;
 
 class TradeCraftDataFile {
 
@@ -25,18 +29,27 @@ class TradeCraftDataFile {
 
     private final TradeCraft plugin;
     private final Map<String, TradeCraftDataInfo> data = new HashMap<String, TradeCraftDataInfo>();
+    private final File dFile = new File(fileName);
+
 
     TradeCraftDataFile(TradeCraft plugin) {
         this.plugin = plugin;
     }
 
-    public synchronized void load() {
-        if (!new File(fileName).exists()) {
-            plugin.log.info("No " + fileName + " file to read");
-            return;
-        }
+    public void load() {
+//        if (!dFile.exists()) {
+//            plugin.log.info("No " + fileName + " file to read.  Creating one now.");
+//            try {
+//				dFile.createNewFile();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//            return;
+//        }
 
         try {
+        	dFile.createNewFile();
             data.clear();
 
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -102,7 +115,7 @@ class TradeCraftDataFile {
         }
     }
 
-    public synchronized void save() {
+    public void save() {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
@@ -114,6 +127,11 @@ class TradeCraftDataFile {
                              info.itemAmount + "," +
                              info.goldAmount);
                 writer.newLine();
+                plugin.getServer().broadcastMessage(info.ownerName + "," +
+                             key + "," +
+                             info.itemType + "," +
+                             info.itemAmount + "," +
+                             info.goldAmount);
             }
 
             writer.close();
@@ -122,11 +140,11 @@ class TradeCraftDataFile {
         }
     }
 
-    public synchronized void setOwnerOfSign(String ownerName, Sign sign) {
+    public void setOwnerOfSign(String ownerName, Sign sign) {
         depositGold(ownerName, sign, 0);
     }
 
-    public synchronized String getOwnerOfSign(Sign sign) {
+    public String getOwnerOfSign(Sign sign) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
@@ -135,7 +153,7 @@ class TradeCraftDataFile {
         return null;
     }
 
-    public synchronized int getItemAmount(Sign sign) {
+    public int getItemAmount(Sign sign) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
@@ -144,7 +162,7 @@ class TradeCraftDataFile {
         return 0;
     }
 
-    public synchronized int getGoldAmount(Sign sign) {
+    public int getGoldAmount(Sign sign) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
@@ -153,7 +171,7 @@ class TradeCraftDataFile {
         return 0;
     }
 
-    public synchronized void depositItems(String ownerName, Sign sign, int itemType, int itemAmount) {
+    public void depositItems(String ownerName, Sign sign, int itemType, int itemAmount) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
@@ -170,7 +188,7 @@ class TradeCraftDataFile {
         save();
     }
 
-    public synchronized void depositGold(String ownerName, Sign sign, int goldAmount) {
+    public void depositGold(String ownerName, Sign sign, int goldAmount) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
@@ -185,7 +203,7 @@ class TradeCraftDataFile {
         save();
     }
 
-    public synchronized int withdrawItems(Sign sign) {
+    public int withdrawItems(Sign sign) {
         String key = getKeyFromSign(sign);
         if (!data.containsKey(key)) {
             return 0;
@@ -199,7 +217,7 @@ class TradeCraftDataFile {
         return itemAmount;
     }
 
-    public synchronized int withdrawGold(Sign sign) {
+    public int withdrawGold(Sign sign) {
         String key = getKeyFromSign(sign);
         if (!data.containsKey(key)) {
             return 0;
@@ -213,7 +231,7 @@ class TradeCraftDataFile {
         return goldAmount;
     }
 
-    public synchronized void updateItemAndGoldAmounts(Sign sign, int itemAdjustment, int goldAdjustment) {
+    public void updateItemAndGoldAmounts(Sign sign, int itemAdjustment, int goldAdjustment) {
         String key = getKeyFromSign(sign);
         if (!data.containsKey(key)) {
             return;

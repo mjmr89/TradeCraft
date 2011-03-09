@@ -1,3 +1,5 @@
+package com.mjmr89.bukkit.TradeCraft;
+
 class TradeCraftConfigurationInfo {
     public String name;
     public int id;

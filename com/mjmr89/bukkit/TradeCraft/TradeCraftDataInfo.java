@@ -1,3 +1,5 @@
+package com.mjmr89.bukkit.TradeCraft;
+
 class TradeCraftDataInfo {
     public String ownerName;
     public int itemType;

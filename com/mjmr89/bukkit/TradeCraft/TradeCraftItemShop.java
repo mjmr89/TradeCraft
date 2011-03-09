@@ -1,3 +1,10 @@
+package com.mjmr89.bukkit.TradeCraft;
+
+import org.bukkit.Material;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+
 public abstract class TradeCraftItemShop extends TradeCraftShop {
 
     public TradeCraftItemShop(TradeCraft plugin, Sign sign, Chest chest) {
@@ -21,7 +28,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         if (getChestItemCount() == 0) {
             int goldAmount = withdrawGold();
             if (goldAmount > 0) {
-                populateChest(Item.Type.GoldIngot.getId(), goldAmount);
+                populateChest(Material.GOLD_INGOT.getId(), goldAmount);
                 plugin.sendMessage(player, "Withdrew %1$d gold.", goldAmount);
             } else {
                 int itemAmount = withdrawItems();
@@ -32,7 +39,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                     plugin.sendMessage(player, "There is nothing to withdraw.");
                 }
             }
-        } else if (getChestItemType() == Item.Type.GoldIngot.getId()) {
+        } else if (getChestItemType() == Material.GOLD_INGOT.getId()) {
             depositGold(getChestItemCount());
             plugin.sendMessage(player, "Deposited %1$d gold.", getChestItemCount());
             populateChest(0, 0);
@@ -51,9 +58,16 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
     }
 
     private void handlePatronClick(Player player) {
-        boolean playerIsInBuyGroup = plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToBuyFromShops());
-        boolean playerIsInSellGroup = plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToSellToShops());
+        boolean playerIsInBuyGroup = true;//plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToBuyFromShops());
+        boolean playerIsInSellGroup = true;//plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToSellToShops());
 
+        getChestItemCount();
+        
+        if (!chestContentsAreOK()) {
+            plugin.sendMessage(player, "The chest has more than one type of item in it!");
+            return;
+        }
+        
         if (getChestItemCount() == 0) {
             if (playerIsInBuyGroup && playerCanBuy()) {
                 plugin.sendMessage(player,
@@ -75,12 +89,9 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             return;
         }
 
-        if (!chestContentsAreOK()) {
-            plugin.sendMessage(player, "The chest has more than one type of item in it!");
-            return;
-        }
+        
 
-        if (getChestItemType() == Item.Type.GoldIngot.getId()) {
+        if (getChestItemType() == Material.GOLD_INGOT.getId()) {
             if (!playerIsInBuyGroup) {
                 plugin.sendMessage(player, "You are not allowed to buy from shops!");
             } else {
@@ -127,7 +138,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         updateItemAndGoldAmounts(-amountPlayerWantsToBuy, requiredGoldForThatAmount);
 
         chest.clear();
-        chest.add(Item.Type.GoldIngot.getId(), goldPlayerWantsToSpend - requiredGoldForThatAmount);
+        chest.add(Material.GOLD_INGOT.getId(), goldPlayerWantsToSpend - requiredGoldForThatAmount);
         chest.add(getItemType(), amountPlayerWantsToBuy);
         chest.update();
 
@@ -168,7 +179,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         chest.clear();
         chest.add(getItemType(), amountPlayerWantsToSell - amountThatCanBeSold);
-        chest.add(Item.Type.GoldIngot.getId(), goldPlayerShouldReceive);
+        chest.add(Material.GOLD_INGOT.getId(), goldPlayerShouldReceive);
         chest.update();
 
         plugin.sendMessage(player,

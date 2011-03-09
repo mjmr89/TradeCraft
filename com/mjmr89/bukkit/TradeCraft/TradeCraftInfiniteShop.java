@@ -1,3 +1,9 @@
+package com.mjmr89.bukkit.TradeCraft;
+
+import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+
 public class TradeCraftInfiniteShop extends TradeCraftItemShop {
     private final TradeCraftConfigurationInfo configurationInfo;
 

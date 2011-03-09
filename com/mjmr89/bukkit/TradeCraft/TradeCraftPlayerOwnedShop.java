@@ -1,3 +1,9 @@
+package com.mjmr89.bukkit.TradeCraft;
+
+import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+
 public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     private final String ownerName;
     private final String itemName;
@@ -5,14 +11,18 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     private final TradeCraftExchangeRate buyRate;
     private final TradeCraftExchangeRate sellRate;
 
-    public TradeCraftPlayerOwnedShop(TradeCraft plugin, Sign sign, Chest chest) {
+    public TradeCraftPlayerOwnedShop(TradeCraft plugin, Sign sign, Chest chest, String ownerName) {
         super(plugin, sign, chest);
 
-        ownerName = plugin.data.getOwnerOfSign(sign);
+//        ownerName = plugin.data.getOwnerOfSign(sign);
+        this.ownerName = ownerName;
         itemName = plugin.getItemName(sign);
         itemType = plugin.configuration.get(itemName).id;
         buyRate = plugin.getExchangeRate(sign, 1);
         sellRate = plugin.getExchangeRate(sign, 2);
+        
+//        plugin.getServer().broadcastMessage("owner" + ownerName + " itemname " + itemName + 
+//        		" item type " + itemType + " buyrate " + buyRate + " sell rate" + sellRate);
     }
 
     public boolean playerCanDestroy(Player player) {
@@ -24,6 +34,7 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     }
 
     public boolean isOwnedByPlayer(Player player) {
+    	plugin.getServer().broadcastMessage("owner is "+ownerName);
         return ownerName != null && player.getName().equals(ownerName);
     }
 

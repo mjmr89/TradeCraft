@@ -1,4 +1,12 @@
+package com.mjmr89.bukkit.TradeCraft;
+
 import java.util.List;
+
+import org.bukkit.Material;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class TradeCraftRepairShop extends TradeCraftShop {
 
@@ -8,7 +16,7 @@ public class TradeCraftRepairShop extends TradeCraftShop {
 
     public void handleRightClick(Player player) {
         int gold = chest.getAmountOfCurrencyInChest();
-        List<Item> items = chest.getNonCurrencyItems();
+        List<ItemStack> items = chest.getNonCurrencyItems();
         int repairCost = plugin.properties.getRepairCost();
 
         if (gold == 0 && items.size() == 0) {
@@ -33,11 +41,11 @@ public class TradeCraftRepairShop extends TradeCraftShop {
 
         chest.clear();
 
-        for (Item item : items) {
+        for (ItemStack item : items) {
             chest.add(item.getType().getId(), 1);
         }
 
-        chest.add(Item.Type.GoldIngot.getId(), (gold - actualCost));
+        chest.add(Material.GOLD_INGOT.getId(), (gold - actualCost));
 
         chest.update();
 
