@@ -54,7 +54,7 @@ public class TradeCraft extends JavaPlugin {
 			this);
 	private final TradeCraftPlayerListener playerListener = new TradeCraftPlayerListener(
 			this);
-	public static TradeCraftPermissions permissions;
+	public TradeCraftPermissions permissions = new TradeCraftPermissions(this);
 
 	public void onDisable() {
 	}
@@ -69,7 +69,7 @@ public class TradeCraft extends JavaPlugin {
 		configuration.load();
 		buildConfiguration();
 		data.load();
-		TradeCraftPermissions.setupPermissions();
+		permissions.setupPermissions();
 
 		PluginManager pm = this.getServer().getPluginManager();
 

@@ -9,25 +9,25 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 public class TradeCraftPermissions {
 
 	static boolean permEnabled = false;
-	static PermissionHandler permHandler;
-	static TradeCraft plugin;
+	PermissionHandler permHandler;
+	TradeCraft plugin;
 
 	TradeCraftPermissions(TradeCraft plugin) {
 		this.plugin = plugin;
 	}
 
-	public static void setupPermissions() {
+	public void setupPermissions() {
 		Plugin test = plugin.getServer().getPluginManager().getPlugin(
-				"Permissions");
+		"Permissions");
 
-		if (TradeCraft.permissions.permHandler == null) {
-			if (test != null) {
+		if (plugin.permissions == null) {
+			if(test != null){
 				permHandler = ((Permissions) test).getHandler();
 				permEnabled = true;
-			} else {
-				plugin.log
-						.info("Permission system not detected, defaulting to OP");
+			}else{
+				plugin.log.info("Permission system not detected, defaulting to OP");
 			}
+			
 		}
 	}
 	
