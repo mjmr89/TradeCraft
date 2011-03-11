@@ -58,8 +58,12 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
     }
 
     private void handlePatronClick(Player player) {
-        boolean playerIsInBuyGroup = true;//plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToBuyFromShops());
-        boolean playerIsInSellGroup = true;//plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToSellToShops());
+    	
+    	
+        boolean playerCanBuy= (TradeCraftPermissions.permEnabled &&plugin.permissions.canBuy(player)) ||
+        						(!TradeCraftPermissions.permEnabled && player.isOp());
+        boolean playerCanSell = (TradeCraftPermissions.permEnabled &&plugin.permissions.canSell(player)) ||
+		(!TradeCraftPermissions.permEnabled && player.isOp());
 
         getChestItemCount();
         
@@ -69,7 +73,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         }
         
         if (getChestItemCount() == 0) {
-            if (playerIsInBuyGroup && playerCanBuy()) {
+            if (playerCanBuy && playerCanBuy()) {
                 plugin.sendMessage(player,
                         "You can buy %1$d %2$s for %3$d gold.",
                         getBuyAmount(),
@@ -77,7 +81,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                         getBuyValue());
             }
 
-            if (playerIsInSellGroup && playerCanSell()) {
+            if (playerCanSell && playerCanSell()) {
                 plugin.sendMessage(player,
                         "You can sell %1$d %2$s for %3$d gold.",
                         getSellAmount(),
@@ -92,13 +96,13 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         
 
         if (getChestItemType() == Material.GOLD_INGOT.getId()) {
-            if (!playerIsInBuyGroup) {
+            if (!playerCanBuy) {
                 plugin.sendMessage(player, "You are not allowed to buy from shops!");
             } else {
                 playerWantsToBuy(player);
             }
         } else if (getChestItemType() == getItemType()) {
-            if (!playerIsInSellGroup) {
+            if (!playerCanSell) {
                 plugin.sendMessage(player, "You are not allowed to sell to shops!");
             } else { 
                 playerWantsToSell(player);

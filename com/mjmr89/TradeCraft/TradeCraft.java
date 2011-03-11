@@ -83,8 +83,6 @@ public class TradeCraft extends JavaPlugin {
 				.registerEvent(Type.SIGN_CHANGE, blockListener,
 						Priority.Normal, this);
 
-		pm.registerEvent(Type.PLAYER_CHAT, playerListener, Priority.Low, this);
-		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Low, this);
 
 		
 	}
@@ -106,7 +104,6 @@ public class TradeCraft extends JavaPlugin {
 	public void addItem(Configuration c, String iName, int id, String buyStr,
 			String sellStr) {
 
-		// c.setProperty("Items.",iName);
 		c.setProperty("Items." + iName + ".ID", id);
 		c.setProperty("Items." + iName + ".Buy", buyStr == null ? sellStr
 				: buyStr);
@@ -121,17 +118,10 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	void trace(Player player, String format, Object... args) {
-		if (true) {// properties.getEnableDebugMessages()) {
+		if (properties.getEnableDebugMessages()) {
 			sendMessage(player, format, args);
 		}
 	}
-
-	// public boolean playerIsInGroup(Player player, String group) {
-	// if (group.equals("*")) {
-	// return true;
-	// }
-	// return player.isInGroup(group);
-	// }
 
 	TradeCraftShop getShopFromSignOrChestBlock(Player player, Block block) {
 		if (block.getType() == Material.CHEST) {
@@ -144,7 +134,6 @@ public class TradeCraft extends JavaPlugin {
 
 	TradeCraftShop getShopFromSignBlock(Player player, Block block) {
 		if (block.getType() != Material.WALL_SIGN) {
-			blockListener.debug("Thinks material is not a wall sign");
 			return null;
 		}
 

@@ -23,14 +23,12 @@ public class TradeCraftBlockListener extends BlockListener{
 	
 	@Override
 	public void onBlockRightClick(BlockRightClickEvent e){
-//			Player player, Block blockClicked, ItemStack itemInHand) {
 		Block blockClicked = e.getBlock();
 		Player player = e.getPlayer();
 		
         TradeCraftShop shop = plugin.getShopFromSignBlock(player, blockClicked);
 
         if (shop == null) {
-//        	debug("Shop is null " + blockClicked.toString());
             return;
         }
 
@@ -45,21 +43,25 @@ public class TradeCraftBlockListener extends BlockListener{
         TradeCraftShop shop = plugin.getShopFromSignOrChestBlock(player, block);
 
         if (shop == null) {
+            
             return;
         }
 
         if (shop.playerCanDestroy(player)) {
             if (!shop.shopCanBeWithdrawnFrom()) {
+                
                 return;
             }
  
             plugin.sendMessage(player, "All items and gold must be withdrawn before you can destroy this sign or chest!");
 
+            e.setCancelled(true);
             return;
         }
 
         plugin.sendMessage(player, "You can't destroy this sign or chest!");
 
+        e.setCancelled(true);
         return;
     }
 	
@@ -73,31 +75,38 @@ public class TradeCraftBlockListener extends BlockListener{
             String itemName = plugin.getItemName(sign);
 
             if (itemName == null) {
+            	
                 return;
             }
-
-            if (player.isOp()){//plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToCreateInfiniteShops())) {
-                return;
+            
+            if ( (TradeCraftPermissions.permEnabled && plugin.permissions.canMakeInfShops(player)) || 
+            		!TradeCraftPermissions.permEnabled && player.isOp()){
+            	
+            	return;
             }
 
             plugin.sendMessage(player, "You can't create infinite shops!");
 
+            
             return;
         }
 
-        if (!player.isOp()){//plugin.playerIsInGroup(player, plugin.properties.getGroupRequiredToCreatePlayerOwnedShops())) {
+        if ( (TradeCraftPermissions.permEnabled && plugin.permissions.canMakePlayerShops(player)) || 
+        		!TradeCraftPermissions.permEnabled && player.isOp()){
             plugin.sendMessage(player, "You can't create player-owned shops!");
+            
             return;
         }
 
         if (player.getName().startsWith(ownerName)) {
             plugin.data.setOwnerOfSign(player.getName(), sign);
-            player.sendMessage("ownersendmessage is " + ownerName);
+            
             return;
         }
 
         plugin.sendMessage(player, "You can't create signs with other players names on them!");
 
+        
         return;
     }
 

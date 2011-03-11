@@ -36,16 +36,6 @@ class TradeCraftChest {
         }
     }
 
-    private void addItem(ItemStack item) {
-    	
-        if (total == 0) {
-            id = item.getTypeId();
-        } else if (id != item.getTypeId()) {
-            id = -1;
-        }
-        total += item.getAmount();
-    }
-
     public boolean containsOnlyOneItemType() {
         return diffFlag == false;
     }

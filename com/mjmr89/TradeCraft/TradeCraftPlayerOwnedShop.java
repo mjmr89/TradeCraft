@@ -34,7 +34,6 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     }
 
     public boolean isOwnedByPlayer(Player player) {
-    	plugin.getServer().broadcastMessage("owner is "+ownerName);
         return ownerName != null && player.getName().equals(ownerName);
     }
 
