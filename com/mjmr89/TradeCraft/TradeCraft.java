@@ -21,7 +21,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 import com.nijiko.permissions.PermissionHandler;
 
@@ -29,13 +28,6 @@ public class TradeCraft extends JavaPlugin {
 
 	// The plugin name.
 	static final String pluginName = "TradeCraft";
-
-	// The plugin version. The first part is the version of hMod this is built
-	// against.
-	// The second part is the release number built against that version of hMod.
-	// A "+" at the end means this is a development version that hasn't been
-	// released yet.
-	static final String version = "133.3+";
 
 	private static final Pattern ratePattern = Pattern
 			.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
@@ -45,6 +37,7 @@ public class TradeCraft extends JavaPlugin {
 	final Server server = this.getServer();
 
 	// Objects used by the plugin.
+	static Material currency;
 	TradeCraftPropertiesFile properties = new TradeCraftPropertiesFile();
 	TradeCraftConfigurationFile configuration = new TradeCraftConfigurationFile(
 			this);
@@ -60,14 +53,13 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	public void onEnable() {
-		log.info(pluginName + " " + version + " initialized");
 
 		properties = new TradeCraftPropertiesFile();
 		configuration = new TradeCraftConfigurationFile(this);
 		data = new TradeCraftDataFile(this);
 
+		currency = Material.getMaterial(properties.getCurrencyTypeId());
 		configuration.load();
-		buildConfiguration();
 		data.load();
 		permissions.setupPermissions();
 
@@ -83,32 +75,9 @@ public class TradeCraft extends JavaPlugin {
 				.registerEvent(Type.SIGN_CHANGE, blockListener,
 						Priority.Normal, this);
 
-
-		
-	}
-
-	public void buildConfiguration() {
-		Configuration c = getConfiguration();
-		if (c != null)
-			addItem(c, "Cobblestone", 4, "64:1", "64:1");
-
-		if (!c.save()) {
-			getServer()
-					.getLogger()
-					.warning(
-							"Unable to persist configuration files, changes will not be saved.");
-		}
-
-	}
-
-	public void addItem(Configuration c, String iName, int id, String buyStr,
-			String sellStr) {
-
-		c.setProperty("Items." + iName + ".ID", id);
-		c.setProperty("Items." + iName + ".Buy", buyStr == null ? sellStr
-				: buyStr);
-		c.setProperty("Items." + iName + ".Sell", sellStr == null ? buyStr
-				: sellStr);
+		PluginDescriptionFile pdfFile = this.getDescription();
+		System.out.println(pdfFile.getName() + " version "
+				+ pdfFile.getVersion() + " is enabled!");
 
 	}
 
@@ -195,7 +164,6 @@ public class TradeCraft extends JavaPlugin {
 		}
 
 		String ownerName = getOwnerName(sign);
-		player.sendMessage("Owner is : " + ownerName);
 
 		if (ownerName == null) {
 			trace(player, "There is no owner name on the sign.");

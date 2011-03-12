@@ -30,7 +30,7 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     }
 
     public boolean shopCanBeWithdrawnFrom() {
-        return getItemsInShop() > 0 || getGoldInShop() > 0;
+        return getItemsInShop() > 0 || getCurrencyInShop() > 0;
     }
 
     public boolean isOwnedByPlayer(Player player) {
@@ -73,27 +73,28 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
         return plugin.data.getItemAmount(sign);
     }
 
-    public int getGoldInShop() {
-        return plugin.data.getGoldAmount(sign);
+    public int getCurrencyInShop() {
+        return plugin.data.getCurrencyAmount(sign);
     }
 
     public void depositItems(int amount) {
         plugin.data.depositItems(ownerName, sign, itemType, amount);
     }
 
-    public void depositGold(int amount) {
-        plugin.data.depositGold(ownerName, sign, amount);
+    public void depositCurrency(int amount) {
+        plugin.data.depositCurrency(ownerName, sign, amount);
     }
 
     public int withdrawItems() {
         return plugin.data.withdrawItems(sign);
     }
 
-    public int withdrawGold() {
-        return plugin.data.withdrawGold(sign);
+    public int withdrawCurrency() {
+        return plugin.data.withdrawCurrency(sign);
     }
 
-    public void updateItemAndGoldAmounts(int itemAdjustment, int goldAdjustment) {
-        plugin.data.updateItemAndGoldAmounts(sign, itemAdjustment, goldAdjustment);
+    public void updateItemAndCurrencyAmounts(int itemAdjustment, int currencyAdjustment) {
+        plugin.data.updateItemAndCurrencyAmounts(sign, itemAdjustment, currencyAdjustment);
     }
+
 }

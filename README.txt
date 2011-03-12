@@ -7,9 +7,8 @@ ingots (bars) as a currency.
 Installation
 ============
 
-The plugin is installed like any other hMod plugin. Put the TradeCraft.jar file
-in your plugins folder and edit server.properties so that TradeCraft appears in
-the plugins property.
+The plugin is installed like any other Bukkitplugin. Put the TradeCraft.jar file
+in your plugins folder.
 
 The plugin is configured using a file called TradeCraft.txt that you need to
 create in the same folder as your server.properties folder. Details on the

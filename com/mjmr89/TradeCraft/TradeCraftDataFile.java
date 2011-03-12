@@ -19,13 +19,13 @@ class TradeCraftDataFile {
     private static final Pattern infoPattern1 = Pattern.compile(
             "^\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)" + // x,y,z
             "\\s*=\\s*" +
-            "(\\d+)\\s*,\\s*(\\d+)\\s*$"); // itemAmount,goldAmount
+            "(\\d+)\\s*,\\s*(\\d+)\\s*$"); // itemAmount,currencyAmount
     private static final Pattern infoPattern2 = Pattern.compile(
             "^\\s*([^,]+)\\s*," + // ownerName
             "\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*," + // x,y,z
             "\\s*(\\d+)\\s*," + // itemType
             "\\s*(\\d+)\\s*," + // itemAmount
-            "\\s*(\\d+)\\s*$"); // goldAmount
+            "\\s*(\\d+)\\s*$"); // currencyAmount
 
     private final TradeCraft plugin;
     private final Map<String, TradeCraftDataInfo> data = new HashMap<String, TradeCraftDataInfo>();
@@ -69,7 +69,7 @@ class TradeCraftDataFile {
                     int z = Integer.parseInt(infoMatcher2.group(4));
                     int itemType = Integer.parseInt(infoMatcher2.group(5));
                     int itemAmount = Integer.parseInt(infoMatcher2.group(6));
-                    int goldAmount = Integer.parseInt(infoMatcher2.group(7));
+                    int currencyAmount = Integer.parseInt(infoMatcher2.group(7));
 
                     String key = getKey(x, y, z);
 
@@ -77,7 +77,7 @@ class TradeCraftDataFile {
                     info.ownerName = ownerName;
                     info.itemType = itemType;
                     info.itemAmount = itemAmount;
-                    info.goldAmount = goldAmount;
+                    info.currencyAmount = currencyAmount;
 
                     data.put(key, info);
                 } else {
@@ -95,14 +95,14 @@ class TradeCraftDataFile {
                     int y = Integer.parseInt(infoMatcher1.group(2));
                     int z = Integer.parseInt(infoMatcher1.group(3));
                     int itemAmount = Integer.parseInt(infoMatcher1.group(4));
-                    int goldAmount = Integer.parseInt(infoMatcher1.group(5));
+                    int currencyAmount = Integer.parseInt(infoMatcher1.group(5));
 
                     String key = getKey(x, y, z);
 
                     TradeCraftDataInfo info = new TradeCraftDataInfo();
                     info.ownerName = "unknown";
                     info.itemAmount = itemAmount;
-                    info.goldAmount = goldAmount;
+                    info.currencyAmount = currencyAmount;
 
                     data.put(key, info);
                 }
@@ -125,13 +125,13 @@ class TradeCraftDataFile {
                              key + "," +
                              info.itemType + "," +
                              info.itemAmount + "," +
-                             info.goldAmount);
+                             info.currencyAmount);
                 writer.newLine();
-                plugin.getServer().broadcastMessage(info.ownerName + "," +
-                             key + "," +
-                             info.itemType + "," +
-                             info.itemAmount + "," +
-                             info.goldAmount);
+//                plugin.getServer().broadcastMessage(info.ownerName + "," +
+//                             key + "," +
+//                             info.itemType + "," +
+//                             info.itemAmount + "," +
+//                             info.currencyAmount);
             }
 
             writer.close();
@@ -141,7 +141,7 @@ class TradeCraftDataFile {
     }
 
     public void setOwnerOfSign(String ownerName, Sign sign) {
-        depositGold(ownerName, sign, 0);
+        depositCurrency(ownerName, sign, 0);
     }
 
     public String getOwnerOfSign(Sign sign) {
@@ -162,11 +162,11 @@ class TradeCraftDataFile {
         return 0;
     }
 
-    public int getGoldAmount(Sign sign) {
+    public int getCurrencyAmount(Sign sign) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
-            return info.goldAmount;
+            return info.currencyAmount;
         }
         return 0;
     }
@@ -188,16 +188,16 @@ class TradeCraftDataFile {
         save();
     }
 
-    public void depositGold(String ownerName, Sign sign, int goldAmount) {
+    public void depositCurrency(String ownerName, Sign sign, int currencyAmount) {
         String key = getKeyFromSign(sign);
         if (data.containsKey(key)) {
             TradeCraftDataInfo info = data.get(key);
             info.ownerName = ownerName; // For old entries that don't have the name.
-            info.goldAmount += goldAmount;
+            info.currencyAmount += currencyAmount;
         } else {
             TradeCraftDataInfo info = new TradeCraftDataInfo();
             info.ownerName = ownerName;
-            info.goldAmount = goldAmount;
+            info.currencyAmount = currencyAmount;
             data.put(key, info);
         }
         save();
@@ -217,28 +217,28 @@ class TradeCraftDataFile {
         return itemAmount;
     }
 
-    public int withdrawGold(Sign sign) {
+    public int withdrawCurrency(Sign sign) {
         String key = getKeyFromSign(sign);
         if (!data.containsKey(key)) {
             return 0;
         }
         TradeCraftDataInfo info = data.get(key);
-        int goldAmount = info.goldAmount;
-        if (goldAmount != 0) {
-            info.goldAmount = 0;
+        int currencyAmount = info.currencyAmount;
+        if (currencyAmount != 0) {
+            info.currencyAmount = 0;
             save();
         }
-        return goldAmount;
+        return currencyAmount;
     }
 
-    public void updateItemAndGoldAmounts(Sign sign, int itemAdjustment, int goldAdjustment) {
+    public void updateItemAndCurrencyAmounts(Sign sign, int itemAdjustment, int currencyAdjustment) {
         String key = getKeyFromSign(sign);
         if (!data.containsKey(key)) {
             return;
         }
         TradeCraftDataInfo info = data.get(key);
         info.itemAmount += itemAdjustment;
-        info.goldAmount += goldAdjustment;
+        info.currencyAmount += currencyAdjustment;
         save();
     }
 

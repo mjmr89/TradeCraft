@@ -72,7 +72,7 @@ class TradeCraftChest {
         int amount = 0;
         for (ItemStack item : ((Inventory)chest).getContents()) {
             if (item != null) {
-                if (item.getType() == Material.GOLD_INGOT) {
+                if (item.getType() == TradeCraft.currency) {
                     amount += item.getAmount();
                 }
             }
@@ -84,7 +84,7 @@ class TradeCraftChest {
         List<ItemStack> items = new ArrayList<ItemStack>();
         for (ItemStack item : chest.getContents()) {
             if (item != null) {
-                if (item.getType() != Material.GOLD_INGOT) {
+                if (item.getType() != TradeCraft.currency) {
                     items.add(item);
                 }
             }

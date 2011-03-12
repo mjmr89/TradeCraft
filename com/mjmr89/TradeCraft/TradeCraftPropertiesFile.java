@@ -31,6 +31,10 @@ public class TradeCraftPropertiesFile {
 //    	properties.save();
     }
     
+    public int getCurrencyTypeId(){
+    	return properties.getInt("currency-id",266);
+    }
+    
     public boolean getInfiniteShopsEnabled() {
         return properties.getBoolean("infinite-shops-enabled", true);
     }

@@ -67,24 +67,24 @@ public class TradeCraftInfiniteShop extends TradeCraftItemShop {
         return Integer.MAX_VALUE;
     }
 
-    public int getGoldInShop() {
+    public int getCurrencyInShop() {
         return Integer.MAX_VALUE;
     }
 
     public void depositItems(int amount) {
     }
 
-    public void depositGold(int amount) {
+    public void depositCurrency(int amount) {
     }
 
     public int withdrawItems() {
         return 0;
     }
 
-    public int withdrawGold() {
+    public int withdrawCurrency() {
         return 0;
     }
 
-    public void updateItemAndGoldAmounts(int itemAdjustment, int goldAdjustment) {
+    public void updateItemAndCurrencyAmounts(int itemAdjustment, int currencyAdjustment) {
     }
 }
