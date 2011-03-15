@@ -60,10 +60,8 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
     private void handlePatronClick(Player player) {
     	
     	
-        boolean playerCanBuy= (TradeCraftPermissions.permEnabled &&plugin.permissions.canBuy(player)) ||
-        						(!TradeCraftPermissions.permEnabled && player.isOp());
-        boolean playerCanSell = (TradeCraftPermissions.permEnabled &&plugin.permissions.canSell(player)) ||
-		(!TradeCraftPermissions.permEnabled && player.isOp());
+        boolean playerCanBuy= (plugin.permissions.canBuy(player));
+        boolean playerCanSell = plugin.permissions.canSell(player);
 
         getChestItemCount();
         

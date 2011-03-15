@@ -23,6 +23,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class TradeCraft extends JavaPlugin {
 
@@ -48,6 +49,8 @@ public class TradeCraft extends JavaPlugin {
 	private final TradeCraftPlayerListener playerListener = new TradeCraftPlayerListener(
 			this);
 	public TradeCraftPermissions permissions = new TradeCraftPermissions(this);
+	public Permissions permissionsPlugin = null;
+	public boolean permEnabled = false;
 
 	public void onDisable() {
 	}
@@ -79,6 +82,47 @@ public class TradeCraft extends JavaPlugin {
 		System.out.println(pdfFile.getName() + " version "
 				+ pdfFile.getVersion() + " is enabled!");
 
+	}
+	@Override
+	public boolean onCommand(CommandSender sender,
+			Command command,
+			String label,
+			String[] args 
+			){
+		String name = command.getName();
+		Player p;
+		
+		
+		if(sender instanceof Player){
+			p = (Player)sender;
+			
+			
+			if(name.equalsIgnoreCase("setcurrency") && args.length == 1){
+				try{
+					int cid = Integer.parseInt(args[0]);
+					currency = Material.getMaterial(cid);
+					p.sendMessage("Currency is set to " + currency.toString());
+				}catch(NumberFormatException nfe){
+					Material m = Material.getMaterial(args[0]);
+					if(m != null){
+						currency = m;
+						p.sendMessage("Currency is set to " + currency.toString());
+
+					}
+				}finally{
+					return true;
+				}
+			}else if(name.equalsIgnoreCase("displaycurrency") && args.length == 0){
+				p.sendMessage("Currency is: " + currency.toString());
+			}else if(name.equalsIgnoreCase("canplayer") && args.length == 1){
+				permissions.debug(args[0]);
+			}
+			
+		}else{
+			return false;
+		}
+				
+		return true;
 	}
 
 	void sendMessage(Player player, String format, Object... args) {
@@ -270,5 +314,13 @@ public class TradeCraft extends JavaPlugin {
 		 */
 		return 64;
 	}
+
+	
+	public void onLoad() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }

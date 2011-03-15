@@ -32,7 +32,7 @@ public class TradeCraftPlayerListener extends PlayerListener{
     }
 
     private void displaySecurity(Player player) {
-        plugin.permissions.debug(player);
+        plugin.permissions.debug(player.getName());
     }
 	
 }

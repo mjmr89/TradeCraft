@@ -79,8 +79,7 @@ public class TradeCraftBlockListener extends BlockListener{
                 return;
             }
             
-            if ( (TradeCraftPermissions.permEnabled && plugin.permissions.canMakeInfShops(player)) || 
-            		!TradeCraftPermissions.permEnabled && player.isOp()){
+            if (plugin.permissions.canMakeInfShops(player)){
             	
             	return;
             }
@@ -91,9 +90,7 @@ public class TradeCraftBlockListener extends BlockListener{
             return;
         }
 
-        if ( (TradeCraftPermissions.permEnabled && plugin.permissions.canMakePlayerShops(player)) || 
-        		!TradeCraftPermissions.permEnabled && player.isOp()){
-            plugin.sendMessage(player, "You can't create player-owned shops!");
+        if ( plugin.permissions.canMakePlayerShops(player)){
             
             return;
         }

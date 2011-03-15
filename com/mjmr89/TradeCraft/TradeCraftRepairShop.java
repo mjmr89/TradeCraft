@@ -45,7 +45,7 @@ public class TradeCraftRepairShop extends TradeCraftShop {
             chest.add(item.getType().getId(), 1);
         }
 
-        chest.add(Material.GOLD_INGOT.getId(), (gold - actualCost));
+        chest.add(plugin.currency.getId(), (gold - actualCost));
 
         chest.update();
 

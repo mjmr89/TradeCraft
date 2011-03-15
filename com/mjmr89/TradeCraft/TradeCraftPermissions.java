@@ -8,8 +8,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class TradeCraftPermissions {
 
-	static boolean permEnabled = false;
-	PermissionHandler permHandler;
+	PermissionHandler permHandler = null;
 	TradeCraft plugin;
 
 	TradeCraftPermissions(TradeCraft plugin) {
@@ -17,42 +16,59 @@ public class TradeCraftPermissions {
 	}
 
 	public void setupPermissions() {
-		Plugin test = plugin.getServer().getPluginManager().getPlugin(
-		"Permissions");
+		Plugin test = plugin.getServer().getPluginManager().getPlugin("Permissions");
 
-		if (plugin.permissions == null) {
-			if(test != null){
-				permHandler = ((Permissions) test).getHandler();
-				permEnabled = true;
-			}else{
-				plugin.log.info("Permission system not detected, defaulting to OP");
-			}
-			
-		}
+	      if (permHandler == null) {
+	          if (test != null) {
+	              this.permHandler = ((Permissions)test).getHandler();
+	              plugin.permEnabled = true;
+	              System.out.println("[TradeCraft] has recognized Permissions");
+	          } 
+	      }
 	}
 	
 	public boolean canBuy(Player p){
-		return permHandler.has(p, "TradeCraft.canBuy");
+		if(plugin.permEnabled == true){
+			return permHandler.has(p, "TradeCraft.canBuy");
+		}else
+			return true;
 	}
 	
 	public boolean canSell(Player p){
-		return permHandler.has(p, "TradeCraft.canSell");
+		if(plugin.permEnabled == true){
+			return permHandler.has(p, "TradeCraft.canSell");
+		}else
+				return true;
 	}
 	
 	public boolean canMakeInfShops(Player p){
-		return permHandler.has(p, "TradeCraft.canMakeInfShops");
+		if(plugin.permEnabled == true){
+			return permHandler.has(p, "TradeCraft.canMakeInfShops");
+		}else
+				return p.isOp();
 	}
 	
 	public boolean canMakePlayerShops(Player p){
-		return permHandler.has(p, "TradeCraft.canMakePlayerShops");
+		if(plugin.permEnabled == true){
+			return permHandler.has(p, "TradeCraft.canMakePlayerShops");
+		}else
+				return p.isOp();
 	}
 	
 	public boolean canDestroyShops(Player p){
-		return permHandler.has(p, "TradeCraft.canDestroy");
+		if(plugin.permEnabled == true){
+			return permHandler.has(p, "TradeCraft.canDestroyShops");
+		}else
+				return p.isOp();
 	}
 	
-	public void debug(Player p){
+	public void debug(String n){
+		Player p = plugin.getServer().getPlayer(n);
 		String name = p.getName();
+		if(p == null){
+			plugin.getServer().broadcastMessage("/canPlayer used with a name of player who is not online.");
+			return;
+		}
 		
 		plugin.log.info("" + name + " has:");
 		plugin.log.info("canbuy " + canBuy(p));

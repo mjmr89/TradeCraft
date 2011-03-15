@@ -15,12 +15,7 @@ public class TradeCraftInfiniteShop extends TradeCraftItemShop {
     }
 
     public boolean playerCanDestroy(Player player) {
-    	if(TradeCraftPermissions.permEnabled){
-    		return plugin.permissions.canDestroyShops(player);
-    	}else if(player.isOp()){
-    		return true;
-    	}
-        return true;
+    	return plugin.permissions.canDestroyShops(player);
     }
 
     public boolean shopCanBeWithdrawnFrom() {

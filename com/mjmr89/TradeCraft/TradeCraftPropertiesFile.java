@@ -28,7 +28,7 @@ public class TradeCraftPropertiesFile {
     public void populate(){
     	properties.setProperty("infinite-shops-enabled",true);
     	
-//    	properties.save();
+    	properties.save();
     }
     
     public int getCurrencyTypeId(){
@@ -45,30 +45,6 @@ public class TradeCraftPropertiesFile {
 
     public boolean getRepairShopsEnabled() {
         return properties.getBoolean("repair-shops-enabled", false);
-    }
-
-    public String getGroupRequiredToCreateInfiniteShops() {
-        return properties.getString("group-required-to-create-infinite-shops", "*");
-    }
-
-    public String getGroupRequiredToCreatePlayerOwnedShops() {
-        return properties.getString("group-required-to-create-player-owned-shops", "*");
-    }
-
-    public String getGroupRequiredToCreateRepairShops() {
-        return properties.getString("group-required-to-create-repair-shops", "*");
-    }
-
-    public String getGroupRequiredToBuyFromShops() {
-        return properties.getString("group-required-to-buy-from-shops", "*");
-    }
-
-    public String getGroupRequiredToSellToShops() {
-        return properties.getString("group-required-to-sell-to-shops", "*");
-    }
-
-    public String getGroupRequiredToUseRepairShops() {
-        return properties.getString("group-required-to-use-repair-shops", "*");
     }
 
     public int getRepairCost() {
