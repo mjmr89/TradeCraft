@@ -102,19 +102,19 @@ public class TradeCraft extends JavaPlugin {
 				try{
 					int cid = Integer.parseInt(args[0]);
 					currency = Material.getMaterial(cid);
-					p.sendMessage("Currency is set to " + currency.toString());
+					p.sendMessage("Currency is set to " + currency);
 				}catch(NumberFormatException nfe){
 					Material m = Material.getMaterial(args[0]);
 					if(m != null){
 						currency = m;
-						p.sendMessage("Currency is set to " + currency.toString());
+						p.sendMessage("Currency is set to " + currency);
 
 					}
 				}finally{
 					return true;
 				}
 			}else if(name.equalsIgnoreCase("displaycurrency") && args.length == 0){
-				p.sendMessage("Currency is: " + currency.toString());
+				p.sendMessage("Currency is: " + currency);
 			}else if(name.equalsIgnoreCase("canplayer") && args.length == 1){
 				permissions.debug(args[0]);
 			}else if(name.equalsIgnoreCase("myshops")){
