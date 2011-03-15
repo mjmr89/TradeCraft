@@ -1,7 +1,10 @@
 name: TradeCraft
 main: com.mjmr89.TradeCraft.TradeCraft
-version: 0.4
+version: 0.5
 commands:
+    myshops:
+        description: See a printout of any personal shops you have
+        usage: 
     setCurrency:
         description:  Set the currency used.
         usage: Enter an id or a material name (using _ as spaces)

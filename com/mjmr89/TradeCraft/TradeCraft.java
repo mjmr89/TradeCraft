@@ -1,6 +1,7 @@
 package com.mjmr89.TradeCraft;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -116,6 +117,8 @@ public class TradeCraft extends JavaPlugin {
 				p.sendMessage("Currency is: " + currency.toString());
 			}else if(name.equalsIgnoreCase("canplayer") && args.length == 1){
 				permissions.debug(args[0]);
+			}else if(name.equalsIgnoreCase("myshops")){
+				displayShops(p);
 			}
 			
 		}else{
@@ -123,6 +126,26 @@ public class TradeCraft extends JavaPlugin {
 		}
 				
 		return true;
+	}
+	
+	void displayShops(Player p){
+		String name = p.getName();
+		ArrayList<TradeCraftDataInfo> list = data.shopsOwned(name);
+		if(list.size() == 0){
+			p.sendMessage("You don't own any shops!");
+			return;
+		}
+		p.sendMessage("Your shops:");
+		for(TradeCraftDataInfo info : list){
+			
+			p.sendMessage( 
+					"Item: " + Material.getMaterial(info.itemType) + " Amount: " + info.itemAmount +
+					"Gold: " + info.currencyAmount
+					);
+			
+		}
+		
+		
 	}
 
 	void sendMessage(Player player, String format, Object... args) {

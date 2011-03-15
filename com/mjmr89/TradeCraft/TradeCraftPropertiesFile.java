@@ -15,7 +15,7 @@ public class TradeCraftPropertiesFile {
     	if(!f.exists()){
 			try {
 				f.createNewFile();
-				populate();
+//				populate();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

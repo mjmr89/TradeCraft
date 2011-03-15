@@ -127,10 +127,6 @@ in the chest will be replaced with gold.
 All of the items in the chest must be of the same type. They can be the type
 indicated by the sign above the chest or all gold.
 
-No "change" is given. If you put too much gold in the chest, the excess is
-lost. Likewise, if you put more items in the chest than what would give you an
-exact number of gold, the excess is lost.
-
 Managing player-owned shops
 ===========================
 

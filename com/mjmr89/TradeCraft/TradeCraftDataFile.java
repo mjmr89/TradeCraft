@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -138,6 +139,20 @@ class TradeCraftDataFile {
         } catch (IOException e) {
             plugin.log.warning("Error writing " + fileName);
         }
+    }
+    
+    public ArrayList<TradeCraftDataInfo> shopsOwned(String name){
+    	ArrayList<TradeCraftDataInfo> list = new ArrayList<TradeCraftDataInfo>();
+    	
+    	for (String key : data.keySet()) {
+    		TradeCraftDataInfo info = data.get(key);
+    		if(info.ownerName.equalsIgnoreCase(name)){
+    			list.add(info);
+    		}
+    	}
+    	
+    	
+    	return list;
     }
 
     public void setOwnerOfSign(String ownerName, Sign sign) {
