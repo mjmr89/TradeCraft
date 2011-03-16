@@ -47,9 +47,8 @@ public class TradeCraftBlockListener extends BlockListener{
             return;
         }
 
-        if (shop.playerCanDestroy(player)) {
+        if (shop.playerCanDestroy(player) || plugin.permissions.canDestroyShops(player)) {
             if (!shop.shopCanBeWithdrawnFrom()) {
-                
                 return;
             }
  
