@@ -72,11 +72,11 @@ public class TradeCraft extends JavaPlugin {
 		pm.registerEvent(Type.BLOCK_RIGHTCLICKED, blockListener,
 				Priority.Normal, this);
 
-		pm.registerEvent(Type.BLOCK_DAMAGED,// block broken
-				blockListener, Priority.Normal, this);
-
 		pm
 				.registerEvent(Type.SIGN_CHANGE, blockListener,
+						Priority.Normal, this);
+		pm
+				.registerEvent(Type.BLOCK_BREAK, blockListener,
 						Priority.Normal, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
@@ -84,68 +84,63 @@ public class TradeCraft extends JavaPlugin {
 				+ pdfFile.getVersion() + " is enabled!");
 
 	}
+
 	@Override
-	public boolean onCommand(CommandSender sender,
-			Command command,
-			String label,
-			String[] args 
-			){
+	public boolean onCommand(CommandSender sender, Command command,
+			String label, String[] args) {
 		String name = command.getName();
 		Player p;
-		
-		
-		if(sender instanceof Player){
-			p = (Player)sender;
-			
-			
-			if(name.equalsIgnoreCase("setcurrency") && args.length == 1){
-				try{
+
+		if (sender instanceof Player) {
+			p = (Player) sender;
+
+			if (name.equalsIgnoreCase("setcurrency") && args.length == 1) {
+				try {
 					int cid = Integer.parseInt(args[0]);
 					currency = Material.getMaterial(cid);
 					p.sendMessage("Currency is set to " + currency);
-				}catch(NumberFormatException nfe){
+				} catch (NumberFormatException nfe) {
 					Material m = Material.getMaterial(args[0]);
-					if(m != null){
+					if (m != null) {
 						currency = m;
 						p.sendMessage("Currency is set to " + currency);
 
 					}
-				}finally{
+				} finally {
 					return true;
 				}
-			}else if(name.equalsIgnoreCase("displaycurrency") && args.length == 0){
+			} else if (name.equalsIgnoreCase("displaycurrency")
+					&& args.length == 0) {
 				p.sendMessage("Currency is: " + currency);
-			}else if(name.equalsIgnoreCase("canplayer") && args.length == 1){
+			} else if (name.equalsIgnoreCase("canplayer") && args.length == 1) {
 				permissions.debug(args[0]);
-			}else if(name.equalsIgnoreCase("myshops")){
+			} else if (name.equalsIgnoreCase("myshops")) {
 				displayShops(p);
 			}
-			
-		}else{
+
+		} else {
 			return false;
 		}
-				
+
 		return true;
 	}
-	
-	void displayShops(Player p){
+
+	void displayShops(Player p) {
 		String name = p.getName();
 		ArrayList<TradeCraftDataInfo> list = data.shopsOwned(name);
-		if(list.size() == 0){
+		if (list.size() == 0) {
 			p.sendMessage("You don't own any shops!");
 			return;
 		}
 		p.sendMessage("Your shops:");
-		for(TradeCraftDataInfo info : list){
-			
-			p.sendMessage( 
-					"Item: " + Material.getMaterial(info.itemType) + " Amount: " + info.itemAmount +
-					"Gold: " + info.currencyAmount
-					);
-			
+		for (TradeCraftDataInfo info : list) {
+
+			p.sendMessage("Item: " + Material.getMaterial(info.itemType)
+					+ " Amount: " + info.itemAmount + "Gold: "
+					+ info.currencyAmount);
+
 		}
-		
-		
+
 	}
 
 	void sendMessage(Player player, String format, Object... args) {
@@ -338,12 +333,9 @@ public class TradeCraft extends JavaPlugin {
 		return 64;
 	}
 
-	
 	public void onLoad() {
 		// TODO Auto-generated method stub
-		
-	}
 
-	
+	}
 
 }

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Location;
 import org.bukkit.block.Sign;
 
 class TradeCraftDataFile {
@@ -139,6 +140,15 @@ class TradeCraftDataFile {
         } catch (IOException e) {
             plugin.log.warning("Error writing " + fileName);
         }
+    }
+    
+    public void deleteShop(TradeCraftShop shop){
+    	Location l = shop.sign.getBlock().getLocation();
+    	String key = getKey(l.getBlockX(),l.getBlockY(),l.getBlockZ());
+    	if(data.containsKey(key)){
+    		data.remove(key);
+    		save();    		
+    	}
     }
     
     public ArrayList<TradeCraftDataInfo> shopsOwned(String name){

@@ -1,12 +1,15 @@
 package com.mjmr89.TradeCraft;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockRightClickEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.inventory.Inventory;
 
 
 public class TradeCraftBlockListener extends BlockListener{
@@ -41,7 +44,7 @@ public class TradeCraftBlockListener extends BlockListener{
 		Block block = e.getBlock();
 		
         TradeCraftShop shop = plugin.getShopFromSignOrChestBlock(player, block);
-
+                
         if (shop == null) {
             
             return;
@@ -49,20 +52,38 @@ public class TradeCraftBlockListener extends BlockListener{
 
         if (shop.playerCanDestroy(player) || plugin.permissions.canDestroyShops(player)) {
             if (!shop.shopCanBeWithdrawnFrom()) {
+            	plugin.data.deleteShop(shop);
                 return;
             }
  
             plugin.sendMessage(player, "All items and gold must be withdrawn before you can destroy this sign or chest!");
 
-            e.setCancelled(true);
+            stopDestruction(block,e);
             return;
         }
 
         plugin.sendMessage(player, "You can't destroy this sign or chest!");
 
-        e.setCancelled(true);
+        stopDestruction(block,e);
         return;
     }
+	
+	public void stopDestruction(Block b, BlockBreakEvent e){
+		if(b.getState() instanceof Sign){
+			Sign sign = (Sign)b.getState();
+			String[] lines = sign.getLines();
+			e.setCancelled(true);
+			for(int i = 0;i<4;i++){
+				sign.setLine(i, lines[i]);
+			}
+			
+			sign.update(true);
+			return;
+		}else if(b.getState() instanceof Chest){
+			e.setCancelled(true);			
+		}
+		
+	}
 	
 	public void onSignChange(SignChangeEvent e) {
 		Player player = e.getPlayer();
