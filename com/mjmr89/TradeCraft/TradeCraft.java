@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
@@ -153,7 +155,50 @@ public class TradeCraft extends JavaPlugin {
 			sendMessage(player, format, args);
 		}
 	}
-
+	/*
+	 * When a block behind a shop sign is destroyed, the sign would be destroyed too.
+	 * Check all side faces of this block, for a sign attached to this block. Then
+	 * pass that sign block to getShopFromSignBlock.
+	 * 
+	 * This should only be used for checking whether a normal block can be destroyed, for there not being any
+	 * signs attached to it, or this block being a chest or sign itself.
+	 * Since one block can 
+	 */
+	ArrayList<TradeCraftShop> getShopsFromBlock(Player player, Block block) {
+		ArrayList<TradeCraftShop> shops = new ArrayList<TradeCraftShop>();
+		// use other function(s) directly if applicable
+		if ( block.getType() == Material.CHEST || block.getType() == Material.WALL_SIGN ) {
+			TradeCraftShop shop = getShopFromSignOrChestBlock(player, block);
+			if ( shop != null ) {
+				shops.add(shop);
+			}
+		} else {
+			// go through all 4 faces of this block to check for a sign attached to this block
+			final BlockFace[] sides = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+			for ( int index_sides = 0; index_sides < sides.length; index_sides++ ) {
+				BlockFace side = sides[index_sides];
+				// get the block on that side
+				Block sideBlock = block.getFace(side);
+				// check for it being a wall sign
+				if ( sideBlock.getType() == Material.WALL_SIGN ) {
+					// get the sign (extending MaterialData) for clean attached face checking
+					org.bukkit.material.Sign materialSign = new org.bukkit.material.Sign(Material.WALL_SIGN, sideBlock.getData());
+					/* Now, for easy comparison, we'll compare to the direction the sign is facing. If that's
+					 * the same as the current face (of the 4 we're looping through), then this sign is attached
+					 * to the block that is being destroyed. 
+					 */
+					if ( materialSign.getFacing() == side ) {
+						TradeCraftShop shop = this.getShopFromSignBlock(player, sideBlock);
+						if ( shop != null ) {
+							shops.add(shop);
+						}
+					}
+					
+				}
+			}
+		}
+		return shops;
+	}
 	TradeCraftShop getShopFromSignOrChestBlock(Player player, Block block) {
 		if (block.getType() == Material.CHEST) {
 			block = player.getWorld().getBlockAt(block.getX(),

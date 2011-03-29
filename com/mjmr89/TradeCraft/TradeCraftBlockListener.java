@@ -1,5 +1,7 @@
 package com.mjmr89.TradeCraft;
 
+import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -42,30 +44,38 @@ public class TradeCraftBlockListener extends BlockListener{
 	public void onBlockBreak(BlockBreakEvent e) {
 		Player player = e.getPlayer();
 		Block block = e.getBlock();
-		
-        TradeCraftShop shop = plugin.getShopFromSignOrChestBlock(player, block);
+        ArrayList<TradeCraftShop> shops = plugin.getShopsFromBlock(player, block);
                 
-        if (shop == null) {
-            
+        if (shops.size() == 0) {
             return;
         }
 
-        if (shop.playerCanDestroy(player) || plugin.permissions.canDestroyShops(player)) {
-            if (!shop.shopCanBeWithdrawnFrom()) {
-            	plugin.data.deleteShop(shop);
+        // Go through all shops in the list and check whether the player can destroy them all first.
+        // Only if that is the case proceed to destroy.
+        for ( TradeCraftShop shop : shops ) {
+        	if (!shop.playerCanDestroy(player) && !plugin.permissions.canDestroyShops(player) ||
+        			shop.shopCanBeWithdrawnFrom() ) {
+        		// cannot destroy this shop, so cancel destruction, use distinct error messages 
+        		if ( shop.shopCanBeWithdrawnFrom() ) {
+                    plugin.sendMessage(player, "All items and gold must be withdrawn before you can destroy this sign or chest!");
+        		} else {
+        			if ( block.getType() == Material.WALL_SIGN ) {
+        				plugin.sendMessage(player, "You can't destroy this sign!");
+        			} else if ( block.getType() == Material.CHEST ) {
+        				plugin.sendMessage(player, "You can't destroy this chest!");
+        			} else {
+        				plugin.sendMessage(player, "You can't destroy this block because there are signs attached to it!");
+        			}
+        		}
+        		stopDestruction(block,e);
                 return;
-            }
- 
-            plugin.sendMessage(player, "All items and gold must be withdrawn before you can destroy this sign or chest!");
-
-            stopDestruction(block,e);
+        	}
+        }
+        // player can destroy all shops, so proceed
+        for ( TradeCraftShop shop : shops ) {
+        	plugin.data.deleteShop(shop);
             return;
         }
-
-        plugin.sendMessage(player, "You can't destroy this sign or chest!");
-
-        stopDestruction(block,e);
-        return;
     }
 	
 	public void stopDestruction(Block b, BlockBreakEvent e){
@@ -79,7 +89,7 @@ public class TradeCraftBlockListener extends BlockListener{
 			
 			sign.update(true);
 			return;
-		}else if(b.getState() instanceof Chest){
+		} else {
 			e.setCancelled(true);			
 		}
 		
