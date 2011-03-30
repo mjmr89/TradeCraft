@@ -9,7 +9,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.block.BlockRightClickEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -25,20 +24,6 @@ public class TradeCraftBlockListener extends BlockListener{
 	public void debug(String str){
 		plugin.getServer().broadcastMessage(str);
 	}
-	
-	@Override
-	public void onBlockRightClick(BlockRightClickEvent e){
-		Block blockClicked = e.getBlock();
-		Player player = e.getPlayer();
-		
-        TradeCraftShop shop = plugin.getShopFromSignBlock(player, blockClicked);
-
-        if (shop == null) {
-            return;
-        }
-
-        shop.handleRightClick(player);
-    }
 	
 	@Override
 	public void onBlockBreak(BlockBreakEvent e) {

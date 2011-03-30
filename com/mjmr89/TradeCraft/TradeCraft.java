@@ -71,7 +71,7 @@ public class TradeCraft extends JavaPlugin {
 
 		PluginManager pm = this.getServer().getPluginManager();
 
-		pm.registerEvent(Type.BLOCK_RIGHTCLICKED, blockListener,
+		pm.registerEvent(Type.PLAYER_INTERACT, playerListener,
 				Priority.Normal, this);
 
 		pm

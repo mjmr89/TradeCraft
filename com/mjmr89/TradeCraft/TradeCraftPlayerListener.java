@@ -1,7 +1,10 @@
 package com.mjmr89.TradeCraft;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 
 
@@ -11,6 +14,21 @@ public class TradeCraftPlayerListener extends PlayerListener{
 	
 	TradeCraftPlayerListener(TradeCraft plugin){
 		this.plugin = plugin;
+	}
+	@Override
+	public void onPlayerInteract(PlayerInteractEvent e) {
+		if ( e.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+			Block blockClicked = e.getClickedBlock();
+			Player player = e.getPlayer();
+			
+	        TradeCraftShop shop = plugin.getShopFromSignBlock(player, blockClicked);
+
+	        if (shop == null) {
+	            return;
+	        }
+
+	        shop.handleRightClick(player);
+		}
 	}
 
     private void displayItems(Player player) {
@@ -30,7 +48,7 @@ public class TradeCraftPlayerListener extends PlayerListener{
             plugin.sendMessage(player, sb.toString());
         }
     }
-
+    
     private void displaySecurity(Player player) {
         plugin.permissions.debug(player.getName());
     }
