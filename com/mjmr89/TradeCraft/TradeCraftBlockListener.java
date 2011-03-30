@@ -74,7 +74,6 @@ public class TradeCraftBlockListener extends BlockListener{
         // player can destroy all shops, so proceed
         for ( TradeCraftShop shop : shops ) {
         	plugin.data.deleteShop(shop);
-            return;
         }
     }
 	
