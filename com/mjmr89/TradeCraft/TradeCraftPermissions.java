@@ -64,12 +64,11 @@ public class TradeCraftPermissions {
 	
 	public void debug(String n){
 		Player p = plugin.getServer().getPlayer(n);
-		String name = p.getName();
 		if(p == null){
 			plugin.getServer().broadcastMessage("/canPlayer used with a name of player who is not online.");
 			return;
 		}
-		
+		String name = p.getName();
 		plugin.log.info("" + name + " has:");
 		plugin.log.info("canbuy " + canBuy(p));
 		plugin.log.info("cansell " + canSell(p));

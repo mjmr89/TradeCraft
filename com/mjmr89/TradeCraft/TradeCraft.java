@@ -1,6 +1,5 @@
 package com.mjmr89.TradeCraft;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -15,17 +14,12 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
-import org.bukkit.material.MaterialData;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class TradeCraft extends JavaPlugin {
@@ -108,9 +102,8 @@ public class TradeCraft extends JavaPlugin {
 						p.sendMessage("Currency is set to " + currency);
 
 					}
-				} finally {
-					return true;
 				}
+				return true;
 			} else if (name.equalsIgnoreCase("displaycurrency")
 					&& args.length == 0) {
 				p.sendMessage("Currency is: " + currency);

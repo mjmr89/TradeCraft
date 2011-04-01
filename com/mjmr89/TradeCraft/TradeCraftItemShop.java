@@ -1,6 +1,5 @@
 package com.mjmr89.TradeCraft;
 
-import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;

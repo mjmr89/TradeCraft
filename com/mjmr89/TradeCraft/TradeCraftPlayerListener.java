@@ -3,7 +3,6 @@ package com.mjmr89.TradeCraft;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
 
@@ -30,8 +29,9 @@ public class TradeCraftPlayerListener extends PlayerListener{
 	        shop.handleRightClick(player);
 		}
 	}
-
-    private void displayItems(Player player) {
+	
+    @SuppressWarnings("unused")
+	private void displayItems(Player player) {
         String[] names = plugin.configuration.getNames();
         StringBuilder sb = new StringBuilder(); 
         for (String name : names) {
@@ -49,7 +49,8 @@ public class TradeCraftPlayerListener extends PlayerListener{
         }
     }
     
-    private void displaySecurity(Player player) {
+    @SuppressWarnings("unused")
+	private void displaySecurity(Player player) {
         plugin.permissions.debug(player.getName());
     }
 	

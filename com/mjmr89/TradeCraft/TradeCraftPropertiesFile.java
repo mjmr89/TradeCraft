@@ -1,34 +1,59 @@
 package com.mjmr89.TradeCraft;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.bukkit.util.config.Configuration;
 
 public class TradeCraftPropertiesFile {
+	private static final String fileName = TradeCraft.pluginName + ".properties";
+    private static final String filePath = "plugins" + File.separator + TradeCraft.pluginName;
 
-	private File f = new File(TradeCraft.pluginName + ".properties");
     private final Configuration properties;
 
     public TradeCraftPropertiesFile() {
+    	// make folder in the plugins dir if it doesn't exist yet
+    	File path = new File(filePath);
+    	if ( !path.exists() ) {
+    		path.mkdirs();
+    	}
+    	path = null;
     	
-    	if(!f.exists()){
-			try {
-				f.createNewFile();
-//				populate();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+    	// if file does not exist in this directory, copy it from the jar
+    	File file = new File(filePath + File.separator + fileName); 
+    	if ( !file.exists() ) {
+    		InputStream input = this.getClass().getResourceAsStream("/" + fileName);
+			if ( input != null ) {
+				FileOutputStream output = null;
+
+	            try {
+	                output = new FileOutputStream(file);
+	                byte[] buf = new byte[8192];
+	                int length = 0;
+	                while ((length = input.read(buf)) > 0) {
+	                    output.write(buf, 0, length);
+	                }
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            } finally {
+	                try {
+	                    if (input != null) {
+	                        input.close();
+	                    }
+	                } catch (IOException e) {}
+
+	                try {
+	                    if (output != null) {
+	                        output.close();
+	                    }
+	                } catch (IOException e) {}
+	            }
 			}
     	}
     	
-        properties = new Configuration(f);
-    }
-
-    public void populate(){
-    	properties.setProperty("infinite-shops-enabled",true);
-    	
-    	properties.save();
+        properties = new Configuration(file);
     }
     
     public int getCurrencyTypeId(){

@@ -2,7 +2,6 @@ package com.mjmr89.TradeCraft;
 
 import java.util.List;
 
-import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -45,7 +44,7 @@ public class TradeCraftRepairShop extends TradeCraftShop {
             chest.add(item.getType().getId(), 1);
         }
 
-        chest.add(plugin.currency.getId(), (gold - actualCost));
+        chest.add(TradeCraft.currency.getId(), (gold - actualCost));
 
         chest.update();
 

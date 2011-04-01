@@ -17,7 +17,7 @@ import org.bukkit.block.Sign;
 
 class TradeCraftDataFile {
 
-	private static final String fileName = TradeCraft.pluginName + ".data";
+	private static final String fileName = "plugins" + File.separator + TradeCraft.pluginName+ File.separator + TradeCraft.pluginName + ".data";
     private static final Pattern infoPattern1 = Pattern.compile(
             "^\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)" + // x,y,z
             "\\s*=\\s*" +

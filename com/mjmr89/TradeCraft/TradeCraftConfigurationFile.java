@@ -1,8 +1,11 @@
 package com.mjmr89.TradeCraft;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class TradeCraftConfigurationFile {
-
     private static final String fileName = TradeCraft.pluginName + ".txt";
+    private static final String filePath = "plugins" + File.separator + TradeCraft.pluginName;
 
     private static final Pattern commentPattern = Pattern.compile("^\\s*#.*$");
     private static final Pattern infoPattern = Pattern.compile(
@@ -28,10 +31,48 @@ class TradeCraftConfigurationFile {
     }
 
     void load() {
+    	// make folder in the plugins dir if it doesn't exist yet
+    	File path = new File(filePath);
+    	if ( !path.exists() ) {
+    		path.mkdirs();
+    	}
+    	path = null;
+    	
+    	// if file does not exist in this directory, copy it from the jar
+    	File file = new File(filePath + File.separator + fileName);
+    	if ( !file.exists() ) {
+    		InputStream input = this.getClass().getResourceAsStream("/" + fileName);
+			if ( input != null ) {
+				FileOutputStream output = null;
+
+	            try {
+	                output = new FileOutputStream(file);
+	                byte[] buf = new byte[8192];
+	                int length = 0;
+	                while ((length = input.read(buf)) > 0) {
+	                    output.write(buf, 0, length);
+	                }
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            } finally {
+	                try {
+	                    if (input != null) {
+	                        input.close();
+	                    }
+	                } catch (IOException e) {}
+
+	                try {
+	                    if (output != null) {
+	                        output.close();
+	                    }
+	                } catch (IOException e) {}
+	            }
+			}
+    	}
         try {
             infos.clear();
 
-            BufferedReader configurationFile = new BufferedReader(new FileReader(fileName));
+            BufferedReader configurationFile = new BufferedReader(new FileReader(filePath + File.separator + fileName));
 
             int lineNumber = 0;
             String line;
@@ -54,7 +95,7 @@ class TradeCraftConfigurationFile {
                 if (!infoMatcher.matches()) {
                     plugin.log.warning(
                             "Failed to parse line number " + lineNumber +
-                            " in " + fileName +
+                            " in " + filePath + File.separator + fileName +
                             ": " + line);
                     continue;
                 }
@@ -79,7 +120,7 @@ class TradeCraftConfigurationFile {
 
             configurationFile.close();
         } catch (IOException e) {
-            plugin.log.warning("Error reading " + fileName);
+            plugin.log.warning("Error reading " + filePath + File.separator + fileName);
         }
     }
 
