@@ -23,12 +23,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class TradeCraft extends JavaPlugin {
-
 	// The plugin name.
 	static final String pluginName = "TradeCraft";
 
-	private static final Pattern ratePattern = Pattern
-			.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
+	private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
 
 	// Stuff used to interact with the server.
 	final Logger log = Logger.getLogger("Minecraft");
@@ -40,10 +38,8 @@ public class TradeCraft extends JavaPlugin {
 	TradeCraftConfigurationFile configuration;
 	TradeCraftDataFile data;
 
-	private final TradeCraftBlockListener blockListener = new TradeCraftBlockListener(
-			this);
-	private final TradeCraftPlayerListener playerListener = new TradeCraftPlayerListener(
-			this);
+	private final TradeCraftBlockListener blockListener = new TradeCraftBlockListener(this);
+	private final TradeCraftPlayerListener playerListener = new TradeCraftPlayerListener(this);
 	public TradeCraftPermissions permissions = new TradeCraftPermissions(this);
 	public Permissions permissionsPlugin = null;
 	public boolean permEnabled = false;
@@ -56,27 +52,21 @@ public class TradeCraft extends JavaPlugin {
 		configuration = new TradeCraftConfigurationFile(this);
 		data = new TradeCraftDataFile(this);
 
-		currency = Material.getMaterial(properties.getCurrencyTypeId());
 		configuration.load();
 		data.load();
+		currency = Material.getMaterial(properties.getCurrencyTypeId());
 		permissions.setupPermissions();
 
 		PluginManager pm = this.getServer().getPluginManager();
 
-		pm.registerEvent(Type.PLAYER_INTERACT, playerListener,
-				Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
 
-		pm
-				.registerEvent(Type.SIGN_CHANGE, blockListener,
-						Priority.Normal, this);
-		pm
-				.registerEvent(Type.BLOCK_BREAK, blockListener,
-						Priority.Normal, this);
+		pm.registerEvent(Type.SIGN_CHANGE, blockListener,Priority.Normal, this);
+		pm.registerEvent(Type.BLOCK_BREAK, blockListener,Priority.Normal, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version "
 				+ pdfFile.getVersion() + " is enabled!");
-
 	}
 
 	@Override
@@ -361,6 +351,11 @@ public class TradeCraft extends JavaPlugin {
 
 	}
 	
+	/**
+	 * Get a CamelCased string based on the current currency.
+	 * 
+	 * @return a string representing the currency.
+	 */
 	public static String getCurrencyName() {
     	String baseName = TradeCraft.currency.name();
     	String[] words = baseName.split("_");
