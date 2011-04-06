@@ -1,6 +1,6 @@
 name: TradeCraft
 main: com.mjmr89.TradeCraft.TradeCraft
-version: 0.81AE
+version: 0.9AE
 commands:
     myshops:
         description: See a printout of any personal shops you have
