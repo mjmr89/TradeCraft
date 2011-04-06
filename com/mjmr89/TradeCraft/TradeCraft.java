@@ -89,20 +89,23 @@ public class TradeCraft extends JavaPlugin {
 			p = (Player) sender;
 
 			if (name.equalsIgnoreCase("setcurrency") && args.length == 1) {
-				if ( !this.permissions.canSell(p) ) {
+				if ( !this.permissions.canSetCurrency(p) ) {
 					p.sendMessage("You do not have the permission to set the currency");
 				} else {
+					Material testCurrency;
 					try {
 						int cid = Integer.parseInt(args[0]);
-						currency = Material.getMaterial(cid);
+						testCurrency = Material.getMaterial(cid);
 					} catch (NumberFormatException nfe) {
-						Material m = Material.getMaterial(args[0]);
-						if (m != null) {
-							currency = m;
-						}
+						testCurrency = Material.getMaterial(args[0]);
 					}
-					this.properties.setCurrencyTypeId(currency.getId());
-					p.sendMessage("Currency is set to " + TradeCraft.getCurrencyName());
+					if ( testCurrency == null ) {
+						p.sendMessage(args[0] +" is not a valid value for a currency.");
+					} else {
+						currency = testCurrency;
+						this.properties.setCurrencyTypeId(currency.getId());
+						p.sendMessage("Currency is set to " + TradeCraft.getCurrencyName());
+					}
 				}
 			} else if (name.equalsIgnoreCase("displaycurrency")
 					&& args.length == 0) {
