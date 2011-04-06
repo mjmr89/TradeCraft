@@ -25,10 +25,10 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         }
 
         if (getChestItemCount() == 0) {
-            int goldAmount = withdrawCurrency();
-            if (goldAmount > 0) {
-                populateChest(TradeCraft.currency.getId(), goldAmount);
-                plugin.sendMessage(player, "Withdrew %1$d gold.", goldAmount);
+            int currencyAmount = withdrawCurrency();
+            if (currencyAmount > 0) {
+                populateChest(TradeCraft.currency.getId(), currencyAmount);
+                plugin.sendMessage(player, "Withdrew %1$d "+ TradeCraft.getCurrencyName() +".", currencyAmount);
             } else {
                 int itemAmount = withdrawItems();
                 if (itemAmount > 0) {
@@ -40,7 +40,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             }
         } else if (getChestItemType() == TradeCraft.currency.getId()) {
             depositCurrency(getChestItemCount());
-            plugin.sendMessage(player, "Deposited %1$d gold.", getChestItemCount());
+            plugin.sendMessage(player, "Deposited %1$d "+ TradeCraft.getCurrencyName() +".", getChestItemCount());
             populateChest(0, 0);
             int itemAmount = withdrawItems();
             if (itemAmount > 0) {
@@ -72,7 +72,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         if (getChestItemCount() == 0) {
             if (playerCanBuy && playerCanBuy()) {
                 plugin.sendMessage(player,
-                        "You can buy %1$d %2$s for %3$d gold.",
+                        "You can buy %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
                         getBuyAmount(),
                         getItemName(),
                         getBuyValue());
@@ -80,7 +80,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
             if (playerCanSell && playerCanSell()) {
                 plugin.sendMessage(player,
-                        "You can sell %1$d %2$s for %3$d gold.",
+                        "You can sell %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
                         getSellAmount(),
                         getItemName(),
                         getSellValue());
@@ -120,7 +120,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         if (amountPlayerWantsToBuy == 0) {
             plugin.sendMessage(player,
-                        "You need to spend at least %1$d gold to get any %2$s.",
+                        "You need to spend at least %1$d "+ TradeCraft.getCurrencyName() +" to get any %2$s.",
                         getBuyValue(),
                         getItemName());
             return;
@@ -134,20 +134,20 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             return;
         }
 
-        int requiredGoldForThatAmount = amountPlayerWantsToBuy * getBuyValue() / getBuyAmount();
+        int requiredCurrencyForThatAmount = amountPlayerWantsToBuy * getBuyValue() / getBuyAmount();
 
-        updateItemAndCurrencyAmounts(-amountPlayerWantsToBuy, requiredGoldForThatAmount);
+        updateItemAndCurrencyAmounts(-amountPlayerWantsToBuy, requiredCurrencyForThatAmount);
 
         chest.clear();
-        chest.add(TradeCraft.currency.getId(), currencyPlayerWantsToSpend - requiredGoldForThatAmount);
+        chest.add(TradeCraft.currency.getId(), currencyPlayerWantsToSpend - requiredCurrencyForThatAmount);
         chest.add(getItemType(), amountPlayerWantsToBuy);
         chest.update();
 
         plugin.sendMessage(player,
-                    "You bought %1$d %2$s for %3$d gold.",
+                    "You bought %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
                     amountPlayerWantsToBuy,
                     getItemName(),
-                    requiredGoldForThatAmount);
+                    requiredCurrencyForThatAmount);
     }
 
     private void playerWantsToSell(Player player) {
@@ -161,7 +161,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         if (currencyPlayerShouldReceive == 0) {
             plugin.sendMessage(player,
-                        "You need to sell at least %1$d %2$s to get any gold.",
+                        "You need to sell at least %1$d %2$s to get any "+ TradeCraft.getCurrencyName() +".",
                         getSellAmount(),
                         getItemName());
             return;
@@ -169,7 +169,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         if (currencyPlayerShouldReceive > getCurrencyInShop()) {
             plugin.sendMessage(player,
-                    "Cannot sell. This shop only has %1$d gold.",
+                    "Cannot sell. This shop only has %1$d "+ TradeCraft.getCurrencyName() +".",
                     getCurrencyInShop());
             return;
         }
@@ -184,7 +184,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         chest.update();
 
         plugin.sendMessage(player,
-                    "You sold %1$d %2$s for %3$d gold.",
+                    "You sold %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
                     amountThatCanBeSold,
                     getItemName(),
                     currencyPlayerShouldReceive);

@@ -40,7 +40,7 @@ public class TradeCraftBlockListener extends BlockListener{
         			shop.shopCanBeWithdrawnFrom() ) {
         		// cannot destroy this shop, so cancel destruction, use distinct error messages 
         		if ( shop.shopCanBeWithdrawnFrom() ) {
-                    plugin.sendMessage(player, "All items and gold must be withdrawn before you can destroy this sign or chest!");
+                    plugin.sendMessage(player, "All items and currency must be withdrawn before you can destroy this sign or chest!");
         		} else {
         			if ( block.getType() == Material.WALL_SIGN ) {
         				plugin.sendMessage(player, "You can't destroy this sign!");

@@ -36,10 +36,9 @@ public class TradeCraft extends JavaPlugin {
 
 	// Objects used by the plugin.
 	static Material currency;
-	TradeCraftPropertiesFile properties = new TradeCraftPropertiesFile();
-	TradeCraftConfigurationFile configuration = new TradeCraftConfigurationFile(
-			this);
-	TradeCraftDataFile data = new TradeCraftDataFile(this);
+	TradeCraftPropertiesFile properties;
+	TradeCraftConfigurationFile configuration;
+	TradeCraftDataFile data;
 
 	private final TradeCraftBlockListener blockListener = new TradeCraftBlockListener(
 			this);
@@ -53,8 +52,7 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	public void onEnable() {
-
-		properties = new TradeCraftPropertiesFile();
+		properties = new TradeCraftPropertiesFile(this);
 		configuration = new TradeCraftConfigurationFile(this);
 		data = new TradeCraftDataFile(this);
 
@@ -97,19 +95,18 @@ public class TradeCraft extends JavaPlugin {
 					try {
 						int cid = Integer.parseInt(args[0]);
 						currency = Material.getMaterial(cid);
-						p.sendMessage("Currency is set to " + currency);
 					} catch (NumberFormatException nfe) {
 						Material m = Material.getMaterial(args[0]);
 						if (m != null) {
 							currency = m;
-							p.sendMessage("Currency is set to " + currency);
-	
 						}
 					}
+					this.properties.setCurrencyTypeId(currency.getId());
+					p.sendMessage("Currency is set to " + TradeCraft.getCurrencyName());
 				}
 			} else if (name.equalsIgnoreCase("displaycurrency")
 					&& args.length == 0) {
-				p.sendMessage("Currency is: " + currency);
+				p.sendMessage("Currency is: " + TradeCraft.getCurrencyName());
 			} else if (name.equalsIgnoreCase("canplayer") && args.length == 1) {
 				permissions.debug(args[0]);
 			} else if (name.equalsIgnoreCase("myshops")) {
@@ -134,8 +131,8 @@ public class TradeCraft extends JavaPlugin {
 		for (TradeCraftDataInfo info : list) {
 
 			p.sendMessage("Item: " + Material.getMaterial(info.itemType)
-					+ " Amount: " + info.itemAmount + "Gold: "
-					+ info.currencyAmount);
+					+ " Amount: " + info.itemAmount + " "
+					+ TradeCraft.getCurrencyName() +": " + info.currencyAmount);
 
 		}
 
@@ -360,5 +357,19 @@ public class TradeCraft extends JavaPlugin {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public static String getCurrencyName() {
+    	String baseName = TradeCraft.currency.name();
+    	String[] words = baseName.split("_");
+    	String name = "";
+    	for ( int word_ind = 0; word_ind < words.length; word_ind++ ) {
+    		String word = words[word_ind];
+    		if ( word_ind > 0 ) {
+    			name = name.concat(" ");
+    		}
+    		name = name.concat(word.substring(0, 1).toUpperCase()).concat(word.substring(1).toLowerCase());
+    	}
+    	return name;
+    }
 
 }

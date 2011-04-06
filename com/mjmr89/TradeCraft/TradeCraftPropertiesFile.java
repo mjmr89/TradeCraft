@@ -4,16 +4,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.bukkit.util.config.Configuration;
 
 public class TradeCraftPropertiesFile {
 	private static final String fileName = TradeCraft.pluginName + ".properties";
     private static final String filePath = "plugins" + File.separator + TradeCraft.pluginName;
-
+    
+    private TradeCraft plugin;
     private final Configuration properties;
 
-    public TradeCraftPropertiesFile() {
+    public TradeCraftPropertiesFile(TradeCraft plugin) {
+    	this.plugin = plugin;
     	// make folder in the plugins dir if it doesn't exist yet
     	File path = new File(filePath);
     	if ( !path.exists() ) {
@@ -24,6 +25,7 @@ public class TradeCraftPropertiesFile {
     	// if file does not exist in this directory, copy it from the jar
     	File file = new File(filePath + File.separator + fileName); 
     	if ( !file.exists() ) {
+    		this.plugin.log.info(filePath + File.separator + fileName +" does not exist, creating...");
     		InputStream input = this.getClass().getResourceAsStream("/" + fileName);
 			if ( input != null ) {
 				FileOutputStream output = null;
@@ -54,10 +56,15 @@ public class TradeCraftPropertiesFile {
     	}
     	
         properties = new Configuration(file);
+        properties.load();
     }
     
     public int getCurrencyTypeId(){
     	return properties.getInt("currency-id",266);
+    }
+    public void setCurrencyTypeId(int id) {
+    	properties.setProperty("currency-id", id);
+    	properties.save();
     }
     
     public boolean getInfiniteShopsEnabled() {

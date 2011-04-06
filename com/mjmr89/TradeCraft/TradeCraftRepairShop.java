@@ -14,27 +14,27 @@ public class TradeCraftRepairShop extends TradeCraftShop {
     }
 
     public void handleRightClick(Player player) {
-        int gold = chest.getAmountOfCurrencyInChest();
+        int currencyAmount = chest.getAmountOfCurrencyInChest();
         List<ItemStack> items = chest.getNonCurrencyItems();
         int repairCost = plugin.properties.getRepairCost();
 
-        if (gold == 0 && items.size() == 0) {
-            plugin.sendMessage(player, "It costs %d gold to repair an item.", repairCost);
+        if (currencyAmount == 0 && items.size() == 0) {
+            plugin.sendMessage(player, "It costs %d "+ TradeCraft.getCurrencyName() +" to repair an item.", repairCost);
             return;
         }
 
         int actualCost = items.size() * repairCost;
 
         if (items.size() == 0) {
-            plugin.sendMessage(player, "With this much gold, you can repair %d items.", gold / repairCost);
+            plugin.sendMessage(player, "With this much "+ TradeCraft.getCurrencyName() +", you can repair %d items.", currencyAmount / repairCost);
             return;
         }
 
-        if (gold < actualCost) {
-            if (gold > 0) {
-                plugin.sendMessage(player, "That's not enough gold.");
+        if (currencyAmount < actualCost) {
+            if (currencyAmount > 0) {
+                plugin.sendMessage(player, "That's not enough "+ TradeCraft.getCurrencyName() +".");
             }
-            plugin.sendMessage(player, "You need %d gold to repair all this.", actualCost);
+            plugin.sendMessage(player, "You need %d "+ TradeCraft.getCurrencyName() +" to repair all this.", actualCost);
             return;
         }
 
@@ -44,11 +44,11 @@ public class TradeCraftRepairShop extends TradeCraftShop {
             chest.add(item.getType().getId(), 1);
         }
 
-        chest.add(TradeCraft.currency.getId(), (gold - actualCost));
+        chest.add(TradeCraft.currency.getId(), (currencyAmount - actualCost));
 
         chest.update();
 
-        plugin.sendMessage(player, "You repaired %d items for %d gold.", items.size(), actualCost);
+        plugin.sendMessage(player, "You repaired %d items for %d "+ TradeCraft.getCurrencyName() +".", items.size(), actualCost);
     }
 
     public boolean playerCanDestroy(Player player) {
