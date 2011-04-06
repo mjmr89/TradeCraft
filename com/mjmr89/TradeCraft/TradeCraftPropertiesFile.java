@@ -86,4 +86,8 @@ public class TradeCraftPropertiesFile {
     public boolean getEnableDebugMessages() {
         return properties.getBoolean("enable-debug-messages", false);
     }
+    
+    public boolean getStrictPlayerShopOwnerNameRequired() {
+    	return properties.getBoolean("strict-playershop-owner-name", true);
+    }
 }
