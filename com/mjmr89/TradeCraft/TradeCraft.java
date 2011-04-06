@@ -353,25 +353,7 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	static int getMaxStackSize(int itemType) {
-		/*
-		 * switch (Material.getMaterial(itemType)) { case APPLE: case
-		 * Golden_Apple: case Pork: case Grilled_Pork: case Bread: case Bucket:
-		 * case Water_Bucket: case Lava_Bucket: case Milk_Bucket: case
-		 * Wood_Sword: case Wood_Spade: case Wood_Pickaxe: case Wood_Axe: case
-		 * Wood_Hoe: case Stone_Sword: case Stone_Spade: case Stone_Pickaxe:
-		 * case Stone_Axe: case Stone_Hoe: case Iron_Sword: case Iron_Spade:
-		 * case Iron_Pickaxe: case Iron_Axe: case Iron_Hoe: case Diamond_Sword:
-		 * case Diamond_Spade: case Diamond_Pickaxe: case Diamond_Axe: case
-		 * Diamond_Hoe: case Gold_Sword: case Gold_Spade: case Gold_Pickaxe:
-		 * case Gold_Axe: case Gold_Hoe: case Leather_Helmet: case
-		 * Leather_Chestplate: case Leather_Leggings: case Leather_Boots: case
-		 * Iron_Helmet: case Iron_Chestplate: case Iron_Leggings: case
-		 * Iron_Boots: case Diamond_Helmet: case Diamond_Chestplate: case
-		 * Diamond_Leggings: case Diamond_Boots: case Gold_Helmet: case
-		 * Gold_Chestplate: case Gold_Leggings: case Gold_Boots: return 1; case
-		 * SnowBall: return 16; } return 64;
-		 */
-		return 64;
+		return Material.getMaterial(itemType).getMaxStackSize();
 	}
 
 	public void onLoad() {
