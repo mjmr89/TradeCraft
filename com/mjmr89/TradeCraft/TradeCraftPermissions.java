@@ -62,6 +62,14 @@ public class TradeCraftPermissions {
 				return p.isOp();
 	}
 	
+	public boolean canSetCurrency(Player p) {
+		if ( plugin.permEnabled ) {
+			return permHandler.has(p, "TradeCraft.canSetCurrency");
+		} else {
+			return p.isOp();
+		}
+	}
+	
 	public void debug(String n){
 		Player p = plugin.getServer().getPlayer(n);
 		if(p == null){
