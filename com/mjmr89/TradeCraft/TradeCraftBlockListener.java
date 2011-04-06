@@ -25,6 +25,10 @@ public class TradeCraftBlockListener extends BlockListener{
 	
 	@Override
 	public void onBlockBreak(BlockBreakEvent e) {
+		if ( !this.plugin.isEnabled() ) {
+			return;
+		}
+		
 		Player player = e.getPlayer();
 		Block block = e.getBlock();
         ArrayList<TradeCraftShop> shops = plugin.getShopsFromBlock(player, block);
@@ -78,6 +82,10 @@ public class TradeCraftBlockListener extends BlockListener{
 	}
 	
 	public void onSignChange(SignChangeEvent e) {
+		if ( !this.plugin.isEnabled() ) {
+			return;
+		}
+		
 		Player player = e.getPlayer();
 		Sign sign = (Sign) e.getBlock().getState();
 		

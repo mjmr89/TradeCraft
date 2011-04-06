@@ -43,30 +43,39 @@ public class TradeCraft extends JavaPlugin {
 	public TradeCraftPermissions permissions = new TradeCraftPermissions(this);
 	public Permissions permissionsPlugin = null;
 	public boolean permEnabled = false;
+	
+	// prevent the script from registering the event listeners multiple times (by dis-/enable)
+	public static boolean hasRegisteredEventListeners = false;
 
 	public void onDisable() {
+		properties = null;
+		configuration = null;
+		data.save();
+		data = null;
 	}
 
 	public void onEnable() {
 		properties = new TradeCraftPropertiesFile(this);
 		configuration = new TradeCraftConfigurationFile(this);
 		data = new TradeCraftDataFile(this);
-
+		
 		configuration.load();
 		data.load();
 		currency = Material.getMaterial(properties.getCurrencyTypeId());
 		permissions.setupPermissions();
 
-		PluginManager pm = this.getServer().getPluginManager();
-
-		pm.registerEvent(Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-
-		pm.registerEvent(Type.SIGN_CHANGE, blockListener,Priority.Normal, this);
-		pm.registerEvent(Type.BLOCK_BREAK, blockListener,Priority.Normal, this);
+		if ( !TradeCraft.hasRegisteredEventListeners ) {
+			PluginManager pm = this.getServer().getPluginManager();
+			pm.registerEvent(Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
+			pm.registerEvent(Type.SIGN_CHANGE, blockListener,Priority.Normal, this);
+			pm.registerEvent(Type.BLOCK_BREAK, blockListener,Priority.Normal, this);
+			TradeCraft.hasRegisteredEventListeners = true;
+		}
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		System.out.println(pdfFile.getName() + " version "
 				+ pdfFile.getVersion() + " is enabled!");
+		
 	}
 
 	@Override

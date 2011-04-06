@@ -16,6 +16,10 @@ public class TradeCraftPlayerListener extends PlayerListener{
 	}
 	@Override
 	public void onPlayerInteract(PlayerInteractEvent e) {
+		if ( !this.plugin.isEnabled() ) {
+			return;
+		}
+		
 		if ( e.getAction() == Action.RIGHT_CLICK_BLOCK ) {
 			Block blockClicked = e.getClickedBlock();
 			Player player = e.getPlayer();
