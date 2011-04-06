@@ -156,8 +156,14 @@ class TradeCraftDataFile {
     	
     	for (String key : data.keySet()) {
     		TradeCraftDataInfo info = data.get(key);
-    		if(info.ownerName.equalsIgnoreCase(name)){
-    			list.add(info);
+    		if ( this.plugin.properties.getStrictPlayerShopOwnerNameRequired() ) {
+    			if(info.ownerName.equalsIgnoreCase(name)){
+    				list.add(info);
+    			}
+    		} else {
+    			if ( name.indexOf(info.ownerName) == 0 ) {
+    				list.add(info);
+    			}
     		}
     	}
     	
