@@ -115,10 +115,16 @@ public class TradeCraftBlockListener extends BlockListener{
             return;
         }
 
-        if (player.getName().startsWith(ownerName)) {
-            plugin.data.setOwnerOfSign(player.getName(), sign);
-            
-            return;
+        if ( this.plugin.properties.getStrictPlayerShopOwnerNameRequired() ) {
+        	if (player.getName().startsWith(ownerName)) {
+        		plugin.data.setOwnerOfSign(player.getName(), sign);
+        		return;
+        	}
+        } else {
+        	if (player.getName().equalsIgnoreCase(ownerName)) {
+        		plugin.data.setOwnerOfSign(player.getName(), sign);
+        		return;
+        	}
         }
 
         plugin.sendMessage(player, "You can't create signs with other players names on them!");
