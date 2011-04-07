@@ -223,7 +223,7 @@ public class TradeCraft extends JavaPlugin {
 			return null;
 		}
 
-		String itemName = getItemName(sign);
+		String itemName = getItemName(sign.getLines());
 
 		if (itemName == null) {
 			trace(player, "There is no item name on the sign.");
@@ -265,7 +265,7 @@ public class TradeCraft extends JavaPlugin {
 			return null;
 		}
 
-		String ownerName = getOwnerName(sign);
+		String ownerName = getOwnerName(sign.getLine(3));
 
 		if (ownerName == null) {
 			trace(player, "There is no owner name on the sign.");
@@ -290,17 +290,17 @@ public class TradeCraft extends JavaPlugin {
 		return new TradeCraftPlayerOwnedShop(this, sign, chest, ownerName);
 	}
 
-	String getItemName(Sign sign) {
-		return getSpecialText(sign, "[", "]");
+	String getItemName(String[] signLines) {
+		return getSpecialText(signLines, "[", "]");
 	}
 
-	String getOwnerName(Sign sign) {
-		return getSpecialTextOnLine(sign, "-", "-", 3);
+	String getOwnerName(String signLine) {
+		return getSpecialTextOnLine(signLine, "-", "-");
 	}
 
-	private String getSpecialText(Sign sign, String prefix, String suffix) {
+	private String getSpecialText(String[] signLines, String prefix, String suffix) {
 		for (int i = 0; i < 4; i++) {
-			String text = getSpecialTextOnLine(sign, prefix, suffix, i);
+			String text = getSpecialTextOnLine(signLines[i], prefix, suffix);
 
 			if (text != null) {
 				return text;
@@ -310,22 +310,18 @@ public class TradeCraft extends JavaPlugin {
 		return null;
 	}
 
-	private String getSpecialTextOnLine(Sign sign, String prefix,
-			String suffix, int lineNumber) {
-		String signText = sign.getLine(lineNumber);
-
-		if (signText == null) {
+	private String getSpecialTextOnLine(String signLine, String prefix, String suffix) {
+		if (signLine == null) {
 			return null;
 		}
 
-		signText = signText.trim();
+		signLine = signLine.trim();
 
-		if (signText.startsWith(prefix) && signText.endsWith(suffix)
-				&& signText.length() > 2) {
+		if (signLine.startsWith(prefix) && signLine.endsWith(suffix)
+				&& signLine.length() > 2) {
 
-			String text = signText.substring(1, signText.length() - 1);
+			String text = signLine.substring(1, signLine.length() - 1);
 			text = text.trim();
-
 			if (text.equals("")) {
 				return null;
 			}

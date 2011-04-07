@@ -10,7 +10,7 @@ public class TradeCraftInfiniteShop extends TradeCraftItemShop {
     public TradeCraftInfiniteShop(TradeCraft plugin, Sign sign, Chest chest) {
         super(plugin, sign, chest);
 
-        String itemName = plugin.getItemName(sign);
+        String itemName = plugin.getItemName(sign.getLines());
         configurationInfo = plugin.configuration.get(itemName);
     }
 

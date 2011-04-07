@@ -16,7 +16,7 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
 
 //        ownerName = plugin.data.getOwnerOfSign(sign);
         this.ownerName = ownerName;
-        itemName = plugin.getItemName(sign);
+        itemName = plugin.getItemName(sign.getLines());
         itemType = plugin.configuration.get(itemName).id;
         buyRate = plugin.getExchangeRate(sign, 1);
         sellRate = plugin.getExchangeRate(sign, 2);

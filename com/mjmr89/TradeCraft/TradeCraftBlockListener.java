@@ -88,47 +88,43 @@ public class TradeCraftBlockListener extends BlockListener{
 		
 		Player player = e.getPlayer();
 		Sign sign = (Sign) e.getBlock().getState();
-		
-        String ownerName = plugin.getOwnerName(sign);
+        String ownerName = plugin.getOwnerName(e.getLine(3));
 
         if (ownerName == null) {
-            String itemName = plugin.getItemName(sign);
+            String itemName = plugin.getItemName(e.getLines());
 
             if (itemName == null) {
-            	
                 return;
             }
             
             if (plugin.permissions.canMakeInfShops(player)){
-            	
             	return;
             }
 
             plugin.sendMessage(player, "You can't create infinite shops!");
-
+            e.setCancelled(true);
             
             return;
         }
 
         if ( plugin.permissions.canMakePlayerShops(player)){
-            
             return;
         }
 
         if ( this.plugin.properties.getStrictPlayerShopOwnerNameRequired() ) {
-        	if (player.getName().startsWith(ownerName)) {
+        	if (player.getName().equalsIgnoreCase(ownerName)) {
         		plugin.data.setOwnerOfSign(player.getName(), sign);
         		return;
         	}
         } else {
-        	if (player.getName().equalsIgnoreCase(ownerName)) {
+        	if (player.getName().startsWith(ownerName)) {
         		plugin.data.setOwnerOfSign(player.getName(), sign);
         		return;
         	}
         }
 
         plugin.sendMessage(player, "You can't create signs with other players names on them!");
-
+        e.setCancelled(true);
         
         return;
     }
