@@ -31,6 +31,7 @@ public class TradeCraftPlayerListener extends PlayerListener{
 	        }
 
 	        shop.handleRightClick(player);
+	        e.setCancelled(true);
 		}
 	}
 	
