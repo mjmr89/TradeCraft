@@ -2,8 +2,6 @@ package com.mjmr89.TradeCraft;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +19,7 @@ class TradeCraftChest {
         
         
         for (ItemStack item : chest.getContents()) {
-        	if(!item.getType().equals(Material.AIR)){
+        	if(item != null){
         		if(id != 0 && id != item.getTypeId()){
         			diffFlag = true;
         			return;
