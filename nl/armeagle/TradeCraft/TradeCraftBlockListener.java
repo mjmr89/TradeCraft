@@ -97,10 +97,16 @@ public class TradeCraftBlockListener extends BlockListener{
                 return;
             }
             
-            if (plugin.permissions.canMakeInfShops(player)){
+            // Check whether this is an existing item. Try to prevent as little normal sign placement as possible.
+            // Only treat signs with "[name]" as item line where "name" is found in the configuration (.txt) file.
+            if ( plugin.configuration.get(itemName) == null ) {
             	return;
             }
 
+            if (plugin.permissions.canMakeInfShops(player)){
+            	return;
+            }
+            
             plugin.sendMessage(player, "You can't create infinite shops!");
             e.setCancelled(true);
             
