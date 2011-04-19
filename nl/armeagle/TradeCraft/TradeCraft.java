@@ -1,4 +1,4 @@
-package com.mjmr89.TradeCraft;
+package nl.armeagle.TradeCraft;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;

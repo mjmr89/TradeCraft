@@ -1,4 +1,4 @@
-package com.mjmr89.TradeCraft;
+package nl.armeagle.TradeCraft;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package com.mjmr89.TradeCraft;
+package nl.armeagle.TradeCraft;
 
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
