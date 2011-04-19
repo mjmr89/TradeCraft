@@ -25,7 +25,7 @@ public class TradeCraftPlayerListener extends PlayerListener{
 			Player player = e.getPlayer();
 			
 	        TradeCraftShop shop = plugin.getShopFromSignBlock(player, blockClicked);
-
+	        
 	        if (shop == null) {
 	            return;
 	        }

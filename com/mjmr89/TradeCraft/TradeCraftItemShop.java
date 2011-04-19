@@ -27,7 +27,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         if (getChestItemCount() == 0) {
             int currencyAmount = withdrawCurrency();
             if (currencyAmount > 0) {
-                populateChest(TradeCraft.currency.getId(), currencyAmount);
+                populateChest(TradeCraft.currency, currencyAmount);
                 plugin.sendMessage(player, "Withdrew %1$d "+ TradeCraft.getCurrencyName() +".", currencyAmount);
             } else {
                 int itemAmount = withdrawItems();
@@ -38,10 +38,10 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                     plugin.sendMessage(player, "There is nothing to withdraw.");
                 }
             }
-        } else if (getChestItemType() == TradeCraft.currency.getId()) {
+        } else if (getChestItemType() == TradeCraft.currency) {
             depositCurrency(getChestItemCount());
             plugin.sendMessage(player, "Deposited %1$d "+ TradeCraft.getCurrencyName() +".", getChestItemCount());
-            populateChest(0, 0);
+            populateChest(new TradeCraftItem(0), 0);
             int itemAmount = withdrawItems();
             if (itemAmount > 0) {
                 populateChest(getItemType(), itemAmount);
@@ -49,7 +49,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             }
         } else if (getChestItemType() == getItemType()) {
             depositItems(getChestItemCount());
-            populateChest(0, 0);
+            populateChest(new TradeCraftItem(0), 0);
             plugin.sendMessage(player, "Deposited %1$d %2$s.", getChestItemCount(), getItemName());
         } else {
             plugin.sendMessage(player, "You can't deposit that here!");
@@ -91,14 +91,13 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         }
 
         
-
-        if (getChestItemType() == TradeCraft.currency.getId()) {
+        if ( getChestItemType().compareTo(TradeCraft.currency) == 0 ) {
             if (!playerCanBuy) {
                 plugin.sendMessage(player, "You are not allowed to buy from shops!");
             } else {
                 playerWantsToBuy(player);
             }
-        } else if (getChestItemType() == getItemType()) {
+        } else if ( getChestItemType().compareTo(getItemType()) == 0 ) {
             if (!playerCanSell) {
                 plugin.sendMessage(player, "You are not allowed to sell to shops!");
             } else { 
@@ -139,7 +138,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         updateItemAndCurrencyAmounts(-amountPlayerWantsToBuy, requiredCurrencyForThatAmount);
 
         chest.clear();
-        chest.add(TradeCraft.currency.getId(), currencyPlayerWantsToSpend - requiredCurrencyForThatAmount);
+        chest.add(TradeCraft.currency, currencyPlayerWantsToSpend - requiredCurrencyForThatAmount);
         chest.add(getItemType(), amountPlayerWantsToBuy);
         chest.update();
 
@@ -180,7 +179,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         chest.clear();
         chest.add(getItemType(), amountPlayerWantsToSell - amountThatCanBeSold);
-        chest.add(TradeCraft.currency.getId(), currencyPlayerShouldReceive);
+        chest.add(TradeCraft.currency, currencyPlayerShouldReceive);
         chest.update();
 
         plugin.sendMessage(player,
@@ -190,8 +189,8 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                     currencyPlayerShouldReceive);
     }
 
-    public int getChestItemType() {
-        return chest.id;
+    public TradeCraftItem getChestItemType() {
+        return chest.type;
     }
 
     public int getChestItemCount() {
@@ -202,13 +201,13 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         return chest.containsOnlyOneItemType();
     }
 
-    public void populateChest(int id, int amount) {
-        chest.populateChest(id, amount);
+    public void populateChest(TradeCraftItem type, int amount) {
+        chest.populateChest(type, amount);
     }
 
     public abstract boolean isOwnedByPlayer(Player player);
 
-    public abstract int getItemType();
+    public abstract TradeCraftItem getItemType();
 
     public abstract String getItemName();
 

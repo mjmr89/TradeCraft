@@ -59,11 +59,14 @@ public class TradeCraftPropertiesFile {
         properties.load();
     }
     
-    public int getCurrencyTypeId(){
-    	return properties.getInt("currency-id",266);
+    public TradeCraftItem getCurrencyType(){
+    	int id = properties.getInt("currency-id",266);
+    	short data = (short)properties.getInt("currency-data",0);
+    	return new TradeCraftItem(id, data); 
     }
-    public void setCurrencyTypeId(int id) {
-    	properties.setProperty("currency-id", id);
+    public void setCurrencyType(TradeCraftItem item) {
+    	properties.setProperty("currency-id", item.id);
+    	properties.setProperty("currency-data", item.data);
     	properties.save();
     }
     

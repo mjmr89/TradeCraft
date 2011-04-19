@@ -26,8 +26,8 @@ public class TradeCraftInfiniteShop extends TradeCraftItemShop {
         return false;
     }
 
-    public int getItemType() {
-        return configurationInfo.id;
+    public TradeCraftItem getItemType() {
+        return configurationInfo.type;
     }
 
     public String getItemName() {

@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,7 +34,7 @@ public class TradeCraft extends JavaPlugin {
 	final Server server = this.getServer();
 
 	// Objects used by the plugin.
-	static Material currency;
+	static TradeCraftItem currency;
 	TradeCraftPropertiesFile properties;
 	TradeCraftConfigurationFile configuration;
 	TradeCraftDataFile data;
@@ -61,7 +62,7 @@ public class TradeCraft extends JavaPlugin {
 		
 		configuration.load();
 		data.load();
-		currency = Material.getMaterial(properties.getCurrencyTypeId());
+		currency = properties.getCurrencyType();
 		permissions.setupPermissions();
 
 		if ( !TradeCraft.hasRegisteredEventListeners ) {
@@ -91,18 +92,20 @@ public class TradeCraft extends JavaPlugin {
 				if ( !this.permissions.canSetCurrency(p) ) {
 					p.sendMessage("You do not have the permission to set the currency");
 				} else {
-					Material testCurrency;
+					TradeCraftItem testCurrency = null;
 					try {
 						int cid = Integer.parseInt(args[0]);
-						testCurrency = Material.getMaterial(cid);
+						testCurrency = new TradeCraftItem(cid);
+						
+						// TODO optionally parse data bit
 					} catch (NumberFormatException nfe) {
-						testCurrency = Material.getMaterial(args[0]);
+						
 					}
 					if ( testCurrency == null ) {
 						p.sendMessage(args[0] +" is not a valid value for a currency.");
 					} else {
 						currency = testCurrency;
-						this.properties.setCurrencyTypeId(currency.getId());
+						this.properties.setCurrencyType(currency);
 						p.sendMessage("Currency is set to " + TradeCraft.getCurrencyName());
 					}
 				}
@@ -132,7 +135,7 @@ public class TradeCraft extends JavaPlugin {
 		p.sendMessage("Your shops:");
 		for (TradeCraftDataInfo info : list) {
 
-			p.sendMessage("Item: " + Material.getMaterial(info.itemType)
+			p.sendMessage("Item: " + info.itemType
 					+ " Amount: " + info.itemAmount + " "
 					+ TradeCraft.getCurrencyName() +": " + info.currencyAmount);
 
@@ -240,8 +243,7 @@ public class TradeCraft extends JavaPlugin {
 			return null;
 		}
 
-		Chest chest = (Chest) player.getWorld().getBlockAt(x, y - 1, z)
-				.getState();
+		Chest chest = (Chest) player.getWorld().getBlockAt(x, y - 1, z).getState();
 
 		if (itemName.toLowerCase().equals("repair")) {
 			if (!properties.getRepairShopsEnabled()) {
@@ -260,8 +262,8 @@ public class TradeCraft extends JavaPlugin {
 
 		if (!configuration.isConfigured(itemName)) {
 			trace(player,
-					"The item name %s is not configured in the config file.",
-					itemName);
+				  "The item name %s is not configured in the config file.",
+				  itemName);
 			return null;
 		}
 
@@ -362,7 +364,8 @@ public class TradeCraft extends JavaPlugin {
 	 * @return a string representing the currency.
 	 */
 	public static String getCurrencyName() {
-    	String baseName = TradeCraft.currency.name();
+		ItemStack stack = new ItemStack(TradeCraft.currency.id, 1, TradeCraft.currency.data); // weird that there's no Material.getMaterial(id, short/byte)
+		String baseName = stack.getType().name();
     	String[] words = baseName.split("_");
     	String name = "";
     	for ( int word_ind = 0; word_ind < words.length; word_ind++ ) {

@@ -19,9 +19,11 @@ class TradeCraftConfigurationFile {
     private static final Pattern commentPattern = Pattern.compile("^\\s*#.*$");
     private static final Pattern infoPattern = Pattern.compile(
             "^\\s*([^,]+)\\s*," + // name
-            "\\s*(\\d+)\\s*" + // id
+            "\\s*(\\d+(?:;\\d+)?)\\s*" + // id[;data] (optional ;data)
             "(?:,\\s*(\\d+)\\s*:\\s*(\\d+))?\\s*" + // buyAmount:buyValue
             "(?:,\\s*(\\d+)\\s*:\\s*(\\d+))?\\s*$"); // sellAmount:sellValue
+    private static final Pattern infoPatternIdSplitData = Pattern.compile(
+    		"^(\\d+)(?:;(\\d+))?$");
 
     private final TradeCraft plugin;
     private final Map<String, TradeCraftConfigurationInfo> infos = new HashMap<String, TradeCraftConfigurationInfo>();
@@ -102,7 +104,27 @@ class TradeCraftConfigurationFile {
 
                 TradeCraftConfigurationInfo info = new TradeCraftConfigurationInfo();
                 info.name = infoMatcher.group(1);
-                info.id = Integer.parseInt(infoMatcher.group(2));
+
+                // try to split ID and Data, separated by a semicolon mark
+                Matcher IdSplitData = infoPatternIdSplitData.matcher(infoMatcher.group(2));
+                plugin.log.info("TC configinfo: |"+ infoMatcher.group(2) +"|");
+                
+                if (!IdSplitData.matches()) {
+                    plugin.log.info(
+                            "Failed to parse line number " + lineNumber +
+                            " in " + filePath + File.separator + fileName +
+                            ": " + line);
+                    continue;
+                }
+                
+                int id = Integer.parseInt(IdSplitData.group(1));
+                if ( IdSplitData.group(2) != null ) {
+                	short data = Short.parseShort(IdSplitData.group(2));
+                	info.type = new TradeCraftItem(id, data);
+                	plugin.log.info(" Conf - matching item data bit: "+ data);
+                } else {
+                	info.type = new TradeCraftItem(id);
+                }
 
                 if (infoMatcher.group(3) != null) {
                     info.sellAmount = info.buyAmount = Integer.parseInt(infoMatcher.group(3));

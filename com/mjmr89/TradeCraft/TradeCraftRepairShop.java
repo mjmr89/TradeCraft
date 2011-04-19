@@ -41,10 +41,10 @@ public class TradeCraftRepairShop extends TradeCraftShop {
         chest.clear();
 
         for (ItemStack item : items) {
-            chest.add(item.getType().getId(), 1);
+            chest.add(new TradeCraftItem(item.getTypeId(), item.getData().getData()), 1);
         }
 
-        chest.add(TradeCraft.currency.getId(), (currencyAmount - actualCost));
+        chest.add(TradeCraft.currency, (currencyAmount - actualCost));
 
         chest.update();
 

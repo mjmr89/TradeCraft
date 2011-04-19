@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     private final String ownerName;
     private final String itemName;
-    private final int itemType;
+    private final TradeCraftItem itemType;
     private final TradeCraftExchangeRate buyRate;
     private final TradeCraftExchangeRate sellRate;
 
@@ -17,7 +17,7 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
 //        ownerName = plugin.data.getOwnerOfSign(sign);
         this.ownerName = ownerName;
         itemName = plugin.getItemName(sign.getLines());
-        itemType = plugin.configuration.get(itemName).id;
+        itemType = plugin.configuration.get(itemName).type;
         buyRate = plugin.getExchangeRate(sign, 1);
         sellRate = plugin.getExchangeRate(sign, 2);
         
@@ -48,7 +48,7 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     	}
     }
 
-    public int getItemType() {
+    public TradeCraftItem getItemType() {
         return itemType;
     }
 
