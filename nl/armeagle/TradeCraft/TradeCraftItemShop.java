@@ -115,7 +115,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         }
 
         int currencyPlayerWantsToSpend = getChestItemCount();
-        int amountPlayerWantsToBuy = currencyPlayerWantsToSpend * getBuyAmount() / getBuyValue();
+        int amountPlayerWantsToBuy = ((currencyPlayerWantsToSpend - (currencyPlayerWantsToSpend % getBuyValue()) ) / getBuyValue()) * getBuyAmount(); 
 
         if (amountPlayerWantsToBuy == 0) {
             plugin.sendMessage(player,
@@ -156,7 +156,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         }
 
         int amountPlayerWantsToSell = getChestItemCount();
-        int currencyPlayerShouldReceive = amountPlayerWantsToSell * getSellValue() / getSellAmount();
+        int currencyPlayerShouldReceive = ((amountPlayerWantsToSell - (amountPlayerWantsToSell % getSellAmount())) / getSellAmount()) * getSellValue();
 
         if (currencyPlayerShouldReceive == 0) {
             plugin.sendMessage(player,
