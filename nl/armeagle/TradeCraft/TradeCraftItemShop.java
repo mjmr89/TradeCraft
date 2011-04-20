@@ -28,7 +28,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             int currencyAmount = withdrawCurrency();
             if (currencyAmount > 0) {
                 populateChest(TradeCraft.currency, currencyAmount);
-                plugin.sendMessage(player, "Withdrew %1$d "+ TradeCraft.getCurrencyName() +".", currencyAmount);
+                plugin.sendMessage(player, "Withdrew %1$d "+ plugin.getCurrencyName() +".", currencyAmount);
             } else {
                 int itemAmount = withdrawItems();
                 if (itemAmount > 0) {
@@ -40,7 +40,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             }
         } else if (getChestItemType() == TradeCraft.currency) {
             depositCurrency(getChestItemCount());
-            plugin.sendMessage(player, "Deposited %1$d "+ TradeCraft.getCurrencyName() +".", getChestItemCount());
+            plugin.sendMessage(player, "Deposited %1$d "+ plugin.getCurrencyName() +".", getChestItemCount());
             populateChest(new TradeCraftItem(0), 0);
             int itemAmount = withdrawItems();
             if (itemAmount > 0) {
@@ -72,7 +72,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         if (getChestItemCount() == 0) {
             if (playerCanBuy && playerCanBuy()) {
                 plugin.sendMessage(player,
-                        "You can buy %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
+                        "You can buy %1$d %2$s for %3$d "+ plugin.getCurrencyName() +".",
                         getBuyAmount(),
                         getItemName(),
                         getBuyValue());
@@ -80,7 +80,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
             if (playerCanSell && playerCanSell()) {
                 plugin.sendMessage(player,
-                        "You can sell %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
+                        "You can sell %1$d %2$s for %3$d "+ plugin.getCurrencyName() +".",
                         getSellAmount(),
                         getItemName(),
                         getSellValue());
@@ -90,7 +90,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             return;
         }
 
-        
+        plugin.log.info(getChestItemType() +" "+ TradeCraft.currency +" "+ getItemType());
         if ( getChestItemType().compareTo(TradeCraft.currency) == 0 ) {
             if (!playerCanBuy) {
                 plugin.sendMessage(player, "You are not allowed to buy from shops!");
@@ -119,7 +119,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         if (amountPlayerWantsToBuy == 0) {
             plugin.sendMessage(player,
-                        "You need to spend at least %1$d "+ TradeCraft.getCurrencyName() +" to get any %2$s.",
+                        "You need to spend at least %1$d "+ plugin.getCurrencyName() +" to get any %2$s.",
                         getBuyValue(),
                         getItemName());
             return;
@@ -143,7 +143,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         chest.update();
 
         plugin.sendMessage(player,
-                    "You bought %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
+                    "You bought %1$d %2$s for %3$d "+ plugin.getCurrencyName() +".",
                     amountPlayerWantsToBuy,
                     getItemName(),
                     requiredCurrencyForThatAmount);
@@ -160,7 +160,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         if (currencyPlayerShouldReceive == 0) {
             plugin.sendMessage(player,
-                        "You need to sell at least %1$d %2$s to get any "+ TradeCraft.getCurrencyName() +".",
+                        "You need to sell at least %1$d %2$s to get any "+ plugin.getCurrencyName() +".",
                         getSellAmount(),
                         getItemName());
             return;
@@ -168,7 +168,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         if (currencyPlayerShouldReceive > getCurrencyInShop()) {
             plugin.sendMessage(player,
-                    "Cannot sell. This shop only has %1$d "+ TradeCraft.getCurrencyName() +".",
+                    "Cannot sell. This shop only has %1$d "+ plugin.getCurrencyName() +".",
                     getCurrencyInShop());
             return;
         }
@@ -183,7 +183,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         chest.update();
 
         plugin.sendMessage(player,
-                    "You sold %1$d %2$s for %3$d "+ TradeCraft.getCurrencyName() +".",
+                    "You sold %1$d %2$s for %3$d "+ plugin.getCurrencyName() +".",
                     amountThatCanBeSold,
                     getItemName(),
                     currencyPlayerShouldReceive);

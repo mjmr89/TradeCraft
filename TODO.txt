@@ -17,4 +17,8 @@ MOVE TradeCraft.getShopFromSignBlock(Player player, Block block) {
  Which creates the actual shops, to the sign change code, that way we have a handle on the player who
  placed the chest and can put down the full name. Which already seems to happen partially, but not for real?!
  
- - [launch player]  triggers infinite shop check
+ - limit currency and configured items to valid data values
+ - chest.getContents --> item.getData() always seems to return null, workaround with using getDurability 
+ 
+ + [launch player]  triggers infinite shop check
+  

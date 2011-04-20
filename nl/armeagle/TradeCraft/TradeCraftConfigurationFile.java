@@ -22,11 +22,12 @@ class TradeCraftConfigurationFile {
             "\\s*(\\d+(?:;\\d+)?)\\s*" + // id[;data] (optional ;data)
             "(?:,\\s*(\\d+)\\s*:\\s*(\\d+))?\\s*" + // buyAmount:buyValue
             "(?:,\\s*(\\d+)\\s*:\\s*(\\d+))?\\s*$"); // sellAmount:sellValue
-    private static final Pattern infoPatternIdSplitData = Pattern.compile(
-    		"^(\\d+)(?:;(\\d+))?$");
+    
 
     private final TradeCraft plugin;
     private final Map<String, TradeCraftConfigurationInfo> infos = new HashMap<String, TradeCraftConfigurationInfo>();
+    // create an index from an TradeCraftItem (id;data) to the TradeCraftConfigurationInfo entry. This for configured name lookup based on id;data  
+    private final Map<TradeCraftItem, TradeCraftConfigurationInfo> TCitemInfoIndex = new HashMap<TradeCraftItem, TradeCraftConfigurationInfo>();
 
     TradeCraftConfigurationFile(TradeCraft plugin) {
         this.plugin = plugin;
@@ -106,8 +107,7 @@ class TradeCraftConfigurationFile {
                 info.name = infoMatcher.group(1);
 
                 // try to split ID and Data, separated by a semicolon mark
-                Matcher IdSplitData = infoPatternIdSplitData.matcher(infoMatcher.group(2));
-                plugin.log.info("TC configinfo: |"+ infoMatcher.group(2) +"|");
+                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(infoMatcher.group(2));
                 
                 if (!IdSplitData.matches()) {
                     plugin.log.info(
@@ -121,7 +121,6 @@ class TradeCraftConfigurationFile {
                 if ( IdSplitData.group(2) != null ) {
                 	short data = Short.parseShort(IdSplitData.group(2));
                 	info.type = new TradeCraftItem(id, data);
-                	plugin.log.info(" Conf - matching item data bit: "+ data);
                 } else {
                 	info.type = new TradeCraftItem(id);
                 }
@@ -137,6 +136,7 @@ class TradeCraftConfigurationFile {
                 }
 
                 infos.put(info.name.toUpperCase(), info);
+                TCitemInfoIndex.put(info.type, info);
             }
             plugin.log.info("Loaded " + infos.size() + " configs");
 
@@ -158,5 +158,14 @@ class TradeCraftConfigurationFile {
 
     public TradeCraftConfigurationInfo get(String name) {
         return infos.get(name.toUpperCase());
+    }
+    public TradeCraftConfigurationInfo get(int id) {
+    	return this.get(new TradeCraftItem(id));
+    }
+    public TradeCraftConfigurationInfo get(int id, short data) {
+    	return this.get(new TradeCraftItem(id, data));
+    }
+    public TradeCraftConfigurationInfo get(TradeCraftItem item) {
+        return TCitemInfoIndex.get(item);
     }
 }

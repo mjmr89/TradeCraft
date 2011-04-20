@@ -22,7 +22,7 @@ public class TradeCraftPermissions {
 	          if (test != null) {
 	              this.permHandler = ((Permissions)test).getHandler();
 	              plugin.permEnabled = true;
-	              System.out.println("[TradeCraft] has recognized Permissions");
+	              plugin.log.info("[TradeCraft] has recognized Permissions");
 	          } 
 	      }
 	}

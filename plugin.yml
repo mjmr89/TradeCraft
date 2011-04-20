@@ -1,5 +1,5 @@
 name: TradeCraft
-main: com.mjmr89.TradeCraft.TradeCraft
+main: nl.armeagle.TradeCraft.TradeCraft
 version: 0.92AE
 commands:
     myshops:

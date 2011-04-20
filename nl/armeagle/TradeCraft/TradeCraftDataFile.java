@@ -28,8 +28,6 @@ class TradeCraftDataFile {
             "\\s*(\\d+(?:!\\d+)?)\\s*," + // itemType[!data]
             "\\s*(\\d+)\\s*," + // itemAmount
             "\\s*(\\d+)\\s*$"); // currencyAmount
-    private static final Pattern infoPatternIdSplitData = Pattern.compile(
-			"^(\\d+)(?:l(\\d+))?$"); // optional data value, separated by a semicolon
 
     private final TradeCraft plugin;
     private final Map<String, TradeCraftDataInfo> data = new HashMap<String, TradeCraftDataInfo>();
@@ -84,7 +82,7 @@ class TradeCraftDataFile {
 
                     data.put(key, info);
 
-                    Matcher IdSplitData = infoPatternIdSplitData.matcher(infoMatcher2.group(5));
+                    Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(infoMatcher2.group(5));
                     int itemId = Integer.parseInt(infoMatcher2.group(5));
                     if ( IdSplitData.group(2) != null ) {
                     	info.itemType = new TradeCraftItem(itemId, Short.parseShort(IdSplitData.group(2)));

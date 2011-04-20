@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +29,7 @@ public class TradeCraft extends JavaPlugin {
 	static final String pluginName = "TradeCraft";
 
 	private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
+	public static final Pattern itemPatternIdSplitData = Pattern.compile("^(\\d+)(?:;(\\d+))?$");
 
 	// Stuff used to interact with the server.
 	final Logger log = Logger.getLogger("Minecraft");
@@ -74,8 +76,7 @@ public class TradeCraft extends JavaPlugin {
 		}
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println(pdfFile.getName() + " version "
-				+ pdfFile.getVersion() + " is enabled!");
+		this.log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 		
 	}
 
@@ -93,25 +94,28 @@ public class TradeCraft extends JavaPlugin {
 					p.sendMessage("You do not have the permission to set the currency");
 				} else {
 					TradeCraftItem testCurrency = null;
-					try {
-						int cid = Integer.parseInt(args[0]);
-						testCurrency = new TradeCraftItem(cid);
-						
-						// TODO optionally parse data bit
-					} catch (NumberFormatException nfe) {
-						
-					}
-					if ( testCurrency == null ) {
-						p.sendMessage(args[0] +" is not a valid value for a currency.");
+					// try to split ID and Data, separated by a semicolon mark
+	                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[0]);
+	                
+	                if ( !IdSplitData.matches() ) {
+	                	p.sendMessage(args[0] +" is not a valid value for a currency, use 'id[;data]'");
+	                	return false;
+	                }
+	                
+					int cid = Integer.parseInt(IdSplitData.group(1));
+					if ( IdSplitData.group(2) != null ) {
+						testCurrency = new TradeCraftItem(cid, Short.parseShort(IdSplitData.group(2)));
 					} else {
-						currency = testCurrency;
-						this.properties.setCurrencyType(currency);
-						p.sendMessage("Currency is set to " + TradeCraft.getCurrencyName());
+						testCurrency = new TradeCraftItem(cid);
 					}
+					
+					currency = testCurrency;
+					this.properties.setCurrencyType(currency);
+					p.sendMessage("Currency is set to " + this.getCurrencyName());
 				}
 			} else if (name.equalsIgnoreCase("displaycurrency")
 					&& args.length == 0) {
-				p.sendMessage("Currency is: " + TradeCraft.getCurrencyName());
+				p.sendMessage("Currency is: " + this.getCurrencyName());
 			} else if (name.equalsIgnoreCase("canplayer") && args.length == 1) {
 				permissions.debug(args[0]);
 			} else if (name.equalsIgnoreCase("myshops")) {
@@ -137,7 +141,7 @@ public class TradeCraft extends JavaPlugin {
 
 			p.sendMessage("Item: " + info.itemType
 					+ " Amount: " + info.itemAmount + " "
-					+ TradeCraft.getCurrencyName() +": " + info.currencyAmount);
+					+ this.getCurrencyName() +": " + info.currencyAmount);
 
 		}
 
@@ -363,19 +367,35 @@ public class TradeCraft extends JavaPlugin {
 	 * 
 	 * @return a string representing the currency.
 	 */
-	public static String getCurrencyName() {
-		ItemStack stack = new ItemStack(TradeCraft.currency.id, 1, TradeCraft.currency.data); // weird that there's no Material.getMaterial(id, short/byte)
-		String baseName = stack.getType().name();
-    	String[] words = baseName.split("_");
-    	String name = "";
-    	for ( int word_ind = 0; word_ind < words.length; word_ind++ ) {
-    		String word = words[word_ind];
-    		if ( word_ind > 0 ) {
-    			name = name.concat(" ");
-    		}
-    		name = name.concat(word.substring(0, 1).toUpperCase()).concat(word.substring(1).toLowerCase());
-    	}
-    	return name;
+	public String getCurrencyName() {
+		// Try to get the name from the configuration file first
+		TradeCraftConfigurationInfo configInfo = this.configuration.get(TradeCraft.currency);
+		if ( configInfo != null ) {
+			return configInfo.name;
+		} else {
+			
+			ItemStack currencyStack = new ItemStack(TradeCraft.currency.id, 1, TradeCraft.currency.data); // weird that there's no Material.getMaterial(id, short/byte)
+			MaterialData currencyData = currencyStack.getType().getNewData((byte)TradeCraft.currency.data);
+			String currencyString; 
+			if ( currencyData == null ) {
+				currencyString = currencyStack.getType().name();
+			} else {
+				currencyString = currencyData.toString();
+			}
+			
+			//String baseName = stack.getType().name();
+	    	String[] words = currencyString.replace("null ", "").split("\\(")[0].split("[ _]{1}");
+	    	String name = "";
+	    	for ( int word_ind = 0; word_ind < words.length; word_ind++ ) {
+	    		String word = words[word_ind];
+	    		if ( word_ind > 0 ) {
+	    			name = name.concat(" ");
+	    		}
+	    		name = name.concat(word.substring(0, 1).toUpperCase()).concat(word.substring(1).toLowerCase());
+	    	}
+			System.out.println("bukkit: "+name);
+	    	return name;
+		}
     }
 
 }

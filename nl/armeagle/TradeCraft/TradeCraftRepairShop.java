@@ -19,36 +19,39 @@ public class TradeCraftRepairShop extends TradeCraftShop {
         int repairCost = plugin.properties.getRepairCost();
 
         if (currencyAmount == 0 && items.size() == 0) {
-            plugin.sendMessage(player, "It costs %d "+ TradeCraft.getCurrencyName() +" to repair an item.", repairCost);
+            plugin.sendMessage(player, "It costs %d "+ plugin.getCurrencyName() +" to repair an item.", repairCost);
             return;
         }
 
         int actualCost = items.size() * repairCost;
 
         if (items.size() == 0) {
-            plugin.sendMessage(player, "With this much "+ TradeCraft.getCurrencyName() +", you can repair %d items.", currencyAmount / repairCost);
+            plugin.sendMessage(player, "With this much "+ plugin.getCurrencyName() +", you can repair %d items.", currencyAmount / repairCost);
             return;
         }
 
         if (currencyAmount < actualCost) {
             if (currencyAmount > 0) {
-                plugin.sendMessage(player, "That's not enough "+ TradeCraft.getCurrencyName() +".");
+                plugin.sendMessage(player, "That's not enough "+ plugin.getCurrencyName() +".");
             }
-            plugin.sendMessage(player, "You need %d "+ TradeCraft.getCurrencyName() +" to repair all this.", actualCost);
+            plugin.sendMessage(player, "You need %d "+ plugin.getCurrencyName() +" to repair all this.", actualCost);
             return;
         }
 
         chest.clear();
 
         for (ItemStack item : items) {
-            chest.add(new TradeCraftItem(item.getTypeId(), item.getData().getData()), 1);
+    		// TODO | DEBUG  item.getData() always seems to return null
+    		short itemData = item.getDurability(); //(item.getData() == null ? (short)0 : item.getData().getData());
+
+            chest.add(new TradeCraftItem(item.getTypeId(), itemData), 1);
         }
 
         chest.add(TradeCraft.currency, (currencyAmount - actualCost));
 
         chest.update();
 
-        plugin.sendMessage(player, "You repaired %d items for %d "+ TradeCraft.getCurrencyName() +".", items.size(), actualCost);
+        plugin.sendMessage(player, "You repaired %d items for %d "+ plugin.getCurrencyName() +".", items.size(), actualCost);
     }
 
     public boolean playerCanDestroy(Player player) {

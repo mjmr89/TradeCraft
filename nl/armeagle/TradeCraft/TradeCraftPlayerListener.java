@@ -19,7 +19,6 @@ public class TradeCraftPlayerListener extends PlayerListener{
 		if ( !this.plugin.isEnabled() ) {
 			return;
 		}
-		
 		if ( e.getAction() == Action.RIGHT_CLICK_BLOCK ) {
 			Block blockClicked = e.getClickedBlock();
 			Player player = e.getPlayer();
