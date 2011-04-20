@@ -38,7 +38,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                     plugin.sendMessage(player, "There is nothing to withdraw.");
                 }
             }
-        } else if (getChestItemType() == TradeCraft.currency) {
+        } else if ( getChestItemType().compareTo(TradeCraft.currency) == 0 ) {
             depositCurrency(getChestItemCount());
             plugin.sendMessage(player, "Deposited %1$d "+ plugin.getCurrencyName() +".", getChestItemCount());
             populateChest(new TradeCraftItem(0), 0);
@@ -47,7 +47,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                 populateChest(getItemType(), itemAmount);
                 plugin.sendMessage(player, "Withdrew %1$d %2$s.", itemAmount, getItemName());
             }
-        } else if (getChestItemType() == getItemType()) {
+        } else if ( getChestItemType().compareTo(getItemType()) == 0 ) {
             depositItems(getChestItemCount());
             populateChest(new TradeCraftItem(0), 0);
             plugin.sendMessage(player, "Deposited %1$d %2$s.", getChestItemCount(), getItemName());
@@ -85,8 +85,13 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                         getItemName(),
                         getSellValue());
             }
-
-            plugin.sendMessage(player, "The chest is empty.");
+            
+            if ( this instanceof TradeCraftInfiniteShop ) {
+            	plugin.sendMessage(player, "This is an infinite shop");
+            } else {
+            	plugin.sendMessage(player, "The shop contains "+ this.getItemsInShop() +" of "+ this.getItemName() +" and can buy for a total of "+ this.getCurrencyInShop() +" "+ this.plugin.getCurrencyName());
+            }
+            plugin.sendMessage(player, "There are no items in the chest.");
             return;
         }
 
@@ -126,11 +131,18 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         }
 
         if (amountPlayerWantsToBuy > getItemsInShop()) {
-            plugin.sendMessage(player,
-                    "Cannot buy. This shop only has %1$d %2$s.",
-                    getItemsInShop(),
-                    getItemName());
-            return;
+        	if ( getItemsInShop() == 0 ) {
+	            plugin.sendMessage(player,
+	                    "Cannot buy. This shop has no more %2$s left.",
+	                    getItemsInShop(),
+	                    getItemName());
+        	} else {
+	            plugin.sendMessage(player,
+	                    "Cannot buy. This shop only has %1$d %2$s.",
+	                    getItemsInShop(),
+	                    getItemName());
+        	}
+        	return;
         }
 
         int requiredCurrencyForThatAmount = amountPlayerWantsToBuy * getBuyValue() / getBuyAmount();

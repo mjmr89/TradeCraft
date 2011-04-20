@@ -25,7 +25,7 @@ class TradeCraftDataFile {
     private static final Pattern infoPattern2 = Pattern.compile(
             "^\\s*([^,]+)\\s*," + // ownerName
             "\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*," + // x,y,z
-            "\\s*(\\d+(?:!\\d+)?)\\s*," + // itemType[!data]
+            "\\s*(\\d+(?:;\\d+)?)\\s*," + // itemType[!data]
             "\\s*(\\d+)\\s*," + // itemAmount
             "\\s*(\\d+)\\s*$"); // currencyAmount
 
@@ -69,7 +69,6 @@ class TradeCraftDataFile {
                     int x = Integer.parseInt(infoMatcher2.group(2));
                     int y = Integer.parseInt(infoMatcher2.group(3));
                     int z = Integer.parseInt(infoMatcher2.group(4));
-//                    int itemType = Integer.parseInt(IdSplitData.group(1));
                     int itemAmount = Integer.parseInt(infoMatcher2.group(6));
                     int currencyAmount = Integer.parseInt(infoMatcher2.group(7));
                     
@@ -81,15 +80,23 @@ class TradeCraftDataFile {
                     info.currencyAmount = currencyAmount;
 
                     data.put(key, info);
-
+                    
                     Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(infoMatcher2.group(5));
-                    int itemId = Integer.parseInt(infoMatcher2.group(5));
-                    if ( IdSplitData.group(2) != null ) {
-                    	info.itemType = new TradeCraftItem(itemId, Short.parseShort(IdSplitData.group(2)));
+                    
+                    if ( IdSplitData.matches() ) {
+	                    int itemId = Integer.parseInt(IdSplitData.group(1));
+	                    if ( IdSplitData.group(2) != null ) {
+	                    	info.itemType = new TradeCraftItem(itemId, Short.parseShort(IdSplitData.group(2)));
+	                    } else {
+	                    	info.itemType = new TradeCraftItem(itemId);
+	                    }
                     } else {
-                    	info.itemType = new TradeCraftItem(itemId);
+                    	plugin.log.warning(
+                                "Failed to parse line number " + lineNumber +
+                                " in " + fileName +
+                                ": " + line);
+                        continue;
                     }
-
                 } else {
                     Matcher infoMatcher1 = infoPattern1.matcher(line);
 
@@ -133,7 +140,7 @@ class TradeCraftDataFile {
                 TradeCraftDataInfo info = data.get(key);
                 writer.write(info.ownerName + "," +
                              key + "," +
-                             info.itemType + "," +
+                             info.itemType.toShortString() + "," +
                              info.itemAmount + "," +
                              info.currencyAmount);
                 writer.newLine();

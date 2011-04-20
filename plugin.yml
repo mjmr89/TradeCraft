@@ -1,6 +1,6 @@
 name: TradeCraft
 main: nl.armeagle.TradeCraft.TradeCraft
-version: 0.92AE
+version: AE-1.0.0-alpha
 commands:
     myshops:
         description: See a printout of any personal shops you have

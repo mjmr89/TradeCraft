@@ -393,7 +393,6 @@ public class TradeCraft extends JavaPlugin {
 	    		}
 	    		name = name.concat(word.substring(0, 1).toUpperCase()).concat(word.substring(1).toLowerCase());
 	    	}
-			System.out.println("bukkit: "+name);
 	    	return name;
 		}
     }
