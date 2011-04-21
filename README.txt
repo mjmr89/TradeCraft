@@ -10,14 +10,13 @@ Installation
 The plugin is installed like any other Bukkitplugin. Put the TradeCraft.jar file
 in your plugins folder.
 
-The plugin is configured using a file called TradeCraft.txt that you need to
-create in the same folder as your server.properties folder. Details on the
-format of the file appear below.
+The plugin is configured using a file called TradeCraft.txt that will automatically
+be placed in the plugins/TradeCraft/ folder. Details on the format of the file
+appear below.
 
-There is also a file called TradeCraft.properties that you can put in the same
-folder as your server.properties folder. You can set properties that configure
-how the plugin works in this file. Look inside the example file that comes with
-the plugin to see the properties you can set.
+There is also a file called TradeCraft.properties in the same folder. You can set
+properties that configure how the plugin works in this file. Look inside the
+example file that comes with the plugin to see the properties you can set.
 
 Shops
 =====
@@ -67,8 +66,8 @@ No state is maintained in infinite shops. Players can buy an infinite amount
 of items (assuming they have enough gold) from infinite shops. They can also
 sell an infinite amount of items (earning an infinite amount of gold).
 
-TODO: Allow administrators to disable infinite shops using
-TradeCraft.properties.
+TODO: Allow administrators to disable infinite shops using a command and
+storing that setting in TradeCraft.properties.
 
 Player-owned shops
 ==================
@@ -104,11 +103,12 @@ be part of their name. For example, if the player's name was
 "NumberOneMinecraftFan", they could use "-NumberOne-" as the name on the sign.
 
 TODO: Allow administrators to set aliases or nicknames for players for use on
-signs.
+signs. Or have support for an existing alias plugin. 
 
 Players are not allowed to create signs that contain other players' names.
 Likewise, players are not allowed to destroy signs (or the chests underneath
-them) containing other players' names.
+them, or the block behind then) containing other players' names. Also all items
+have to be removed from player shops before they can be destroyed.
 
 Using shops
 ===========
@@ -159,11 +159,14 @@ to edit TradeCraft.txt. The file should look like this:
 # Comments look like this.
 Sand,12,32:1
 Diamond,264,1:64
+LGWool,35;8,10:1
 
 The first value is the name of the item as you want it to appear on your signs
 and in the messages the players see when they make their trades.
 
-The second value is the block or item ID. You can see these values here:
+The second value is the block or item ID, optionally with a data value added
+(separated with a semicolon) for colored wool, logs, etc. You can see these
+values here:
 
 http://www.minecraftwiki.net/wiki/Data_values
 
@@ -195,6 +198,5 @@ configure it like this:
 Diamond,264,1:64,0:0
 
 If you click on a sign above an empty chest, you'll see a message saying what
-the exchange rates for both buying and selling are. This is only necessary for
-infinite shops since player-owned shops have to display their exchange rates
-on the sign.
+the exchange rates for both buying and selling are. On player shops you will
+also get information about the amount of items and 'money' still in the shop.

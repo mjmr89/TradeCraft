@@ -1,24 +1,26 @@
 - repairshop has it's own handling code  /  enable repair shop
 
-gsand: 
-- Would it be possible to make it so players can buy 6 items for 2 gold, but not 3 for 1 gold.
 
 Digi said:
  - Also, could you add a feature to place signs ON chests (like Lockette) ?
- - The wool, dye, log, etc sub-items (just re-mentioning, I understand it's gonna be possible in #564+)
  - Protection of chest contents while you're using it... or something, so other people don't just sit by and wait for you to buy and steal your stuff.
  - The sign labels would be better understood if they're: "Buy 5 for 1" and "Sell 5 for 1" and you should suppot texts like "Buy 5 for 1g" or "Buy5for1" etc.
  - The sign shouldn't require you to type your name since you can only make shops for yourself, it should overwrite the last line with your nickname.
- - Additional information about current amount of items and currency available when right clicking as client.
-
  
- 
-MOVE TradeCraft.getShopFromSignBlock(Player player, Block block) {
+?MOVE TradeCraft.getShopFromSignBlock(Player player, Block block) {
  Which creates the actual shops, to the sign change code, that way we have a handle on the player who
  placed the chest and can put down the full name. Which already seems to happen partially, but not for real?!
  
  - limit currency and configured items to valid data values
- - chest.getContents --> item.getData() always seems to return null, workaround with using getDurability 
+ - Allow administrators to disable infinite shops using a command and storing that setting in TradeCraft.properties.
  
- + [launch player]  triggers infinite shop check
+ Coding issue:
+ - chest.getContents --> item.getData().getData() always seems to return 0, workaround with using getDurability which accesses the same data. 
+ 
+ 
+ Done: 
+ - [launch player]  triggers infinite shop check
+ - (gsand) Would it be possible to make it so players can buy 6 items for 2 gold, but not 3 for 1 gold.
+ - The wool, dye, log, etc sub-items (just re-mentioning, I understand it's gonna be possible in #564+)
+ - Additional information about current amount of items and currency available when right clicking as client.
   
