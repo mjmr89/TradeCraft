@@ -13,6 +13,8 @@ Digi said:
  
  - limit currency and configured items to valid data values
  - Allow administrators to disable infinite shops using a command and storing that setting in TradeCraft.properties.
+ - Allow setting of currency by name (basic names from Bukkit, or also as defined in config?) again.
+ 
  
  Coding issue:
  - chest.getContents --> item.getData().getData() always seems to return 0, workaround with using getDurability which accesses the same data. 

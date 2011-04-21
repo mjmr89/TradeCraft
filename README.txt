@@ -4,6 +4,8 @@ TradeCraft
 This is a plugin for Bukkit that allows you to buy and sell items using gold
 ingots (bars) as a currency.
 
+See also: http://forums.bukkit.org/threads/econ-tradecraft-ae-gold-based-economy.13797/
+
 Installation
 ============
 
