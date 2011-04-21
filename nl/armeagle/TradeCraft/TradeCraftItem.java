@@ -17,7 +17,15 @@ public class TradeCraftItem implements Comparable<TradeCraftItem> {
 		this.data = data;
 	}
 	
-	public int compareTo(TradeCraftItem compare) {
+	/**
+	 * @param compare
+	 * @throws NullPointerException if compare is null
+	 * @return default < 0 > compare values
+	 */
+	@Override public int compareTo(TradeCraftItem compare) {
+		if ( this == compare ) {
+			return 0;
+		}
 		if ( this.id < compare.id ) {
 			return -1;
 		} else if ( this.id > compare.id ) {
@@ -32,8 +40,14 @@ public class TradeCraftItem implements Comparable<TradeCraftItem> {
 			}
 		}
 	}
+	@Override public boolean equals(Object compare) {
+		return (compare == null ? false : (compare instanceof TradeCraftItem? this.compareTo((TradeCraftItem)compare) == 0 : false));
+	}
+	@Override public int hashCode() {
+		return this.id * 32768 + this.data;
+	}
 
-	public String toString() {
+	@Override public String toString() {
 		return "TradeCraftItem("+ this.id +";"+ this.data +")";
 	}
 	public String toShortString() {

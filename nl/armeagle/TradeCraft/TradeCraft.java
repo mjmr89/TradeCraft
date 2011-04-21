@@ -138,8 +138,7 @@ public class TradeCraft extends JavaPlugin {
 		}
 		p.sendMessage("Your shops:");
 		for (TradeCraftDataInfo info : list) {
-
-			p.sendMessage("Item: " + info.itemType
+			p.sendMessage("Item: " + this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
 					+ " Amount: " + info.itemAmount + " "
 					+ this.getCurrencyName() +": " + info.currencyAmount);
 

@@ -168,7 +168,6 @@ class TradeCraftDataFile {
     
     public ArrayList<TradeCraftDataInfo> shopsOwned(String name){
     	ArrayList<TradeCraftDataInfo> list = new ArrayList<TradeCraftDataInfo>();
-    	
     	for (String key : data.keySet()) {
     		TradeCraftDataInfo info = data.get(key);
     		if ( this.plugin.properties.getStrictPlayerShopOwnerNameRequired() ) {
