@@ -294,4 +294,23 @@ class TradeCraftDataFile {
     private String getKey(int x, int y, int z) {
         return x + "," + y + "," + z;
     }
+
+	public void createNewSign(String ownerName, TradeCraftConfigurationInfo itemInfo, Sign sign) {
+		String key = getKeyFromSign(sign);
+        if (data.containsKey(key)) {
+            TradeCraftDataInfo info = data.get(key);
+            info.ownerName = ownerName;
+            info.currencyAmount = 0;
+            info.itemAmount = 0;
+            info.itemType = itemInfo.type;
+        } else {
+            TradeCraftDataInfo info = new TradeCraftDataInfo();
+            info.ownerName = ownerName;
+            info.currencyAmount = 0;
+            info.itemAmount = 0;
+            info.itemType = itemInfo.type;
+            data.put(key, info);
+        }
+        save();
+	}
 }

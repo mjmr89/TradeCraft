@@ -5,19 +5,15 @@ Digi said:
  - Also, could you add a feature to place signs ON chests (like Lockette) ?
  - Protection of chest contents while you're using it... or something, so other people don't just sit by and wait for you to buy and steal your stuff.
  - The sign labels would be better understood if they're: "Buy 5 for 1" and "Sell 5 for 1" and you should suppot texts like "Buy 5 for 1g" or "Buy5for1" etc.
- - The sign shouldn't require you to type your name since you can only make shops for yourself, it should overwrite the last line with your nickname.
- 
-?MOVE TradeCraft.getShopFromSignBlock(Player player, Block block) {
- Which creates the actual shops, to the sign change code, that way we have a handle on the player who
- placed the chest and can put down the full name. Which already seems to happen partially, but not for real?!
  
  - limit currency and configured items to valid data values
  - Allow administrators to disable infinite shops using a command and storing that setting in TradeCraft.properties.
  - Allow setting of currency by name (basic names from Bukkit, or also as defined in config?) again.
- 
+ - warn when config files use old format?
  
  Coding issue:
  - chest.getContents --> item.getData().getData() always seems to return 0, workaround with using getDurability which accesses the same data. 
+ - items with 'damage' bits too high will act as the basic item, but cannot be traded or stacked as such. Be careful not to create these.
  
  
  Done: 
@@ -25,4 +21,4 @@ Digi said:
  - (gsand) Would it be possible to make it so players can buy 6 items for 2 gold, but not 3 for 1 gold.
  - The wool, dye, log, etc sub-items (just re-mentioning, I understand it's gonna be possible in #564+)
  - Additional information about current amount of items and currency available when right clicking as client.
-  
+ - You don't have to write your name on the sign of a player shop anymore. Also, too long names will be stored just fine, but will show abbreviated on the sign.    

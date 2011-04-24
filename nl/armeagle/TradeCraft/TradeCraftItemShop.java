@@ -71,30 +71,50 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         
         if (getChestItemCount() == 0) {
             if (playerCanBuy && playerCanBuy()) {
-                plugin.sendMessage(player,
-                        "You can buy %1$d %2$s for %3$d "+ plugin.getCurrencyName() +".",
-                        getBuyAmount(),
-                        getItemName(),
-                        getBuyValue());
+            	if ( this instanceof TradeCraftInfiniteShop ) {
+	                plugin.sendMessage(player,
+	                        "You can buy %1$d %2$s for %3$d %4$s.",
+	                        getBuyAmount(),
+	                        getItemName(),
+	                        getBuyValue(),
+	                        plugin.getCurrencyName());            		
+            	} else {
+	                plugin.sendMessage(player,
+	                        "You can buy %1$d %2$s for %3$d %4$s, up to %5$d.",
+	                        getBuyAmount(),
+	                        getItemName(),
+	                        getBuyValue(),
+	                        plugin.getCurrencyName(),
+	                        this.getItemsInShop());
+            	}
             }
 
             if (playerCanSell && playerCanSell()) {
-                plugin.sendMessage(player,
-                        "You can sell %1$d %2$s for %3$d "+ plugin.getCurrencyName() +".",
-                        getSellAmount(),
-                        getItemName(),
-                        getSellValue());
+            	if ( this instanceof TradeCraftInfiniteShop ) {
+	                plugin.sendMessage(player,
+	                        "You can sell %1$d %2$s for %3$d %4$s.",
+	                        getSellAmount(),
+	                        getItemName(),
+	                        getSellValue(),
+	                        plugin.getCurrencyName());
+            	} else {
+	                plugin.sendMessage(player,
+	                        "You can sell %1$d %2$s for %3$d %4$s, up to %5$d %4$s.",
+	                        getSellAmount(),
+	                        getItemName(),
+	                        getSellValue(),
+	                        plugin.getCurrencyName(),
+	                        this.getCurrencyInShop());
+            	}
             }
             
             if ( this instanceof TradeCraftInfiniteShop ) {
             	plugin.sendMessage(player, "This is an infinite shop");
-            } else {
-            	plugin.sendMessage(player, "The shop contains "+ this.getItemsInShop() +" of "+ this.getItemName() +" and can buy for a total of "+ this.getCurrencyInShop() +" "+ this.plugin.getCurrencyName());
             }
-            plugin.sendMessage(player, "There are no items in the chest.");
             return;
         }
 
+        plugin.trace(player, "%s %s %s", getChestItemType(), TradeCraft.currency, getItemType());
         if ( getChestItemType().compareTo(TradeCraft.currency) == 0 ) {
             if (!playerCanBuy) {
                 plugin.sendMessage(player, "You are not allowed to buy from shops!");

@@ -28,7 +28,6 @@ public class TradeCraft extends JavaPlugin {
 	// The plugin name.
 	static final String pluginName = "TradeCraft";
 
-	private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\D+(\\d+)\\s*");
 	public static final Pattern itemPatternIdSplitData = Pattern.compile("^(\\d+)(?:;(\\d+))?$");
 
 	// Stuff used to interact with the server.
@@ -270,7 +269,9 @@ public class TradeCraft extends JavaPlugin {
 			return null;
 		}
 
-		String ownerName = getOwnerName(sign.getLine(3));
+		// TODO change to use chest getOwner
+		//String ownerName = getOwnerName(sign.getLine(3));
+		String ownerName = data.getOwnerOfSign(sign);
 
 		if (ownerName == null) {
 			trace(player, "There is no owner name on the sign.");
@@ -337,20 +338,14 @@ public class TradeCraft extends JavaPlugin {
 		return null;
 	}
 
-	TradeCraftExchangeRate getExchangeRate(Sign sign, int lineNumber) {
-		TradeCraftExchangeRate rate = new TradeCraftExchangeRate();
-
-		String signText = sign.getLine(lineNumber);
-
-		Matcher matcher = ratePattern.matcher(signText);
-
-		if (matcher.find()) {
-			rate.amount = Integer.parseInt(matcher.group(1));
-			rate.value = Integer.parseInt(matcher.group(2));
+	TradeCraftExchangeRate getExchangeRate(String[] signLines, int lineNumber) {
+		if ( lineNumber < 0 || lineNumber >= signLines.length ) {
+			return null;
 		}
-
-		return rate;
+		return getExchangeRate(signLines[lineNumber]);
 	}
+	TradeCraftExchangeRate getExchangeRate(String signLine) {
+		return new TradeCraftExchangeRate(signLine);	}
 
 	static int getMaxStackSize(int itemType) {
 		return Material.getMaterial(itemType).getMaxStackSize();

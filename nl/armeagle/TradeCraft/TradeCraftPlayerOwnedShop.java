@@ -14,15 +14,11 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     public TradeCraftPlayerOwnedShop(TradeCraft plugin, Sign sign, Chest chest, String ownerName) {
         super(plugin, sign, chest);
 
-//        ownerName = plugin.data.getOwnerOfSign(sign);
         this.ownerName = ownerName;
-        itemName = plugin.getItemName(sign.getLines());
-        itemType = plugin.configuration.get(itemName).type;
-        buyRate = plugin.getExchangeRate(sign, 1);
-        sellRate = plugin.getExchangeRate(sign, 2);
-        
-//        plugin.getServer().broadcastMessage("owner" + ownerName + " itemname " + itemName + 
-//        		" item type " + itemType + " buyrate " + buyRate + " sell rate" + sellRate);
+        this.itemName = plugin.getItemName(sign.getLines());
+        this.itemType = plugin.configuration.get(this.itemName).type;
+        this.buyRate = new TradeCraftExchangeRate(sign.getLine(1));
+        this.sellRate = new TradeCraftExchangeRate(sign.getLine(2));
     }
 
     public boolean playerCanDestroy(Player player) {

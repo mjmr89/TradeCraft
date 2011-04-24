@@ -88,35 +88,47 @@ public class TradeCraftBlockListener extends BlockListener{
 		
 		Player player = e.getPlayer();
 		Sign sign = (Sign) e.getBlock().getState();
-        String ownerName = plugin.getOwnerName(e.getLine(3));
+        String ownerName = player.getName();
 
-        if (ownerName == null) {
-            String itemName = plugin.getItemName(e.getLines());
+        String itemName = plugin.getItemName(e.getLines());
 
-            if (itemName == null) {
-                return;
-            }
-            
-            // Check whether this is an existing item. Try to prevent as little normal sign placement as possible.
-            // Only treat signs with "[name]" as item line where "name" is found in the configuration (.txt) file.
-            if ( plugin.configuration.get(itemName) == null ) {
-            	return;
-            }
+        if (itemName == null) {
+            plugin.trace(player, "sign change, no item name, ignore");
+            return;
+        }
+        // Check whether this is an existing item. Try to prevent as little normal sign placement as possible.
+        // Only treat signs with "[name]" as item line where "name" is found in the configuration (.txt) file.
+        TradeCraftConfigurationInfo itemInfo = plugin.configuration.get(itemName); 
+        if ( itemInfo == null ) {
+            plugin.trace(player, "sign change, %s is not a valid item name, ignore this sign", itemName);
+            return;
+        }
 
+        TradeCraftExchangeRate buyRate = new TradeCraftExchangeRate(e.getLine(1));
+        TradeCraftExchangeRate sellRate = new TradeCraftExchangeRate(e.getLine(2));
+        // no buy rate means this is an infinite shop
+        if ( !buyRate.isValid() && !sellRate.isValid() ) {
             if (plugin.permissions.canMakeInfShops(player)){
+                plugin.trace(player, "sign change, infinite chest of %s", itemName);
             	return;
             }
             
             plugin.sendMessage(player, "You can't create infinite shops!");
             e.setCancelled(true);
-            
             return;
         }
-
-        if ( plugin.permissions.canMakePlayerShops(player)){
-            return;
+        // there is a buy rate, so this is a player owned shop
+        if ( !plugin.permissions.canMakePlayerShops(player)){
+	        plugin.sendMessage(player, "You do not have the permission to create a player shop!");
+	        e.setCancelled(true);
+	        return;
         }
 
+        plugin.trace(player, "Setting owner of sign to: %s", ownerName);
+        // set the player name on the last line
+        e.setLine(3, "-"+ ownerName.substring(0, Math.min(ownerName.length(), 15)) +"-");
+        plugin.data.createNewSign(ownerName, itemInfo, sign);
+        /*
         if ( this.plugin.properties.getStrictPlayerShopOwnerNameRequired() ) {
         	if (player.getName().equalsIgnoreCase(ownerName)) {
         		plugin.data.setOwnerOfSign(player.getName(), sign);
@@ -128,11 +140,8 @@ public class TradeCraftBlockListener extends BlockListener{
         		return;
         	}
         }
-
-        plugin.sendMessage(player, "You can't create signs with other players names on them!");
-        e.setCancelled(true);
+        */
         
         return;
     }
-
 }
