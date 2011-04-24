@@ -38,6 +38,7 @@ public class TradeCraft extends JavaPlugin {
 	static TradeCraftItem currency;
 	TradeCraftPropertiesFile properties;
 	TradeCraftConfigurationFile configuration;
+	public TradeCraftLocalization localization;
 	TradeCraftDataFile data;
 
 	private final TradeCraftBlockListener blockListener = new TradeCraftBlockListener(this);
@@ -52,6 +53,7 @@ public class TradeCraft extends JavaPlugin {
 	public void onDisable() {
 		properties = null;
 		configuration = null;
+		this.localization = null;
 		data.save();
 		data = null;
 	}
@@ -60,6 +62,7 @@ public class TradeCraft extends JavaPlugin {
 		properties = new TradeCraftPropertiesFile(this);
 		configuration = new TradeCraftConfigurationFile(this);
 		data = new TradeCraftDataFile(this);
+		this.localization = new TradeCraftLocalization(this);
 		
 		configuration.load();
 		data.load();
@@ -80,8 +83,7 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		String name = command.getName();
 		Player p;
 
@@ -90,31 +92,39 @@ public class TradeCraft extends JavaPlugin {
 
 			if (name.equalsIgnoreCase("setcurrency") && args.length == 1) {
 				if ( !this.permissions.canSetCurrency(p) ) {
-					p.sendMessage("You do not have the permission to set the currency");
+					p.sendMessage(TradeCraftLocalization.get("NO_PERMISSION_SET_CURRENCY"));
 				} else {
 					TradeCraftItem testCurrency = null;
 					// try to split ID and Data, separated by a semicolon mark
 	                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[0]);
 	                
 	                if ( !IdSplitData.matches() ) {
-	                	p.sendMessage(args[0] +" is not a valid value for a currency, use 'id[;data]'");
+	                	p.sendMessage(args[0] +" "+ TradeCraftLocalization.get("IS_NO_VALID_CURRENCY_USE_INSTEAD"));
 	                	return false;
 	                }
 	                
-					int cid = Integer.parseInt(IdSplitData.group(1));
-					if ( IdSplitData.group(2) != null ) {
-						testCurrency = new TradeCraftItem(cid, Short.parseShort(IdSplitData.group(2)));
-					} else {
-						testCurrency = new TradeCraftItem(cid);
-					}
+	                try {
+	                	int cid = Integer.parseInt(IdSplitData.group(1));
+	                	if ( IdSplitData.group(2) != null ) {
+							testCurrency = new TradeCraftItem(cid, Short.parseShort(IdSplitData.group(2)));
+						} else {
+							testCurrency = new TradeCraftItem(cid);
+						}
+						if ( this.configuration.get(testCurrency) != null ) {
+							currency = testCurrency;
+							this.properties.setCurrencyType(currency);
+							p.sendMessage(TradeCraftLocalization.get("CURRENCY_IS_SET_TO")+" "+ this.getCurrencyName());
+						} else {
+							p.sendMessage(TradeCraftLocalization.get("INVALID_CURRENCY")+" "+ args[0]);
+						}
+	                } catch ( NumberFormatException e ) {
+ 						p.sendMessage(TradeCraftLocalization.get("INVALID_CURRENCY")+" "+ args[0]);
+	                }
 					
-					currency = testCurrency;
-					this.properties.setCurrencyType(currency);
-					p.sendMessage("Currency is set to " + this.getCurrencyName());
 				}
 			} else if (name.equalsIgnoreCase("displaycurrency")
 					&& args.length == 0) {
-				p.sendMessage("Currency is: " + this.getCurrencyName());
+				p.sendMessage(TradeCraftLocalization.get("CURRENCY_IS") +" "+ this.getCurrencyName());
 			} else if (name.equalsIgnoreCase("canplayer") && args.length == 1) {
 				permissions.debug(args[0]);
 			} else if (name.equalsIgnoreCase("myshops")) {
@@ -132,14 +142,14 @@ public class TradeCraft extends JavaPlugin {
 		String name = p.getName();
 		ArrayList<TradeCraftDataInfo> list = data.shopsOwned(name);
 		if (list.size() == 0) {
-			p.sendMessage("You don't own any shops!");
+			p.sendMessage(TradeCraftLocalization.get("YOU_DONT_OWN_ANY_SHOPS"));
 			return;
 		}
-		p.sendMessage("Your shops:");
+		p.sendMessage(TradeCraftLocalization.get("YOUR_SHOPS"));
 		for (TradeCraftDataInfo info : list) {
-			p.sendMessage("Item: " + this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
-					+ " Amount: " + info.itemAmount + " "
-					+ this.getCurrencyName() +": " + info.currencyAmount);
+			p.sendMessage(TradeCraftLocalization.get("ITEM") +": "+ this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
+					+" "+ TradeCraftLocalization.get("AMOUNT") +": "+ info.itemAmount +" "
+					+ this.getCurrencyName() +": "+ info.currencyAmount);
 
 		}
 

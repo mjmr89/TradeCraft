@@ -13,6 +13,7 @@ import org.bukkit.util.config.Configuration;
 public class TradeCraftPropertiesFile {
 	private static final String fileName = TradeCraft.pluginName + ".properties";
     private static final String filePath = "plugins" + File.separator + TradeCraft.pluginName;
+    public static final String defaultLanguage = "en";
     
     private TradeCraft plugin;
     private final Configuration properties;
@@ -92,5 +93,9 @@ public class TradeCraftPropertiesFile {
 
     public boolean getEnableDebugMessages() {
         return properties.getBoolean("enable-debug-messages", false);
+    }
+    
+    public String getLanguage() {
+    	return properties.getString("language", TradeCraftPropertiesFile.defaultLanguage);
     }
 }
