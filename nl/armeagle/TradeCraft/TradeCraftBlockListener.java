@@ -44,14 +44,14 @@ public class TradeCraftBlockListener extends BlockListener{
         			shop.shopCanBeWithdrawnFrom() ) {
         		// cannot destroy this shop, so cancel destruction, use distinct error messages 
         		if ( shop.shopCanBeWithdrawnFrom() ) {
-                    plugin.sendMessage(player, "All items and currency must be withdrawn before you can destroy this sign or chest!");
+                    plugin.sendMessage(player, TradeCraftLocalization.get("ALL_ITEMS_MUST_BE_WITHDRAWN"));
         		} else {
         			if ( block.getType() == Material.WALL_SIGN ) {
-        				plugin.sendMessage(player, "You can't destroy this sign!");
+        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_SIGN"));
         			} else if ( block.getType() == Material.CHEST ) {
-        				plugin.sendMessage(player, "You can't destroy this chest!");
+        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_CHEST"));
         			} else {
-        				plugin.sendMessage(player, "You can't destroy this block because there are signs attached to it!");
+        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_BLOCK_ATTACHED"));
         			}
         		}
         		stopDestruction(block,e);
@@ -113,13 +113,13 @@ public class TradeCraftBlockListener extends BlockListener{
             	return;
             }
             
-            plugin.sendMessage(player, "You can't create infinite shops!");
+            plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_CREATE_INF_SHOPS"));
             e.setCancelled(true);
             return;
         }
         // there is a buy rate, so this is a player owned shop
         if ( !plugin.permissions.canMakePlayerShops(player)){
-	        plugin.sendMessage(player, "You do not have the permission to create a player shop!");
+	        plugin.sendMessage(player, TradeCraftLocalization.get("YOU_DONT_HAVE_PERM_CREATE_PLAYER_SHOP"));
 	        e.setCancelled(true);
 	        return;
         }

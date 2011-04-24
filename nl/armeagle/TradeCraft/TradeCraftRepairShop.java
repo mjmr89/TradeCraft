@@ -19,22 +19,29 @@ public class TradeCraftRepairShop extends TradeCraftShop {
         int repairCost = plugin.properties.getRepairCost();
 
         if (currencyAmount == 0 && items.size() == 0) {
-            plugin.sendMessage(player, "It costs %d "+ plugin.getCurrencyName() +" to repair an item.", repairCost);
+            plugin.sendMessage(player, TradeCraftLocalization.get("IT_COSTS_X_A_TO_REPAIR_AN_ITEM"),
+            				   repairCost,
+            				   plugin.getCurrencyName());
             return;
         }
 
         int actualCost = items.size() * repairCost;
 
         if (items.size() == 0) {
-            plugin.sendMessage(player, "With this much "+ plugin.getCurrencyName() +", you can repair %d items.", currencyAmount / repairCost);
+            plugin.sendMessage(player, TradeCraftLocalization.get("WITH_THIS_MUCH_A_YOU_CAN_REPAIR_Y_ITEMS"),
+            				   plugin.getCurrencyName(),
+            				   currencyAmount / repairCost);
             return;
         }
 
         if (currencyAmount < actualCost) {
             if (currencyAmount > 0) {
-                plugin.sendMessage(player, "That's not enough "+ plugin.getCurrencyName() +".");
+                plugin.sendMessage(player, TradeCraftLocalization.get("THAT_IS_NOT_ENOUGH_A"),
+                		  	       plugin.getCurrencyName());
             }
-            plugin.sendMessage(player, "You need %d "+ plugin.getCurrencyName() +" to repair all this.", actualCost);
+            plugin.sendMessage(player, TradeCraftLocalization.get("YOU_NEED_X_A_TO_REPAIR_ALL_THIS"),
+            		           actualCost,
+            		           plugin.getCurrencyName());
             return;
         }
 
@@ -51,7 +58,10 @@ public class TradeCraftRepairShop extends TradeCraftShop {
 
         chest.update();
 
-        plugin.sendMessage(player, "You repaired %d items for %d "+ plugin.getCurrencyName() +".", items.size(), actualCost);
+        plugin.sendMessage(player, TradeCraftLocalization.get("YOU_REPAIRED_X_ITEMS_FOR_Y_B"),
+        				   items.size(),
+        				   actualCost,
+        				   plugin.getCurrencyName());
     }
 
     public boolean playerCanDestroy(Player player) {
