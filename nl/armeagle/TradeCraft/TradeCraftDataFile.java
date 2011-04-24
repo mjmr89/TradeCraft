@@ -170,17 +170,10 @@ class TradeCraftDataFile {
     	ArrayList<TradeCraftDataInfo> list = new ArrayList<TradeCraftDataInfo>();
     	for (String key : data.keySet()) {
     		TradeCraftDataInfo info = data.get(key);
-    		if ( this.plugin.properties.getStrictPlayerShopOwnerNameRequired() ) {
-    			if(info.ownerName.equalsIgnoreCase(name)){
-    				list.add(info);
-    			}
-    		} else {
-    			if ( name.indexOf(info.ownerName) == 0 ) {
-    				list.add(info);
-    			}
-    		}
+  			if(info.ownerName.equalsIgnoreCase(name)){
+   				list.add(info);
+   			}
     	}
-    	
     	
     	return list;
     }

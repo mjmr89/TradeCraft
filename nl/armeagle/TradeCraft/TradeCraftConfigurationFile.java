@@ -12,6 +12,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The name of this class is a bit misleading. This class stores all the items and their default
+ * trade rates that can be used in the game. The actual configuration of the plugin itself
+ * is handled by the TradeCraftProperties class.
+ */
 class TradeCraftConfigurationFile {
     private static final String fileName = TradeCraft.pluginName + ".txt";
     private static final String filePath = "plugins" + File.separator + TradeCraft.pluginName;

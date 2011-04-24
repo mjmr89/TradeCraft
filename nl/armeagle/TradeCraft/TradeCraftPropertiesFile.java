@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.bukkit.util.config.Configuration;
 
+/**
+ * This class, handles the actual configuration of the plugin. The TradeCraftConfiguration class
+ * actually handles all the items that can be used by the shops in the game.
+ */
 public class TradeCraftPropertiesFile {
 	private static final String fileName = TradeCraft.pluginName + ".properties";
     private static final String filePath = "plugins" + File.separator + TradeCraft.pluginName;
@@ -88,9 +92,5 @@ public class TradeCraftPropertiesFile {
 
     public boolean getEnableDebugMessages() {
         return properties.getBoolean("enable-debug-messages", false);
-    }
-    
-    public boolean getStrictPlayerShopOwnerNameRequired() {
-    	return properties.getBoolean("strict-playershop-owner-name", true);
     }
 }
