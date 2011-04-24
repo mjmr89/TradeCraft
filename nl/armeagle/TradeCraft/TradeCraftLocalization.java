@@ -7,9 +7,17 @@ import java.io.InputStream;
 
 import org.bukkit.util.config.Configuration;
 
+/**
+ * 
+ * @author ArmEagle
+ * Localization support.
+ *  
+ * You can put different language files in the plugins/TradeCraft/ folder, similar to the default TradeCraft.en.lang.
+ * There is a "language" option in the TradeCraft.properties file (default: "en") with which you can then select
+ * such other language file to be used.
+ */
 public class TradeCraftLocalization {
-	private static final String replaceString = "##lang##";
-	private static final String filePreName = TradeCraft.pluginName + "."+ TradeCraftLocalization.replaceString +".lang";
+	private static final String filePreName = TradeCraft.pluginName + ".%1$s.lang";
     private static final String filePath = "plugins" + File.separator + TradeCraft.pluginName;
 
     private TradeCraft plugin;
@@ -28,7 +36,7 @@ public class TradeCraftLocalization {
     	path = null;
     	
     	// if file does not exist in this directory, copy it from the jar
-    	String fileName = TradeCraftLocalization.filePreName.replace(TradeCraftLocalization.replaceString, this.language);
+    	String fileName = String.format(TradeCraftLocalization.filePreName, this.language);
     	File file = new File(filePath + File.separator + fileName);
     	if ( !file.exists() ) {
     		InputStream input = this.getClass().getResourceAsStream("/" + fileName);
@@ -38,7 +46,7 @@ public class TradeCraftLocalization {
 			if ( input == null ) {
 				this.plugin.log.info(fileName +" was not found in "+ TradeCraft.pluginName +".jar, using default language \""+ TradeCraftPropertiesFile.defaultLanguage +"\" instead");
 				this.language = TradeCraftPropertiesFile.defaultLanguage;
-				fileName = TradeCraftLocalization.filePreName.replace(TradeCraftLocalization.replaceString, this.language);
+				fileName = String.format(TradeCraftLocalization.filePreName, this.language);
 				file = new File(filePath + File.separator + fileName);
 		    	if ( !file.exists() ) {
 		    		input = this.getClass().getResourceAsStream("/" + fileName);
