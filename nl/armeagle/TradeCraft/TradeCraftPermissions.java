@@ -52,7 +52,7 @@ public class TradeCraftPermissions {
 		if(plugin.permEnabled == true){
 			return permHandler.has(p, "TradeCraft.canMakePlayerShops");
 		}else
-				return p.isOp();
+				return true;
 	}
 	
 	public boolean canDestroyShops(Player p){
