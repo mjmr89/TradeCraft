@@ -28,7 +28,7 @@ public class TradeCraft extends JavaPlugin {
 	// The plugin name.
 	static final String pluginName = "TradeCraft";
 
-	private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\s*:\\s*(\\d+)\\s*");
+	private static final Pattern ratePattern = Pattern.compile("\\s*(\\d+)\\D+(\\d+)\\s*");
 	public static final Pattern itemPatternIdSplitData = Pattern.compile("^(\\d+)(?:;(\\d+))?$");
 
 	// Stuff used to interact with the server.

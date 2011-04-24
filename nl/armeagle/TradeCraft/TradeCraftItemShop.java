@@ -95,7 +95,6 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             return;
         }
 
-        plugin.log.info(getChestItemType() +" "+ TradeCraft.currency +" "+ getItemType());
         if ( getChestItemType().compareTo(TradeCraft.currency) == 0 ) {
             if (!playerCanBuy) {
                 plugin.sendMessage(player, "You are not allowed to buy from shops!");
