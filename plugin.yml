@@ -2,15 +2,15 @@ name: TradeCraft
 main: nl.armeagle.TradeCraft.TradeCraft
 version: AE-1.0.0-beta1
 commands:
-    myshops:
-        description: See a printout of any personal shops you have
-        usage: 
-    setCurrency:
-        description:  Set the currency used.
-        usage: Enter an id or a material name (using _ as spaces)
-    displayCurrency:
-        description: Check what currency is being used.
-        usage: Displays the current material name of the currency used.
-    canPlayer:
-        description:  See what permissions a player has regarding TradeCraft
-        usage: enter a user name
+    tc:
+        help:
+            description: Show TradeCradt command help
+        shops:
+            description: See a printout of any personal shops you have
+            usage: 
+        currency:
+            description:  Get/set the currency used.
+            usage: Enter an id with an optional data value separated by a semicolon
+        reload:
+            description: reload the script and with that all the configuration files
+            usage:

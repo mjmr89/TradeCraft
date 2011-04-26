@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
@@ -17,6 +18,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -33,6 +35,8 @@ public class TradeCraft extends JavaPlugin {
 	static final String pluginName = "TradeCraft";
 
 	public static final Pattern itemPatternIdSplitData = Pattern.compile("^(\\d+)(?:;(\\d+))?$");
+
+	private static final String CommandString = "tc";
 
 	// Stuff used to interact with the server.
 	final Logger log = Logger.getLogger("Minecraft");
@@ -55,6 +59,9 @@ public class TradeCraft extends JavaPlugin {
 	public static boolean hasRegisteredEventListeners = false;
 
 	public void onDisable() {
+		this.disable();
+	}
+	private void disable() {
 		properties = null;
 		configuration = null;
 		this.localization = null;
@@ -63,6 +70,9 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	public void onEnable() {
+		this.enable();
+	}
+	private void enable() {
 		properties = new TradeCraftPropertiesFile(this);
 		configuration = new TradeCraftConfigurationFile(this);
 		data = new TradeCraftDataFile(this);
@@ -94,47 +104,68 @@ public class TradeCraft extends JavaPlugin {
 		if (sender instanceof Player) {
 			p = (Player) sender;
 
-			if (name.equalsIgnoreCase("setcurrency") && args.length == 1) {
-				if ( !this.permissions.canSetCurrency(p) ) {
-					p.sendMessage(TradeCraftLocalization.get("NO_PERMISSION_SET_CURRENCY"));
+			if ( name.equalsIgnoreCase(TradeCraft.CommandString) ) {
+				if ( args.length == 0 || args[0].compareToIgnoreCase("help") == 0 ) {
+					displayCommandHelpText(p);
+				} else if ( args[0].compareToIgnoreCase("currency") == 0 ) {
+					if ( args.length == 2 && this.permissions.canSetCurrency(p) ) {
+						TradeCraftItem testCurrency = null;
+						// try to split ID and Data, separated by a semicolon mark
+		                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[1]);
+		                
+		                if ( !IdSplitData.matches() ) {
+		                	this.sendMessage(p, TradeCraftLocalization.get("IS_NO_VALID_CURRENCY_USE_INSTEAD"),
+		                				     args[1]);
+		                	return false;
+		                }
+		                
+		                try {
+		                	int cid = Integer.parseInt(IdSplitData.group(1));
+		                	if ( IdSplitData.group(2) != null ) {
+								testCurrency = new TradeCraftItem(cid, Short.parseShort(IdSplitData.group(2)));
+							} else {
+								testCurrency = new TradeCraftItem(cid);
+							}
+							if ( this.configuration.get(testCurrency) != null ) {
+								currency = testCurrency;
+								this.properties.setCurrencyType(currency);
+								this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_SET_TO"),
+													this.getCurrencyName());
+							} else {
+								this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
+													args[1]);
+			                	return false;
+							}
+		                } catch ( NumberFormatException e ) {
+	 						this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
+	 											args[1]);
+		                	return false;
+		                }
+					} else {
+						this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS"),
+										    this.getCurrencyName());
+					}
+				} else if ( args[0].equalsIgnoreCase("shops") ) {
+					displayShops(p);
+				} else if ( args[0].equalsIgnoreCase("reload") && this.permissions.canReload(p) ) {
+					this.sendMessage(p, TradeCraftLocalization.get("RESTARTING_PLUGIN"),
+										TradeCraft.pluginName);
+					this.disable();
+					this.enable();
+					this.sendMessage(p, TradeCraftLocalization.get("RESTARTING_PLUGIN_DONE"),
+										TradeCraft.pluginName);
 				} else {
-					TradeCraftItem testCurrency = null;
-					// try to split ID and Data, separated by a semicolon mark
-	                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[0]);
-	                
-	                if ( !IdSplitData.matches() ) {
-	                	p.sendMessage(args[0] +" "+ TradeCraftLocalization.get("IS_NO_VALID_CURRENCY_USE_INSTEAD"));
-	                	return false;
-	                }
-	                
-	                try {
-	                	int cid = Integer.parseInt(IdSplitData.group(1));
-	                	if ( IdSplitData.group(2) != null ) {
-							testCurrency = new TradeCraftItem(cid, Short.parseShort(IdSplitData.group(2)));
-						} else {
-							testCurrency = new TradeCraftItem(cid);
-						}
-						if ( this.configuration.get(testCurrency) != null ) {
-							currency = testCurrency;
-							this.properties.setCurrencyType(currency);
-							p.sendMessage(TradeCraftLocalization.get("CURRENCY_IS_SET_TO")+" "+ this.getCurrencyName());
-						} else {
-							p.sendMessage(TradeCraftLocalization.get("INVALID_CURRENCY")+" "+ args[0]);
-						}
-	                } catch ( NumberFormatException e ) {
- 						p.sendMessage(TradeCraftLocalization.get("INVALID_CURRENCY")+" "+ args[0]);
-	                }
-					
+					return false;
 				}
-			} else if (name.equalsIgnoreCase("displaycurrency")
-					&& args.length == 0) {
-				p.sendMessage(TradeCraftLocalization.get("CURRENCY_IS") +" "+ this.getCurrencyName());
-			} else if (name.equalsIgnoreCase("canplayer") && args.length == 1) {
-				permissions.debug(args[0]);
-			} else if (name.equalsIgnoreCase("myshops")) {
-				displayShops(p);
 			}
-
+		} else if ( sender instanceof ConsoleCommandSender ) {
+			if ( name.equalsIgnoreCase(TradeCraft.CommandString) ) {
+				if ( args[0].equalsIgnoreCase("canplayer") && args.length == 2) {
+					permissions.debug(args[1]);
+					return true;
+				}
+			}
+			return false;
 		} else {
 			return false;
 		}
@@ -404,6 +435,22 @@ public class TradeCraft extends JavaPlugin {
 	    	return name;
 		}
     }
+
+	private void displayCommandHelpText(Player player) {
+		this.sendMessage(player, TradeCraftLocalization.get("POSSIBLE_COMMANDS_FOR_THE_PLUGIN"),
+								 TradeCraft.pluginName);
+		this.sendMessage(player, "/tc [help]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
+		this.sendMessage(player, "/tc shops"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_SHOPS"));
+		if ( this.permissions.canSetCurrency(player) ) {
+			this.sendMessage(player, "/tc currency [id[;data]]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_OPT_PARAM_GETSET_CURRENCY"));
+		} else {
+			this.sendMessage(player, "/tc currency"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_GET_CURRENCY"));
+		}
+		if ( this.permissions.canReload(player) ) {
+			this.sendMessage(player, "/tc reload"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_RELOAD"));
+		}
+	}
+
 	
 	/**
 	 * Return the last modified time stamp of a resource with the given file path.
@@ -432,6 +479,7 @@ public class TradeCraft extends JavaPlugin {
 		// finally return the last modified time code
 		return lastModified;
 	}
+	
 	public void log(Level level, String format, Object... args) {
 		this.log.log(level, TradeCraft.pluginName +": "+ String.format(format, args));
 	}

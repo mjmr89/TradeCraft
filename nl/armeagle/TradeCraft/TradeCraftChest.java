@@ -12,15 +12,13 @@ class TradeCraftChest {
     public int total = 0;
     public boolean diffFlag = false;
     
-    
 
     public TradeCraftChest(Chest c) {
         chest = c.getInventory();
         
         for (ItemStack item : chest.getContents()) {
         	if(item != null){
-        		// TODO | DEBUG  item.getData() always seems to return null
-        		short itemData = item.getDurability(); //(item.getData() == null ? (short)0 : item.getData().getData());
+            	short itemData = (item.getData() == null ? (short)0 : item.getData().getData());
         		if(type.id != 0 && (type.id != item.getTypeId() || type.data != itemData) ){
         			diffFlag = true;
         			return;
@@ -29,10 +27,6 @@ class TradeCraftChest {
         		type.data = itemData;
         		total += item.getAmount();
         	}
-        	
-//            if (item != null) {
-//                addItem(item);
-//            }
         }
     }
 
@@ -72,8 +66,7 @@ class TradeCraftChest {
         int amount = 0;
         for (ItemStack item : ((Inventory)chest).getContents()) {
             if (item != null) {
-        		// TODO | DEBUG  item.getData() always seems to return null
-        		short itemData = item.getDurability(); //(item.getData() == null ? (short)0 : item.getData().getData());
+            	short itemData = (item.getData() == null ? (short)0 : item.getData().getData());
                 if (item.getTypeId() == TradeCraft.currency.id && itemData == TradeCraft.currency.data) {
                     amount += item.getAmount();
                 }
@@ -86,8 +79,7 @@ class TradeCraftChest {
         List<ItemStack> items = new ArrayList<ItemStack>();
         for (ItemStack item : chest.getContents()) {
             if (item != null) {
-        		// TODO | DEBUG  item.getData() always seems to return null
-        		short itemData = item.getDurability(); //(item.getData() == null ? (short)0 : item.getData().getData());
+            	short itemData = (item.getData() == null ? (short)0 : item.getData().getData());
                 if (item.getTypeId() != TradeCraft.currency.id || itemData != TradeCraft.currency.data) {
                     items.add(item);
                 }

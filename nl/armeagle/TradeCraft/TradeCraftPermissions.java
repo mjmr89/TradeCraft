@@ -70,10 +70,18 @@ public class TradeCraftPermissions {
 		}
 	}
 	
+	public boolean canReload(Player p) {
+		if ( plugin.permEnabled ) {
+			return permHandler.has(p, "TradeCraft.canReload");
+		} else {
+			return p.isOp();
+		}
+	}
+	
 	public void debug(String n){
 		Player p = plugin.getServer().getPlayer(n);
 		if(p == null){
-			plugin.getServer().broadcastMessage("/canPlayer used with a name of player who is not online.");
+			plugin.getServer().broadcastMessage("/tc canPlayer used with a name of player who is not online.");
 			return;
 		}
 		String name = p.getName();
