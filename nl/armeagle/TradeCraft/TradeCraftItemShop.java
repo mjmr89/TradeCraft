@@ -139,8 +139,16 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         }
 
         int currencyPlayerWantsToSpend = getChestItemCount();
-        int amountPlayerWantsToBuy = ((currencyPlayerWantsToSpend - (currencyPlayerWantsToSpend % getBuyValue()) ) / getBuyValue()) * getBuyAmount(); 
-
+        int amountPlayerWantsToBuy = ((currencyPlayerWantsToSpend - (currencyPlayerWantsToSpend % getBuyValue()) ) / getBuyValue()) * getBuyAmount();
+        if ( amountPlayerWantsToBuy > this.chest.getSize()*64 ) {
+        	if ( getBuyValue() > this.chest.getSize()*64 ) {
+        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_ALWAYS_RETURNS_TOO_MUCH"));
+        	} else {
+        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_WOULD_RETURN_TOO_MANY_BUY_LESS"));
+        	}
+        	return;
+        }
+        
         if (amountPlayerWantsToBuy == 0) {
             plugin.sendMessage(player,
                         TradeCraftLocalization.get("YOU_NEED_TO_SPEND_AT_LEAST_X_A_TO_GET_ANY_B"),

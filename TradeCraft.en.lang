@@ -38,6 +38,8 @@ CANNOT_BUY_SHOP_ONLY_HAS_X_A: "Cannot buy. This shop only has %1$d %2$s."
 YOU_NEED_TO_SELL_AT_LEAST_X_A_TO_GET_ANY_B: "You need to sell at least %1$d %2$s to get any %3$s."
 CANNOT_SELL_SHOP_ONLY_HAS_X_A: "Cannot sell. This shop only has %1$d %2$s."
 YOU_SOLD_X_A_FOR_Y_B: "You sold %1$d %2$s for %3$d %4$s."
+THIS_SHOP_ALWAYS_RETURNS_TOO_MUCH: "This shop always returns more goods than the chest could contain, contact the shop owner."
+THIS_SHOP_WOULD_RETURN_TOO_MANY_BUY_LESS: "This shop would return more goods than the chest could contain, try to buy less."
 
 # TradeCraftRepairShop.java
 IT_COSTS_X_A_TO_REPAIR_AN_ITEM: "It costs %1$d %2$s to repair an item."

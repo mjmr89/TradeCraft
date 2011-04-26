@@ -95,4 +95,8 @@ class TradeCraftChest {
         }
         return items;
     }
+    
+    public int getSize() {
+    	return (this.chest == null ? 0 : this.chest.getSize());
+    }
 }
