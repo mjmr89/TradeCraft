@@ -48,7 +48,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                 		populateChest(getItemType(), maxItemsChestCanHold);
                 		depositItems(itemAmount - maxItemsChestCanHold);
 	                    plugin.sendMessage(player, TradeCraftLocalization.get("WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A"),
-	                    						   itemAmount,
+	                    						   itemAmount - maxItemsChestCanHold,
 	                    						   getItemName(),
 	                    						   itemAmount - maxItemsChestCanHold);
                 	} else {
@@ -70,7 +70,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             		populateChest(getItemType(), maxItemsChestCanHold);
             		depositItems(itemAmount - maxItemsChestCanHold);
                     plugin.sendMessage(player, TradeCraftLocalization.get("WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A"),
-                    						   itemAmount,
+                    						   itemAmount - maxItemsChestCanHold,
                     						   getItemName(),
                     						   itemAmount - maxItemsChestCanHold);
             	} else {
