@@ -197,7 +197,15 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         int amountPlayerWantsToSell = getChestItemCount();
         int currencyPlayerShouldReceive = ((amountPlayerWantsToSell - (amountPlayerWantsToSell % getSellAmount())) / getSellAmount()) * getSellValue();
-
+        if ( currencyPlayerShouldReceive > this.chest.getSize()*64 ) {
+        	if ( getSellValue() > this.chest.getSize()*64 ) {
+        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_ALWAYS_RETURNS_TOO_MUCH_CURRENCY"), this.plugin.getCurrencyName());
+        	} else {
+        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_WOULD_RETURN_TOO_MUCH_CURRENCY_SELL_LESS"), this.plugin.getCurrencyName());
+        	}
+        	return;
+        }
+        
         if (currencyPlayerShouldReceive == 0) {
             plugin.sendMessage(player,
                         TradeCraftLocalization.get("YOU_NEED_TO_SELL_AT_LEAST_X_A_TO_GET_ANY_B"),
