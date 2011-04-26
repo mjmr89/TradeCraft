@@ -27,13 +27,34 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         if (getChestItemCount() == 0) {
             int currencyAmount = withdrawCurrency();
             if (currencyAmount > 0) {
-                populateChest(TradeCraft.currency, currencyAmount);
-                plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), currencyAmount, plugin.getCurrencyName());
+            	// limit amount of currency dropped into the chest to the max amount it can hold
+            	int maxCurrencyChestCanHold = chest.getSize() * TradeCraft.getMaxStackSize(TradeCraft.currency.id); 
+            	if ( currencyAmount > maxCurrencyChestCanHold ) {
+            		populateChest(TradeCraft.currency, maxCurrencyChestCanHold); // fill to the max
+            		depositCurrency(currencyAmount - maxCurrencyChestCanHold); // return remaining money back to shop data 
+            		plugin.sendMessage(player, TradeCraftLocalization.get("WITHDREW_X_CURRENCY_SHOP_STILL_HOLDS_Y_CURRENCY"),
+            								   maxCurrencyChestCanHold,
+            								   plugin.getCurrencyName(),
+            								   currencyAmount - maxCurrencyChestCanHold);
+            	} else {
+            		populateChest(TradeCraft.currency, currencyAmount);
+            		plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), currencyAmount, plugin.getCurrencyName());
+            	}
             } else {
                 int itemAmount = withdrawItems();
                 if (itemAmount > 0) {
-                    populateChest(getItemType(), itemAmount);
-                    plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), itemAmount, getItemName());
+                	int maxItemsChestCanHold = chest.getSize() * TradeCraft.getMaxStackSize(getChestItemType().id);
+                	if ( itemAmount > maxItemsChestCanHold ) {
+                		populateChest(getItemType(), maxItemsChestCanHold);
+                		depositItems(itemAmount - maxItemsChestCanHold);
+	                    plugin.sendMessage(player, TradeCraftLocalization.get("WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A"),
+	                    						   itemAmount,
+	                    						   getItemName(),
+	                    						   itemAmount - maxItemsChestCanHold);
+                	} else {
+	                    populateChest(getItemType(), itemAmount);
+	                    plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), itemAmount, getItemName());
+                	}
                 } else {
                     plugin.sendMessage(player, TradeCraftLocalization.get("THERE_IS_NOTHING_TO_WITHDRAW"));
                 }
@@ -140,14 +161,10 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         int currencyPlayerWantsToSpend = getChestItemCount();
         int amountPlayerWantsToBuy = ((currencyPlayerWantsToSpend - (currencyPlayerWantsToSpend % getBuyValue()) ) / getBuyValue()) * getBuyAmount();
-        if ( amountPlayerWantsToBuy > this.chest.getSize()*64 ) {
-        	if ( getBuyValue() > this.chest.getSize()*64 ) {
-        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_ALWAYS_RETURNS_TOO_MUCH"));
-        	} else {
-        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_WOULD_RETURN_TOO_MANY_BUY_LESS"));
-        	}
-        	return;
-        }
+    	if ( getBuyAmount() > this.chest.getSize() * TradeCraft.getMaxStackSize(getItemType().id) ) {
+    		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_ALWAYS_RETURNS_TOO_MUCH"));
+    		return;
+    	}
         
         if (amountPlayerWantsToBuy == 0) {
             plugin.sendMessage(player,
@@ -174,6 +191,13 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         int requiredCurrencyForThatAmount = amountPlayerWantsToBuy * getBuyValue() / getBuyAmount();
 
+        if ( Math.ceil( (currencyPlayerWantsToSpend - requiredCurrencyForThatAmount) / TradeCraft.getMaxStackSize(TradeCraft.currency.id))
+        	 + Math.ceil( amountPlayerWantsToBuy / TradeCraft.getMaxStackSize(getItemType().id))
+        	 > this.chest.getSize() ) {
+        	plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_WOULD_RETURN_TOO_MANY_BUY_LESS"));
+        	return;
+        }
+        
         updateItemAndCurrencyAmounts(-amountPlayerWantsToBuy, requiredCurrencyForThatAmount);
 
         chest.clear();
@@ -197,14 +221,11 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         int amountPlayerWantsToSell = getChestItemCount();
         int currencyPlayerShouldReceive = ((amountPlayerWantsToSell - (amountPlayerWantsToSell % getSellAmount())) / getSellAmount()) * getSellValue();
-        if ( currencyPlayerShouldReceive > this.chest.getSize()*64 ) {
-        	if ( getSellValue() > this.chest.getSize()*64 ) {
-        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_ALWAYS_RETURNS_TOO_MUCH_CURRENCY"), this.plugin.getCurrencyName());
-        	} else {
-        		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_WOULD_RETURN_TOO_MUCH_CURRENCY_SELL_LESS"), this.plugin.getCurrencyName());
-        	}
-        	return;
-        }
+        // prevent too much currency (more than can fit in a chest) to be given to the customer
+       	if ( getSellValue() > this.chest.getSize() * TradeCraft.getMaxStackSize(TradeCraft.currency.id) ) {
+       		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_ALWAYS_RETURNS_TOO_MUCH_CURRENCY"), this.plugin.getCurrencyName());
+       		return;
+       	}
         
         if (currencyPlayerShouldReceive == 0) {
             plugin.sendMessage(player,
@@ -225,6 +246,14 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
 
         int amountThatCanBeSold = currencyPlayerShouldReceive * getSellAmount() / getSellValue();
 
+        // prevent too much items+currency stacks to end up in the chest
+        if ( Math.ceil( (amountPlayerWantsToSell - amountThatCanBeSold)/ TradeCraft.getMaxStackSize(getItemType().id) )
+        	 + Math.ceil( currencyPlayerShouldReceive / TradeCraft.getMaxStackSize(TradeCraft.currency.id) ) 
+             > chest.getSize() ) {
+    		plugin.sendMessage(player, TradeCraftLocalization.get("THIS_SHOP_WOULD_RETURN_TOO_MUCH_CURRENCY_SELL_LESS"), this.plugin.getCurrencyName());
+    		return;
+        }
+        
         updateItemAndCurrencyAmounts(amountThatCanBeSold, -currencyPlayerShouldReceive);
 
         chest.clear();

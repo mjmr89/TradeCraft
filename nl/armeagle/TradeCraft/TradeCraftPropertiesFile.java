@@ -98,4 +98,8 @@ public class TradeCraftPropertiesFile {
     public String getLanguage() {
     	return properties.getString("language", TradeCraftPropertiesFile.defaultLanguage);
     }
+    
+    public boolean autoUpdateLanguageFiles() {
+    	return properties.getBoolean("auto-update-language-files", true);
+    }
 }

@@ -1,6 +1,10 @@
 package nl.armeagle.TradeCraft;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -400,5 +404,36 @@ public class TradeCraft extends JavaPlugin {
 	    	return name;
 		}
     }
+	
+	/**
+	 * Return the last modified time stamp of a resource with the given file path.
+	 * @param filePath
+	 * @return -1 in case of errors, or else the seconds since epoch at which point this resource was last modified. 
+	 */
+	public static long resourceLastModified(String filePath) {
+		URL resource = TradeCraft.class.getResource(filePath);
+		if ( resource == null) {
+			return -1;
+		}
+		URLConnection resConn;
+		try {
+			resConn = resource.openConnection();
+		} catch ( IOException ioe ) {
+			return -1;
+		}
+		if ( resConn == null ) {
+			return -1;
+		}
+		long lastModified = resConn.getLastModified();
+		// calling getLastModified apparently opens an InputStream that should be closed
+		try {
+			resConn.getInputStream().close();
+		} catch ( Exception e ) {}
+		// finally return the last modified time code
+		return lastModified;
+	}
+	public void log(Level level, String format, Object... args) {
+		this.log.log(level, TradeCraft.pluginName +": "+ String.format(format, args));
+	}
 
 }

@@ -20,6 +20,8 @@ YOU_DONT_HAVE_PERM_CREATE_PLAYER_SHOP: "You do not have the permission to create
 # TradeCraftItemShop.java
 THE_CHEST_HAS_MORE_THAN_ONE_TYPE: "The chest has more than one type of item in it!"
 WITHDREW: "Withdrew"
+WITHDREW_X_CURRENCY_SHOP_STILL_HOLDS_Y_CURRENCY: "Withdrew the maximum %1$d %2$s, there is still %3$d %2$s in the shop."
+WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A: "Withdrew the maximum of %1$d %2$s, there are still %3$d %2$s in the shop."
 THERE_IS_NOTHING_TO_WITHDRAW: "There is nothing to withdraw."
 DEPOSITED: "Deposited"
 YOU_CANT_DEPOSIT_THAT_HERE: "You can't deposit that here!"

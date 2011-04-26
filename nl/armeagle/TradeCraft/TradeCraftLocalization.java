@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 
 import org.bukkit.util.config.Configuration;
 
@@ -35,26 +36,44 @@ public class TradeCraftLocalization {
     	}
     	path = null;
     	
-    	// if file does not exist in this directory, copy it from the jar
+    	// If file does not exist in this directory, copy it from the jar.
+    	// Or if the file in the jar was updated and the setting allows for automatic updating, then do so.
     	String fileName = String.format(TradeCraftLocalization.filePreName, this.language);
+    	
     	File file = new File(filePath + File.separator + fileName);
-    	if ( !file.exists() ) {
-    		InputStream input = this.getClass().getResourceAsStream("/" + fileName);
+    	
+    	if ( !file.exists()
+    		 || this.plugin.properties.autoUpdateLanguageFiles()
+    		 && TradeCraft.resourceLastModified("/"+ fileName) > file.lastModified() ) {
     		
+    		InputStream input = this.getClass().getResourceAsStream("/" + fileName);
     		// If this file does not exist (not a default supported language), then revert back to the default language file.
     		// That file will exist in the jar for sure
 			if ( input == null ) {
-				this.plugin.log.info(fileName +" was not found in "+ TradeCraft.pluginName +".jar, using default language \""+ TradeCraftPropertiesFile.defaultLanguage +"\" instead");
+				this.plugin.log(Level.INFO, "%1$s was not found in %2$s.jar, using default language \"%3$s\" instead",
+											fileName,
+											TradeCraft.pluginName,
+											TradeCraftPropertiesFile.defaultLanguage);
 				this.language = TradeCraftPropertiesFile.defaultLanguage;
 				fileName = String.format(TradeCraftLocalization.filePreName, this.language);
 				file = new File(filePath + File.separator + fileName);
-		    	if ( !file.exists() ) {
+				// check whether this file already exists, or else copy it over
+		    	if ( !file.exists() || this.plugin.properties.autoUpdateLanguageFiles()
+		       		 && TradeCraft.resourceLastModified("/"+ fileName) > file.lastModified()) {
 		    		input = this.getClass().getResourceAsStream("/" + fileName);
 		    	}
 			}
 			// if input is not null, then we need to copy the given file from the jar
 			if ( input != null ) {
-	    		this.plugin.log.info(filePath + File.separator + fileName +" does not exist, creating...");
+				if ( !file.exists() ) {
+					this.plugin.log(Level.INFO, "%1$s%2$s%3$s does not exist, creating...",
+												filePath,
+												File.separator,
+												fileName);
+				} else {
+					this.plugin.log(Level.INFO, "%1$s has a new version, updating...",
+							   				    fileName);
+				}
 
 	    		FileOutputStream output = null;
 	
@@ -82,7 +101,6 @@ public class TradeCraftLocalization {
 	            }
 			}
     	}
-    	
         TradeCraftLocalization.localization = new Configuration(file);
         TradeCraftLocalization.localization.load();
 	}

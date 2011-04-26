@@ -32,6 +32,7 @@ class TradeCraftDataFile {
     private final TradeCraft plugin;
     private final Map<String, TradeCraftDataInfo> data = new HashMap<String, TradeCraftDataInfo>();
     private final File dFile = new File(fileName);
+    public boolean wasLoaded = false;
 
 
     TradeCraftDataFile(TradeCraft plugin) {
@@ -130,9 +131,17 @@ class TradeCraftDataFile {
         } catch (IOException e) {
             plugin.log.warning("Error reading " + fileName);
         }
+        this.wasLoaded = true;
     }
 
     public void save() {
+    	if ( ! this.wasLoaded ) {
+    		this.plugin.log.severe("TradeCraft: failed to load data file when plugin was enabled, will not save to prevent loss of items.");
+    		// The failure should have been such that no interaction with shops would have been possible, so no items should have been lost since the plugin was
+    		// loaded till this save point. TODO, make sure that no items are lost, when save is actually called after motations, even though that situation
+    		// should never possibly occur.
+    		return;
+    	}
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
