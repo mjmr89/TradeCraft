@@ -159,11 +159,22 @@ public class TradeCraft extends JavaPlugin {
 				}
 			}
 		} else if ( sender instanceof ConsoleCommandSender ) {
-			if ( name.equalsIgnoreCase(TradeCraft.CommandString) ) {
+			if ( args.length == 0 || args[0].compareToIgnoreCase("help") == 0 ) {
+				displayCommandHelpText(null);
+				return true;
+			} else if ( name.equalsIgnoreCase(TradeCraft.CommandString) ) {
 				if ( args[0].equalsIgnoreCase("canplayer") && args.length == 2) {
 					permissions.debug(args[1]);
 					return true;
+				} else if ( args[0].equalsIgnoreCase("reload") ) {
+					this.log(Level.INFO, TradeCraftLocalization.get("RESTARTING_PLUGIN"),
+										 TradeCraft.pluginName);
+					this.disable();
+					this.enable();
+					this.log(Level.INFO, TradeCraftLocalization.get("RESTARTING_PLUGIN_DONE"),
+										 TradeCraft.pluginName);
 				}
+				return true;
 			}
 			return false;
 		} else {
@@ -437,17 +448,26 @@ public class TradeCraft extends JavaPlugin {
     }
 
 	private void displayCommandHelpText(Player player) {
-		this.sendMessage(player, TradeCraftLocalization.get("POSSIBLE_COMMANDS_FOR_THE_PLUGIN"),
-								 TradeCraft.pluginName);
-		this.sendMessage(player, "/tc [help]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
-		this.sendMessage(player, "/tc shops"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_SHOPS"));
-		if ( this.permissions.canSetCurrency(player) ) {
-			this.sendMessage(player, "/tc currency [id[;data]]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_OPT_PARAM_GETSET_CURRENCY"));
+		if ( player != null ) {
+			this.sendMessage(player, TradeCraftLocalization.get("POSSIBLE_COMMANDS_FOR_THE_PLUGIN"),
+									 TradeCraft.pluginName);
+			this.sendMessage(player, "/tc [help]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
+			this.sendMessage(player, "/tc shops"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_SHOPS"));
+			if ( this.permissions.canSetCurrency(player) ) {
+				this.sendMessage(player, "/tc currency [id[;data]]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_OPT_PARAM_GETSET_CURRENCY"));
+			} else {
+				this.sendMessage(player, "/tc currency"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_GET_CURRENCY"));
+			}
+			if ( this.permissions.canReload(player) ) {
+				this.sendMessage(player, "/tc reload"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_RELOAD"));
+			}
 		} else {
-			this.sendMessage(player, "/tc currency"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_GET_CURRENCY"));
-		}
-		if ( this.permissions.canReload(player) ) {
-			this.sendMessage(player, "/tc reload"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_RELOAD"));
+			// console command help
+			this.log(Level.INFO, TradeCraftLocalization.get("POSSIBLE_COMMANDS_FOR_THE_PLUGIN"),
+								 TradeCraft.pluginName);
+			this.log(Level.INFO, "tc [help]: "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
+			this.log(Level.INFO, "tc canPlayer playername: "+ TradeCraftLocalization.get("TC_CAN_PLAYER"));
+			this.log(Level.INFO, "tc reload: "+ TradeCraftLocalization.get("TC_RELOAD"));
 		}
 	}
 
