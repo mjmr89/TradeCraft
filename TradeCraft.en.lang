@@ -1,9 +1,9 @@
 # TradeCraft.java
 NO_PERMISSION_SET_CURRENCY: "You do not have the permission to set the currency"
-IS_NO_VALID_CURRENCY_USE_INSTEAD: "%1$s is not a valid value for a currency, use 'id[;data]'"
+IS_NO_VALID_CURRENCY_USE_INSTEAD: "%1$s is not a valid value for a currency, use 'id[;data]' or 'itemname'."
 INVALID_CURRENCY: "Invalid currency: %1$s"
-CURRENCY_IS_SET_TO: "Currency is set to: %1$s"
-CURRENCY_IS: "Currency is: %1$s"
+CURRENCY_IS_SET_TO_A_IDDATA: "Currency is set to: %1$s (%2$s)"
+CURRENCY_IS_A_IDDATA: "Currency is: %1$s (%2$s)"
 YOU_DONT_OWN_ANY_SHOPS: "You don't own any shops!"
 YOUR_SHOPS: "Your shops:"
 ITEM: "Item"

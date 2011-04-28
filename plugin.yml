@@ -1,6 +1,6 @@
 name: TradeCraft
 main: nl.armeagle.TradeCraft.TradeCraft
-version: AE-1.0.0
+version: AE-1.0.1
 commands:
     tc:
         help:

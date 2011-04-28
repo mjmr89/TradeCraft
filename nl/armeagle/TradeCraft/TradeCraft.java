@@ -114,36 +114,45 @@ public class TradeCraft extends JavaPlugin {
 		                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[1]);
 		                
 		                if ( !IdSplitData.matches() ) {
-		                	this.sendMessage(p, TradeCraftLocalization.get("IS_NO_VALID_CURRENCY_USE_INSTEAD"),
-		                				     args[1]);
-		                	return false;
+		                	// try to match the parameter to item names from the configuration
+		                	TradeCraftConfigurationInfo setCurr = this.configuration.get(args[1]);
+		                	if ( setCurr == null ) {
+		                		this.sendMessage(p, TradeCraftLocalization.get("IS_NO_VALID_CURRENCY_USE_INSTEAD"),
+		                						 args[1]);
+			                	return false;
+		                	} else {
+		                		currency = setCurr.type;
+		                	}
+		                } else {
+			                try {
+			                	int cid = Integer.parseInt(IdSplitData.group(1));
+			                	if ( IdSplitData.group(2) != null ) {
+									testCurrency = new TradeCraftItem(cid, Short.parseShort(IdSplitData.group(2)));
+								} else {
+									testCurrency = new TradeCraftItem(cid);
+								}
+			                } catch ( NumberFormatException e ) {
+		 						this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
+		 											args[1]);
+			                	return false;
+			                }
+		                	if ( this.configuration.get(testCurrency) != null ) {
+		                		currency = testCurrency;
+		                	} else {
+								this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
+										args[1]);
+								return false;
+		                	}
 		                }
 		                
-		                try {
-		                	int cid = Integer.parseInt(IdSplitData.group(1));
-		                	if ( IdSplitData.group(2) != null ) {
-								testCurrency = new TradeCraftItem(cid, Short.parseShort(IdSplitData.group(2)));
-							} else {
-								testCurrency = new TradeCraftItem(cid);
-							}
-							if ( this.configuration.get(testCurrency) != null ) {
-								currency = testCurrency;
-								this.properties.setCurrencyType(currency);
-								this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_SET_TO"),
-													this.getCurrencyName());
-							} else {
-								this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
-													args[1]);
-			                	return false;
-							}
-		                } catch ( NumberFormatException e ) {
-	 						this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
-	 											args[1]);
-		                	return false;
-		                }
+						this.properties.setCurrencyType(currency);
+						this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_SET_TO_A_IDDATA"),
+											this.getCurrencyName(),
+											currency.toShortString());
 					} else {
-						this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS"),
-										    this.getCurrencyName());
+						this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_A_IDDATA"),
+										    this.getCurrencyName(),
+										    currency.toShortString());
 					}
 				} else if ( args[0].equalsIgnoreCase("shops") ) {
 					displayShops(p);
