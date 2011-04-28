@@ -179,8 +179,8 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         if (amountPlayerWantsToBuy == 0) {
             plugin.sendMessage(player,
                         TradeCraftLocalization.get("YOU_NEED_TO_SPEND_AT_LEAST_X_A_TO_GET_ANY_B"),
-                        plugin.getCurrencyName(),
                         getBuyValue(),
+                        plugin.getCurrencyName(),
                         getItemName());
             return;
         }
