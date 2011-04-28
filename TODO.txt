@@ -4,16 +4,22 @@
 Digi said:
  - Also, could you add a feature to place signs ON chests (like Lockette) ?
  - Protection of chest contents while you're using it... or something, so other people don't just sit by and wait for you to buy and steal your stuff.
- - The sign labels would be better understood if they're: "Buy 5 for 1" and "Sell 5 for 1" and you should suppot texts like "Buy 5 for 1g" or "Buy5for1" etc.
+ -- Can be done by implementing features like VirtualChest has. This used CraftBukkit code to open a virtual inventory.
  
  - limit currency and configured items to valid data values
  - Allow administrators to disable infinite shops using a command and storing that setting in TradeCraft.properties.
  - Allow setting of currency by name (basic names from Bukkit, or also as defined in config?) again.
  - warn when config files use old format?
  
+ - Messages after right-clicking use the item name as on the sign, not as in TradeCraft.txt (capitalization issue only).
+ - Customer right-clicking telling about rates and availability only display the amount of items. Could perhaps display "up to 12 Logs" instead of "up to 12".
+ 
  Coding issue:
- - chest.getContents --> item.getData().getData() always seems to return 0, workaround with using getDurability which accesses the same data. 
  - items with 'damage' bits too high will act as the basic item, but cannot be traded or stacked as such. Be careful not to create these.
+ -- The server will automatically stack items that do not have actually existing multiple version through the damage bit.
+ 
+ - What happens when a sign/chest is removed while the plugin is disabled .. / with the entry in the .data file later.. when a shop is placed in the exact same spot again?
+ - No message is shown when a customer places too few currency in the chest and right-clicks.
  
  
  Done: 
@@ -22,3 +28,5 @@ Digi said:
  - The wool, dye, log, etc sub-items (just re-mentioning, I understand it's gonna be possible in #564+)
  - Additional information about current amount of items and currency available when right clicking as client.
  - You don't have to write your name on the sign of a player shop anymore. Also, too long names will be stored just fine, but will show abbreviated on the sign.    
+- The sign labels would be better understood if they're: "Buy 5 for 1" and "Sell 5 for 1" and you should suppot texts like "Buy 5 for 1g" or "Buy5for1" etc.
+ 
