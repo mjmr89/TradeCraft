@@ -41,9 +41,10 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             		plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), currencyAmount, plugin.getCurrencyName());
             	}
             } else {
+            	// limit amount of items dropped into the chest 
                 int itemAmount = withdrawItems();
                 if (itemAmount > 0) {
-                	int maxItemsChestCanHold = chest.getSize() * TradeCraft.getMaxStackSize(getChestItemType().id);
+                	int maxItemsChestCanHold = chest.getSize() * TradeCraft.getMaxStackSize(getItemType().id);
                 	if ( itemAmount > maxItemsChestCanHold ) {
                 		populateChest(getItemType(), maxItemsChestCanHold);
                 		depositItems(itemAmount - maxItemsChestCanHold);
@@ -279,6 +280,10 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                     plugin.getCurrencyName());
     }
 
+    /**
+     * Get the item type of the items that are currently in the chest. 
+     * @return
+     */
     public TradeCraftItem getChestItemType() {
         return chest.type;
     }
