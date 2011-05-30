@@ -86,8 +86,15 @@ public class TradeCraftBlockListener extends BlockListener{
 			return;
 		}
 		
+		// Check whether this block is (still) a sign. Can be revoked already in case the sign was temporary,
+		// for example when the plugin SimpleSignEdit is being used.
+		if ( e.getBlock().getType() != Material.SIGN && e.getBlock().getType() != Material.SIGN_POST ) {
+			return;
+		}
 		Player player = e.getPlayer();
+
 		Sign sign = (Sign) e.getBlock().getState();
+		
         String ownerName = player.getName();
 
         String itemName = plugin.getItemName(e.getLines());
