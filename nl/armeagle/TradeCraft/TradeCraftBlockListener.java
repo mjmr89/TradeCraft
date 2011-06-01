@@ -1,6 +1,7 @@
 package nl.armeagle.TradeCraft;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -85,17 +86,18 @@ public class TradeCraftBlockListener extends BlockListener{
 		if ( !this.plugin.isEnabled() ) {
 			return;
 		}
-		
+	
 		// Check whether this block is (still) a sign. Can be revoked already in case the sign was temporary,
 		// for example when the plugin SimpleSignEdit is being used.
-		if ( e.getBlock().getType() != Material.SIGN && e.getBlock().getType() != Material.SIGN_POST ) {
+		if ( e.getBlock().getType() != Material.SIGN_POST &&
+			 e.getBlock().getType() != Material.WALL_SIGN ) {
 			return;
 		}
-		Player player = e.getPlayer();
 
 		Sign sign = (Sign) e.getBlock().getState();
-		
-        String ownerName = player.getName();
+
+		Player player = e.getPlayer();
+		String ownerName = player.getName();
 
         String itemName = plugin.getItemName(e.getLines());
 

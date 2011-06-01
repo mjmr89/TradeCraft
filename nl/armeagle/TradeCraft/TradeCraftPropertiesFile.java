@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.bukkit.ChatColor;
 import org.bukkit.util.config.Configuration;
 
 /**
@@ -17,7 +19,7 @@ public class TradeCraftPropertiesFile {
     
     private TradeCraft plugin;
     private final Configuration properties;
-
+    
     public TradeCraftPropertiesFile(TradeCraft plugin) {
     	this.plugin = plugin;
     	// make folder in the plugins dir if it doesn't exist yet
@@ -101,5 +103,16 @@ public class TradeCraftPropertiesFile {
     
     public boolean autoUpdateLanguageFiles() {
     	return properties.getBoolean("auto-update-language-files", true);
+    }
+    
+    public ChatColor getMessageTypeColor(TradeCraft.MessageTypes mtype) {
+    	switch (mtype) {
+    	case WITHDRAW:
+    		return ChatColor.YELLOW;
+    	case DEPOSIT:
+    		return ChatColor.GRAY;
+    	default:
+    		return ChatColor.WHITE;
+    	}
     }
 }

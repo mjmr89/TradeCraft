@@ -31,6 +31,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 public class TradeCraft extends JavaPlugin {
+	public static enum MessageTypes {WITHDRAW, DEPOSIT};
+	
 	// The plugin name.
 	static final String pluginName = "TradeCraft";
 
@@ -210,6 +212,11 @@ public class TradeCraft extends JavaPlugin {
 
 	}
 
+	void sendMessage(Player player, TradeCraft.MessageTypes messageType, String format, Object... args) {
+		String message = String.format(format, args);
+		player.sendMessage(this.properties.getMessageTypeColor(messageType) + message);
+	}
+	
 	void sendMessage(Player player, String format, Object... args) {
 		String message = String.format(format, args);
 		player.sendMessage(message);

@@ -32,13 +32,18 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             	if ( currencyAmount > maxCurrencyChestCanHold ) {
             		populateChest(TradeCraft.currency, maxCurrencyChestCanHold); // fill to the max
             		depositCurrency(currencyAmount - maxCurrencyChestCanHold); // return remaining money back to shop data 
-            		plugin.sendMessage(player, TradeCraftLocalization.get("WITHDREW_X_CURRENCY_SHOP_STILL_HOLDS_Y_CURRENCY"),
-            								   maxCurrencyChestCanHold,
-            								   plugin.getCurrencyName(),
-            								   currencyAmount - maxCurrencyChestCanHold);
+            		plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
+    								   TradeCraftLocalization.get("WITHDREW_X_CURRENCY_SHOP_STILL_HOLDS_Y_CURRENCY"),
+    								   maxCurrencyChestCanHold,
+    								   plugin.getCurrencyName(),
+    								   currencyAmount - maxCurrencyChestCanHold);
             	} else {
             		populateChest(TradeCraft.currency, currencyAmount);
-            		plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), currencyAmount, plugin.getCurrencyName());
+            		plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
+							   		   "%1$s %2$d %3$s.",
+							   		   TradeCraftLocalization.get("WITHDREW"),
+							   		   currencyAmount,
+							   		   plugin.getCurrencyName());
             	}
             } else {
             	// limit amount of items dropped into the chest 
@@ -48,13 +53,18 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                 	if ( itemAmount > maxItemsChestCanHold ) {
                 		populateChest(getItemType(), maxItemsChestCanHold);
                 		depositItems(itemAmount - maxItemsChestCanHold);
-	                    plugin.sendMessage(player, TradeCraftLocalization.get("WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A"),
-	                    						   maxItemsChestCanHold,
-	                    						   getItemName(),
-	                    						   itemAmount - maxItemsChestCanHold);
+	                    plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
+						   				   TradeCraftLocalization.get("WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A"),
+                						   maxItemsChestCanHold,
+                						   getItemName(),
+                						   itemAmount - maxItemsChestCanHold);
                 	} else {
 	                    populateChest(getItemType(), itemAmount);
-	                    plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), itemAmount, getItemName());
+	                    plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
+								   		   "%1$s %2$d %3$s.",
+								   		   TradeCraftLocalization.get("WITHDREW"),
+								   		   itemAmount,
+								   		   getItemName());
                 	}
                 } else {
                     plugin.sendMessage(player, TradeCraftLocalization.get("THERE_IS_NOTHING_TO_WITHDRAW"));
@@ -62,7 +72,11 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             }
         } else if ( getChestItemType().compareTo(TradeCraft.currency) == 0 ) {
             depositCurrency(getChestItemCount());
-            plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("DEPOSITED"), getChestItemCount(), plugin.getCurrencyName());
+            plugin.sendMessage(player, TradeCraft.MessageTypes.DEPOSIT,
+					   		   "%1$s %2$d %3$s.",
+					   		   TradeCraftLocalization.get("DEPOSITED"),
+					   		   getChestItemCount(),
+					   		   plugin.getCurrencyName());
             populateChest(new TradeCraftItem(0), 0);
             int itemAmount = withdrawItems();
             if (itemAmount > 0) {
@@ -70,19 +84,28 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             	if ( itemAmount > maxItemsChestCanHold ) {
             		populateChest(getItemType(), maxItemsChestCanHold);
             		depositItems(itemAmount - maxItemsChestCanHold);
-                    plugin.sendMessage(player, TradeCraftLocalization.get("WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A"),
-                    						   maxItemsChestCanHold,
-                    						   getItemName(),
-                    						   itemAmount - maxItemsChestCanHold);
+                    plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
+							   		   TradeCraftLocalization.get("WITHDREW_X_A_SHOP_STILL_HOLDS_Y_A"),
+            						   maxItemsChestCanHold,
+            						   getItemName(),
+            						   itemAmount - maxItemsChestCanHold);
             	} else {
                     populateChest(getItemType(), itemAmount);
-                    plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("WITHDREW"), itemAmount, getItemName());
+                    plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
+							   		   "%1$s %2$d %3$s.",
+							   		   TradeCraftLocalization.get("WITHDREW"),
+							   		   itemAmount,
+							   		   getItemName());
             	}
             }
         } else if ( getChestItemType().compareTo(getItemType()) == 0 ) {
             depositItems(getChestItemCount());
             populateChest(new TradeCraftItem(0), 0);
-            plugin.sendMessage(player, "%1$s %2$d %3$s.", TradeCraftLocalization.get("DEPOSITED"), getChestItemCount(), getItemName());
+            plugin.sendMessage(player, TradeCraft.MessageTypes.DEPOSIT,
+					   		   "%1$s %2$d %3$s.",
+					   		   TradeCraftLocalization.get("DEPOSITED"),
+					   		   getChestItemCount(),
+					   		   getItemName());
         } else {
             plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DEPOSIT_THAT_HERE"));
         }
