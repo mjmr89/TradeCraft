@@ -1,8 +1,6 @@
 package nl.armeagle.TradeCraft;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
