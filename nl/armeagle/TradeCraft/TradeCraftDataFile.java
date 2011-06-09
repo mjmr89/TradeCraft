@@ -13,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.block.Sign;
 
 class TradeCraftDataFile {
