@@ -13,17 +13,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Sign;
 
 class TradeCraftDataFile {
+	/*
+	 * As of version 1.0.5 there is support for multiple worlds.
+	 * Newly created shops will add the world name to the information stored.
+	 * Old shops will be converted when first interacted with. 
+	 */
 
 	private static final String fileName = "plugins" + File.separator + TradeCraft.pluginName+ File.separator + TradeCraft.pluginName + ".data";
-    private static final Pattern infoPattern1 = Pattern.compile(
-            "^\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)" + // x,y,z
-            "\\s*=\\s*" +
-            "(\\d+)\\s*,\\s*(\\d+)\\s*$"); // itemAmount,currencyAmount
-    private static final Pattern infoPattern2 = Pattern.compile(
+    private static final Pattern infoPatternNoWorld = Pattern.compile(
             "^\\s*([^,]+)\\s*," + // ownerName
+            "\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*," + // x,y,z
+            "\\s*(\\d+(?:;\\d+)?)\\s*," + // itemType[!data]
+            "\\s*(\\d+)\\s*," + // itemAmount
+            "\\s*(\\d+)\\s*$"); // currencyAmount
+    private static final Pattern infoPatternWorld = Pattern.compile(
+            "^\\s*([^,]+)\\s*," + // ownerName
+            "\\s*([^,]+)\\s*," + // world name
             "\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*," + // x,y,z
             "\\s*(\\d+(?:;\\d+)?)\\s*," + // itemType[!data]
             "\\s*(\\d+)\\s*," + // itemAmount
@@ -40,17 +49,6 @@ class TradeCraftDataFile {
     }
 
     public void load() {
-//        if (!dFile.exists()) {
-//            plugin.log.info("No " + fileName + " file to read.  Creating one now.");
-//            try {
-//				dFile.createNewFile();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//            return;
-//        }
-
         try {
         	dFile.createNewFile();
             data.clear();
@@ -63,66 +61,70 @@ class TradeCraftDataFile {
             while ((line = reader.readLine()) != null) {
                 lineNumber += 1;
 
-                Matcher infoMatcher2 = infoPattern2.matcher(line);
+                String ownerName;
+                String worldName;
+                int x;
+                int y;
+                int z;
+                int itemAmount;
+                int currencyAmount;
+                String itemIdData;
+                
+                Matcher infoMatcher2 = infoPatternNoWorld.matcher(line);
 
                 if (infoMatcher2.matches()) {
-                    String ownerName = infoMatcher2.group(1);
-                    int x = Integer.parseInt(infoMatcher2.group(2));
-                    int y = Integer.parseInt(infoMatcher2.group(3));
-                    int z = Integer.parseInt(infoMatcher2.group(4));
-                    int itemAmount = Integer.parseInt(infoMatcher2.group(6));
-                    int currencyAmount = Integer.parseInt(infoMatcher2.group(7));
-                    
-                    TradeCraftDataInfo info = new TradeCraftDataInfo();
-                    String key = getKey(x, y, z);
-
-                    info.ownerName = ownerName;
-                    info.itemAmount = itemAmount;
-                    info.currencyAmount = currencyAmount;
-
-                    data.put(key, info);
-                    
-                    Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(infoMatcher2.group(5));
-                    
-                    if ( IdSplitData.matches() ) {
-	                    int itemId = Integer.parseInt(IdSplitData.group(1));
-	                    if ( IdSplitData.group(2) != null ) {
-	                    	info.itemType = new TradeCraftItem(itemId, Short.parseShort(IdSplitData.group(2)));
-	                    } else {
-	                    	info.itemType = new TradeCraftItem(itemId);
-	                    }
-                    } else {
-                    	plugin.log.warning(
+                    ownerName = infoMatcher2.group(1);
+                    worldName = null;
+                    x = Integer.parseInt(infoMatcher2.group(2));
+                    y = Integer.parseInt(infoMatcher2.group(3));
+                    z = Integer.parseInt(infoMatcher2.group(4));
+                    itemIdData = infoMatcher2.group(5);
+                    itemAmount = Integer.parseInt(infoMatcher2.group(6));
+                    currencyAmount = Integer.parseInt(infoMatcher2.group(7));
+                } else {
+                 	// support for multiple worlds 
+                 	Matcher infoMatcher3 = infoPatternWorld.matcher(line);
+                 	if ( !infoMatcher3.matches()) {
+                 		plugin.log.warning(
                                 "Failed to parse line number " + lineNumber +
                                 " in " + fileName +
                                 ": " + line);
                         continue;
+                 	}
+
+                    ownerName = infoMatcher3.group(1);
+                    worldName = infoMatcher3.group(2);
+                    x = Integer.parseInt(infoMatcher3.group(3));
+                    y = Integer.parseInt(infoMatcher3.group(4));
+                    z = Integer.parseInt(infoMatcher3.group(5));
+                    itemIdData = infoMatcher3.group(6);
+                    itemAmount = Integer.parseInt(infoMatcher3.group(7));
+                    currencyAmount = Integer.parseInt(infoMatcher3.group(8));
+                }
+                    
+                TradeCraftDataInfo info = new TradeCraftDataInfo();
+                info.ownerName = ownerName;
+                info.itemAmount = itemAmount;
+                info.currencyAmount = currencyAmount;
+
+                String key = getKey(worldName, x, y, z);
+                data.put(key, info);
+                
+                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(itemIdData);
+                
+                if ( IdSplitData.matches() ) {
+                    int itemId = Integer.parseInt(IdSplitData.group(1));
+                    if ( IdSplitData.group(2) != null ) {
+                    	info.itemType = new TradeCraftItem(itemId, Short.parseShort(IdSplitData.group(2)));
+                    } else {
+                    	info.itemType = new TradeCraftItem(itemId);
                     }
                 } else {
-                    Matcher infoMatcher1 = infoPattern1.matcher(line);
-
-                    if (!infoMatcher1.matches()) {
-                        plugin.log.warning(
-                                "Failed to parse line number " + lineNumber +
-                                " in " + fileName +
-                                ": " + line);
-                        continue;
-                    }
-
-                    int x = Integer.parseInt(infoMatcher1.group(1));
-                    int y = Integer.parseInt(infoMatcher1.group(2));
-                    int z = Integer.parseInt(infoMatcher1.group(3));
-                    int itemAmount = Integer.parseInt(infoMatcher1.group(4));
-                    int currencyAmount = Integer.parseInt(infoMatcher1.group(5));
-
-                    String key = getKey(x, y, z);
-
-                    TradeCraftDataInfo info = new TradeCraftDataInfo();
-                    info.ownerName = "unknown";
-                    info.itemAmount = itemAmount;
-                    info.currencyAmount = currencyAmount;
-
-                    data.put(key, info);
+                	plugin.log.warning(
+                            "Failed to parse line number " + lineNumber +
+                            " in " + fileName +
+                            ": " + line);
+                    continue;
                 }
             }
 
@@ -168,7 +170,7 @@ class TradeCraftDataFile {
     
     public void deleteShop(TradeCraftShop shop){
     	Location l = shop.sign.getBlock().getLocation();
-    	String key = getKey(l.getBlockX(),l.getBlockY(),l.getBlockZ());
+    	String key = getKey(shop.sign.getWorld().getName(), l.getBlockX(),l.getBlockY(),l.getBlockZ());
     	if(data.containsKey(key)){
     		data.remove(key);
     		save();    		
@@ -290,11 +292,27 @@ class TradeCraftDataFile {
     }
 
     private String getKeyFromSign(Sign sign) {
-        return getKey(sign.getX(), sign.getY(), sign.getZ());
+        String keyWithWorld = getKey(sign.getWorld().getName(), sign.getX(), sign.getY(), sign.getZ());
+        // convert old style keys (without world name) to new style and return the new key
+        if ( !data.containsKey(keyWithWorld) ) {
+        	// try the old style key, without the world part
+        	String keyWithoutWorld = getKey(null, sign.getX(), sign.getY(), sign.getZ());
+        	if ( data.containsKey(keyWithoutWorld) ) {
+        		TradeCraftDataInfo shopInfo = data.get(keyWithoutWorld);
+        		data.remove(keyWithoutWorld);
+        		data.put(keyWithWorld, shopInfo);
+        	}
+        }
+        return keyWithWorld;
     }
 
-    private String getKey(int x, int y, int z) {
-        return x + "," + y + "," + z;
+    private String getKey(String world, int x, int y, int z) {
+    	// support for multiple words now, optionally accepting a world passed on.
+    	if ( world == null ) {
+    		return x + "," + y + "," + z;
+    	} else {
+    		return world + "," + x + "," + y + "," + z;
+    	}
     }
 
 	public void createNewSign(String ownerName, TradeCraftConfigurationInfo itemInfo, Sign sign) {

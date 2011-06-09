@@ -289,7 +289,7 @@ public class TradeCraft extends JavaPlugin {
 		int y = block.getY();
 		int z = block.getZ();
 
-		trace(player, "You clicked a sign at %d, %d, %d.", x, y, z);
+		trace(player, "You clicked a sign at %d, %d, %d in world: %s.", x, y, z, player.getWorld().getName());
 
 		Sign sign = (Sign) player.getWorld().getBlockAt(x, y, z).getState();
 
