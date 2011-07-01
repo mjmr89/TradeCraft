@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.IllegalFormatException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -157,7 +158,15 @@ public class TradeCraft extends JavaPlugin {
 										    currency.toShortString());
 					}
 				} else if ( args[0].equalsIgnoreCase("shops") ) {
-					displayShops(p);
+					// Check whether another parameter is passed, if so check whether
+					// the player can get information about other player's shops.
+					if ( args.length > 1 && this.permissions.canQueryOtherShops(p) ) {
+						// lookup other player's shops
+						displayShops(args[1], p, true);
+					} else {
+						// lookup own shows
+						displayShops(p.getName(), p, false);
+					}
 				} else if ( args[0].equalsIgnoreCase("reload") && this.permissions.canReload(p) ) {
 					this.sendMessage(p, TradeCraftLocalization.get("RESTARTING_PLUGIN"),
 										TradeCraft.pluginName);
@@ -195,16 +204,29 @@ public class TradeCraft extends JavaPlugin {
 		return true;
 	}
 
-	void displayShops(Player p) {
-		String name = p.getName();
-		ArrayList<TradeCraftDataInfo> list = data.shopsOwned(name);
+	void displayShops(String infoPlayerName, Player displayTo, boolean otherQuery) {
+		ArrayList<TradeCraftDataInfo> list = data.shopsOwned(infoPlayerName);
 		if (list.size() == 0) {
-			p.sendMessage(TradeCraftLocalization.get("YOU_DONT_OWN_ANY_SHOPS"));
+			if ( otherQuery ) {
+				// elevated player looking for other player's shops
+				this.sendMessage(displayTo,
+						TradeCraftLocalization.get("A_DOES_NOT_OWN_ANY_SHOPS"),
+						infoPlayerName);
+			} else {
+				displayTo.sendMessage(TradeCraftLocalization.get("YOU_DONT_OWN_ANY_SHOPS"));
+			}
 			return;
 		}
-		p.sendMessage(TradeCraftLocalization.get("YOUR_SHOPS"));
+		
+		if ( otherQuery ) {
+			this.sendMessage(displayTo,
+							 TradeCraftLocalization.get("SHOPS_OF_A"),
+							 infoPlayerName);
+		} else {
+			displayTo.sendMessage(TradeCraftLocalization.get("YOUR_SHOPS"));
+		}
 		for (TradeCraftDataInfo info : list) {
-			p.sendMessage(TradeCraftLocalization.get("ITEM") +": "+ this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
+			displayTo.sendMessage(TradeCraftLocalization.get("ITEM") +": "+ this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
 					+" "+ TradeCraftLocalization.get("AMOUNT") +": "+ info.itemAmount +" "
 					+ this.getCurrencyName() +": "+ info.currencyAmount);
 
@@ -213,13 +235,21 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	void sendMessage(Player player, TradeCraft.MessageTypes messageType, String format, Object... args) {
-		String message = String.format(format, args);
-		player.sendMessage(this.properties.getMessageTypeColor(messageType) + message);
+		try {
+			String message = String.format(format, args);
+			player.sendMessage(this.properties.getMessageTypeColor(messageType) + message);
+		} catch ( IllegalFormatException e ) {
+			player.sendMessage(TradeCraftLocalization.get("ERROR_IN_FORMAT_STRING") +" "+ format);
+		}
 	}
 	
 	void sendMessage(Player player, String format, Object... args) {
-		String message = String.format(format, args);
-		player.sendMessage(message);
+		try {
+			String message = String.format(format, args);
+			player.sendMessage(message);
+		} catch ( IllegalFormatException e ) {
+			player.sendMessage(TradeCraftLocalization.get("ERROR_IN_FORMAT_STRING") +" "+ format);
+		}
 	}
 
 	void trace(Player player, String format, Object... args) {

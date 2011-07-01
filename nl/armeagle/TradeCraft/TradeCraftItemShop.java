@@ -40,8 +40,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             	} else {
             		populateChest(TradeCraft.currency, currencyAmount);
             		plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
-							   		   "%1$s %2$d %3$s.",
-							   		   TradeCraftLocalization.get("WITHDREW"),
+							   		   TradeCraftLocalization.get("WITHDREW_X_A"),
 							   		   currencyAmount,
 							   		   plugin.getCurrencyName());
             	}
@@ -61,8 +60,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
                 	} else {
 	                    populateChest(getItemType(), itemAmount);
 	                    plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
-								   		   "%1$s %2$d %3$s.",
-								   		   TradeCraftLocalization.get("WITHDREW"),
+								   		   TradeCraftLocalization.get("WITHDREW_X_A"),
 								   		   itemAmount,
 								   		   getItemName());
                 	}
@@ -73,8 +71,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         } else if ( getChestItemType().compareTo(TradeCraft.currency) == 0 ) {
             depositCurrency(getChestItemCount());
             plugin.sendMessage(player, TradeCraft.MessageTypes.DEPOSIT,
-					   		   "%1$s %2$d %3$s.",
-					   		   TradeCraftLocalization.get("DEPOSITED"),
+					   		   TradeCraftLocalization.get("DEPOSITED_X_A"),
 					   		   getChestItemCount(),
 					   		   plugin.getCurrencyName());
             populateChest(new TradeCraftItem(0), 0);
@@ -92,8 +89,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             	} else {
                     populateChest(getItemType(), itemAmount);
                     plugin.sendMessage(player, TradeCraft.MessageTypes.WITHDRAW,
-							   		   "%1$s %2$d %3$s.",
-							   		   TradeCraftLocalization.get("WITHDREW"),
+							   		   TradeCraftLocalization.get("WITHDREW_X_A"),
 							   		   itemAmount,
 							   		   getItemName());
             	}
@@ -102,8 +98,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
             depositItems(getChestItemCount());
             populateChest(new TradeCraftItem(0), 0);
             plugin.sendMessage(player, TradeCraft.MessageTypes.DEPOSIT,
-					   		   "%1$s %2$d %3$s.",
-					   		   TradeCraftLocalization.get("DEPOSITED"),
+            				   TradeCraftLocalization.get("DEPOSITED_X_A"),
 					   		   getChestItemCount(),
 					   		   getItemName());
         } else {
@@ -240,7 +235,7 @@ public abstract class TradeCraftItemShop extends TradeCraftShop {
         chest.update();
 
         plugin.sendMessage(player,
-                    "You bought %1$d %2$s for %3$d %4$s.",
+        		    TradeCraftLocalization.get("YOU_BOUGHT_X_A_FOR_Y_B"),
                     amountPlayerWantsToBuy,
                     getItemName(),
                     requiredCurrencyForThatAmount,

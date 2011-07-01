@@ -78,6 +78,14 @@ public class TradeCraftPermissions {
 		}
 	}
 	
+	public boolean canQueryOtherShops(Player p) {
+		if ( plugin.permEnabled ) {
+			return permHandler.has(p, "TradeCraft.canQueryOtherShops");
+		} else {
+			return p.isOp();
+		}
+	}
+	
 	public void debug(String n){
 		Player p = plugin.getServer().getPlayer(n);
 		if(p == null){
