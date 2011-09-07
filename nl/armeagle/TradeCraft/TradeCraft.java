@@ -280,7 +280,7 @@ public class TradeCraft extends JavaPlugin {
 			for ( int index_sides = 0; index_sides < sides.length; index_sides++ ) {
 				BlockFace side = sides[index_sides];
 				// get the block on that side
-				Block sideBlock = block.getFace(side);
+				Block sideBlock = block.getRelative(side);
 				// check for it being a wall sign
 				if ( sideBlock.getType() == Material.WALL_SIGN ) {
 					// get the sign (extending MaterialData) for clean attached face checking
@@ -451,11 +451,6 @@ public class TradeCraft extends JavaPlugin {
 
 	static int getMaxStackSize(int itemType) {
 		return Material.getMaterial(itemType).getMaxStackSize();
-	}
-
-	public void onLoad() {
-		// TODO Auto-generated method stub
-
 	}
 	
 	/**
