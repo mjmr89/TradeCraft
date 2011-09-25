@@ -20,4 +20,12 @@ public abstract class TradeCraftShop {
     public abstract boolean playerCanDestroy(Player player);
 
     public abstract boolean shopCanBeWithdrawnFrom();
+    
+    public String toString() {
+    	return String.format("Shop(%s:%d,%d,%d)",
+    						 this.sign.getWorld().getName(),
+    						 this.sign.getX(),
+    						 this.sign.getY(),
+    						 this.sign.getZ());
+    }
 }

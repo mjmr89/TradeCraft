@@ -52,10 +52,4 @@ public class TradeCraftPlayerListener extends PlayerListener{
             plugin.sendMessage(player, sb.toString());
         }
     }
-    
-    @SuppressWarnings("unused")
-	private void displaySecurity(Player player) {
-        plugin.permissions.debug(player.getName());
-    }
-	
 }

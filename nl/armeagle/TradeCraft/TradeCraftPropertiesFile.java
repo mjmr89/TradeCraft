@@ -76,7 +76,10 @@ public class TradeCraftPropertiesFile {
     	properties.setProperty("currency-data", item.data);
     	properties.save();
     }
-    
+    public boolean getNormalStackSizeUsed(){
+    	return properties.getBoolean("normal-stack-size", true);
+    }
+
     public boolean getInfiniteShopsEnabled() {
         return properties.getBoolean("infinite-shops-enabled", true);
     }
@@ -103,6 +106,10 @@ public class TradeCraftPropertiesFile {
     
     public boolean autoUpdateLanguageFiles() {
     	return properties.getBoolean("auto-update-language-files", true);
+    }
+    
+    public boolean logShopUse() {
+    	return properties.getBoolean("log-shop-use", false);
     }
     
     public ChatColor getMessageTypeColor(TradeCraft.MessageTypes mtype) {

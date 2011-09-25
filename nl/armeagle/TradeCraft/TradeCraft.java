@@ -1,9 +1,11 @@
 package nl.armeagle.TradeCraft;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,15 +41,25 @@ public class TradeCraft extends JavaPlugin {
 
 	public static final Pattern itemPatternIdSplitData = Pattern.compile("^(\\d+)(?:;(\\d+))?$");
 
-	private static final String CommandString = "tc";
+	private static enum Commands {
+		tcsetcurrency,
+		tcgetcurrency,
+		tcshops,
+		tcpshops,
+		tcreload,
+		tcplayerperms,
+		tchelp,
+		tc
+	};
 
 	// Stuff used to interact with the server.
 	final Logger log = Logger.getLogger("Minecraft");
 	final Server server = this.getServer();
 
+	protected BufferedWriter usageLog = null;
 	// Objects used by the plugin.
 	static TradeCraftItem currency;
-	TradeCraftPropertiesFile properties;
+	static TradeCraftPropertiesFile properties;
 	TradeCraftConfigurationFile configuration;
 	public TradeCraftLocalization localization;
 	TradeCraftDataFile data;
@@ -65,6 +77,13 @@ public class TradeCraft extends JavaPlugin {
 		this.disable();
 	}
 	private void disable() {
+		if ( this.usageLog != null ) {
+			try {
+				this.usageLog.close();
+			} catch (IOException e) {
+				this.log(Level.WARNING, "Failed to close shop usage log file");
+			}
+		}
 		properties = null;
 		configuration = null;
 		this.localization = null;
@@ -80,6 +99,23 @@ public class TradeCraft extends JavaPlugin {
 		configuration = new TradeCraftConfigurationFile(this);
 		data = new TradeCraftDataFile(this);
 		this.localization = new TradeCraftLocalization(this);
+		
+		if ( TradeCraft.properties.logShopUse() ) {
+			File usageLogFile = new File(this.getDataFolder(), "shopUsage.log");
+			try {
+				if ( !usageLogFile.exists() ) {
+					usageLogFile.createNewFile();
+				}
+				if ( usageLogFile.canWrite() ) {
+					this.usageLog = new BufferedWriter(new FileWriter(usageLogFile, true));
+					this.log(Level.INFO, "Writing shop usage to log file: "+ usageLogFile.toString());
+				} else {
+					this.log(Level.WARNING, "Error opening shop usage log file: "+ usageLogFile.toString());
+				}
+			} catch (IOException e) {
+				this.log(Level.WARNING, "Failed to open shop usage log file: "+ usageLogFile.toString());
+			}
+		}
 		
 		configuration.load();
 		data.load();
@@ -100,28 +136,24 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		String name = command.getName();
-		Player p;
-
-		if (sender instanceof Player) {
-			p = (Player) sender;
-
-			if ( name.equalsIgnoreCase(TradeCraft.CommandString) ) {
-				if ( args.length == 0 || args[0].compareToIgnoreCase("help") == 0 ) {
-					displayCommandHelpText(p);
-				} else if ( args[0].compareToIgnoreCase("currency") == 0 ) {
-					if ( args.length == 2 && this.permissions.canSetCurrency(p) ) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		try {
+			TradeCraft.Commands command = TradeCraft.Commands.valueOf(cmd.getName());
+			if (sender instanceof Player) {
+				Player p = (Player) sender;
+				switch (command) {
+				case tcsetcurrency:
+					if ( args.length == 1 && this.permissions.canSetCurrency(p) ) {
 						TradeCraftItem testCurrency = null;
 						// try to split ID and Data, separated by a semicolon mark
-		                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[1]);
+		                Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[0]);
 		                
 		                if ( !IdSplitData.matches() ) {
 		                	// try to match the parameter to item names from the configuration
-		                	TradeCraftConfigurationInfo setCurr = this.configuration.get(args[1]);
+		                	TradeCraftConfigurationInfo setCurr = this.configuration.get(args[0]);
 		                	if ( setCurr == null ) {
 		                		this.sendMessage(p, TradeCraftLocalization.get("IS_NO_VALID_CURRENCY_USE_INSTEAD"),
-		                						 args[1]);
+		                						 args[0]);
 			                	return false;
 		                	} else {
 		                		currency = setCurr.type;
@@ -136,82 +168,112 @@ public class TradeCraft extends JavaPlugin {
 								}
 			                } catch ( NumberFormatException e ) {
 		 						this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
-		 											args[1]);
+		 											args[0]);
 			                	return false;
 			                }
 		                	if ( this.configuration.get(testCurrency) != null ) {
 		                		currency = testCurrency;
 		                	} else {
 								this.sendMessage(p, TradeCraftLocalization.get("INVALID_CURRENCY"),
-										args[1]);
+										args[0]);
 								return false;
 		                	}
 		                }
 		                
-						this.properties.setCurrencyType(currency);
+						TradeCraft.properties.setCurrencyType(currency);
 						this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_SET_TO_A_IDDATA"),
 											this.getCurrencyName(),
 											currency.toShortString());
-					} else {
-						this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_A_IDDATA"),
-										    this.getCurrencyName(),
-										    currency.toShortString());
+						return true;
 					}
-				} else if ( args[0].equalsIgnoreCase("shops") ) {
+					return true;
+				case tcgetcurrency:
+					this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_A_IDDATA"),
+						    this.getCurrencyName(),
+						    currency.toShortString());
+					return true;
+				case tcshops:
+					// lookup own shows
+					displayShops(p.getName(), p, false);
+					return true;
+				case tcpshops:
 					// Check whether another parameter is passed, if so check whether
 					// the player can get information about other player's shops.
-					if ( args.length > 1 && this.permissions.canQueryOtherShops(p) ) {
-						// lookup other player's shops
-						displayShops(args[1], p, true);
-					} else {
-						// lookup own shows
-						displayShops(p.getName(), p, false);
+					if ( this.permissions.canQueryOtherShops(p) ) {
+						if ( args.length == 1 ) {
+							// lookup other player's shops
+							displayShops(args[0], p, true);
+						} else {
+							this.sendMessage(p, cmd.getUsage());
+						}
 					}
-				} else if ( args[0].equalsIgnoreCase("reload") && this.permissions.canReload(p) ) {
-					this.sendMessage(p, TradeCraftLocalization.get("RESTARTING_PLUGIN"),
-										TradeCraft.pluginName);
-					this.disable();
-					this.enable();
-					this.sendMessage(p, TradeCraftLocalization.get("RESTARTING_PLUGIN_DONE"),
-										TradeCraft.pluginName);
-				} else {
-					return false;
-				}
-			}
-		} else if ( sender instanceof ConsoleCommandSender ) {
-			if ( args.length == 0 || args[0].compareToIgnoreCase("help") == 0 ) {
-				displayCommandHelpText(null);
-				return true;
-			} else if ( name.equalsIgnoreCase(TradeCraft.CommandString) ) {
-				if ( args[0].equalsIgnoreCase("canplayer") && args.length == 2) {
-					permissions.debug(args[1]);
 					return true;
-				} else if ( args[0].equalsIgnoreCase("reload") ) {
-					this.log(Level.INFO, TradeCraftLocalization.get("RESTARTING_PLUGIN"),
-										 TradeCraft.pluginName);
+				case tcreload:
+					if ( this.permissions.canReload(p)) {
+						this.sendMessage(p, TradeCraftLocalization.get("RESTARTING_PLUGIN"), TradeCraft.pluginName);
+						this.disable();
+						this.enable();
+						this.sendMessage(p, TradeCraftLocalization.get("RESTARTING_PLUGIN_DONE"), TradeCraft.pluginName);
+					}
+					return true;
+				case tcplayerperms:
+					if ( this.permissions.canQueryPlayer(p)) {
+						if ( args.length == 1 ) {
+							permissions.debug(sender, args[0]);
+						} else {
+							sender.sendMessage(cmd.getUsage());
+						}
+					}
+					return true;
+				default:
+					displayCommandHelpText(p);
+					return true;
+				}
+			} else if ( sender instanceof ConsoleCommandSender ) {
+				switch (command) {
+				case tcplayerperms: 
+					if ( args.length == 1 ) {
+						permissions.debug(sender, args[0]);
+					} else {
+						sender.sendMessage(cmd.getUsage());
+					}
+					return true;
+				case tcpshops:
+					// Check whether another parameter is passed, if so check whether
+					// the player can get information about other player's shops.
+					if ( args.length == 1 ) {
+						// lookup other player's shops
+						displayShops(args[0], sender, true);
+					} else {
+						sender.sendMessage(cmd.getUsage());
+					}
+					return true;
+				case tcreload:
+					sender.sendMessage(String.format(TradeCraftLocalization.get("RESTARTING_PLUGIN"),
+										 			 TradeCraft.pluginName));
 					this.disable();
 					this.enable();
-					this.log(Level.INFO, TradeCraftLocalization.get("RESTARTING_PLUGIN_DONE"),
-										 TradeCraft.pluginName);
+					sender.sendMessage(String.format(TradeCraftLocalization.get("RESTARTING_PLUGIN_DONE"),
+										 			 TradeCraft.pluginName));
+					return true;
+				default: 
+					displayCommandHelpText(null);
+					return true;
 				}
-				return true;
 			}
-			return false;
-		} else {
+		} catch (IllegalArgumentException e) {
 			return false;
 		}
-
-		return true;
+		return false;
 	}
 
-	void displayShops(String infoPlayerName, Player displayTo, boolean otherQuery) {
+	void displayShops(String infoPlayerName, CommandSender displayTo, boolean otherQuery) {
 		ArrayList<TradeCraftDataInfo> list = data.shopsOwned(infoPlayerName);
 		if (list.size() == 0) {
 			if ( otherQuery ) {
 				// elevated player looking for other player's shops
-				this.sendMessage(displayTo,
-						TradeCraftLocalization.get("A_DOES_NOT_OWN_ANY_SHOPS"),
-						infoPlayerName);
+				displayTo.sendMessage(String.format(TradeCraftLocalization.get("A_DOES_NOT_OWN_ANY_SHOPS"),
+													infoPlayerName));
 			} else {
 				displayTo.sendMessage(TradeCraftLocalization.get("YOU_DONT_OWN_ANY_SHOPS"));
 			}
@@ -219,9 +281,8 @@ public class TradeCraft extends JavaPlugin {
 		}
 		
 		if ( otherQuery ) {
-			this.sendMessage(displayTo,
-							 TradeCraftLocalization.get("SHOPS_OF_A"),
-							 infoPlayerName);
+			displayTo.sendMessage(String.format(TradeCraftLocalization.get("SHOPS_OF_A"),
+							 					infoPlayerName));
 		} else {
 			displayTo.sendMessage(TradeCraftLocalization.get("YOUR_SHOPS"));
 		}
@@ -237,7 +298,7 @@ public class TradeCraft extends JavaPlugin {
 	void sendMessage(Player player, TradeCraft.MessageTypes messageType, String format, Object... args) {
 		try {
 			String message = String.format(format, args);
-			player.sendMessage(this.properties.getMessageTypeColor(messageType) + message);
+			player.sendMessage(TradeCraft.properties.getMessageTypeColor(messageType) + message);
 		} catch ( IllegalFormatException e ) {
 			player.sendMessage(TradeCraftLocalization.get("ERROR_IN_FORMAT_STRING") +" "+ format);
 		}
@@ -450,7 +511,11 @@ public class TradeCraft extends JavaPlugin {
 		return new TradeCraftExchangeRate(signLine);	}
 
 	static int getMaxStackSize(int itemType) {
-		return Material.getMaterial(itemType).getMaxStackSize();
+		if ( TradeCraft.properties.getNormalStackSizeUsed() ) {
+			return Material.getMaterial(itemType).getMaxStackSize();
+		} else {
+			return 64;
+		}
 	}
 	
 	/**
@@ -492,23 +557,29 @@ public class TradeCraft extends JavaPlugin {
 		if ( player != null ) {
 			this.sendMessage(player, TradeCraftLocalization.get("POSSIBLE_COMMANDS_FOR_THE_PLUGIN"),
 									 TradeCraft.pluginName);
-			this.sendMessage(player, "/tc [help]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
-			this.sendMessage(player, "/tc shops"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_SHOPS"));
+			this.sendMessage(player, "/tc[help]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
+			this.sendMessage(player, "/tcshops"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_SHOPS"));
+			if ( this.permissions.canQueryOtherShops(player) ) {
+				this.sendMessage(player, "/tcpshops [player]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_PSHOPS"));
+			}
+			this.sendMessage(player, "/tcgetcurrency"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_GET_CURRENCY"));
 			if ( this.permissions.canSetCurrency(player) ) {
-				this.sendMessage(player, "/tc currency [id[;data]]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_OPT_PARAM_GETSET_CURRENCY"));
-			} else {
-				this.sendMessage(player, "/tc currency"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_GET_CURRENCY"));
+				this.sendMessage(player, "/tcsetcurrency [id[;data]]"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CURRENCY_OPT_PARAM_GETSET_CURRENCY"));
 			}
 			if ( this.permissions.canReload(player) ) {
-				this.sendMessage(player, "/tc reload"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_RELOAD"));
+				this.sendMessage(player, "/tcreload"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_RELOAD"));
+			}
+			if ( this.permissions.canQueryPlayer(player) ) {
+				this.sendMessage(player, "/tcplayerperms"+ ChatColor.GRAY +" "+ TradeCraftLocalization.get("TC_CAN_PLAYER"));
 			}
 		} else {
 			// console command help
 			this.log(Level.INFO, TradeCraftLocalization.get("POSSIBLE_COMMANDS_FOR_THE_PLUGIN"),
 								 TradeCraft.pluginName);
-			this.log(Level.INFO, "tc [help]: "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
-			this.log(Level.INFO, "tc canPlayer playername: "+ TradeCraftLocalization.get("TC_CAN_PLAYER"));
-			this.log(Level.INFO, "tc reload: "+ TradeCraftLocalization.get("TC_RELOAD"));
+			this.log(Level.INFO, "tc[help]: "+ TradeCraftLocalization.get("TC_HELP_THIS_TEXT"));
+			this.log(Level.INFO, "tcplayerperms playername: "+ TradeCraftLocalization.get("TC_CAN_PLAYER"));
+			this.log(Level.INFO, "tcpshops [player]: "+ TradeCraftLocalization.get("TC_PSHOPS"));
+			this.log(Level.INFO, "tcreload: "+ TradeCraftLocalization.get("TC_RELOAD"));
 		}
 	}
 
@@ -543,6 +614,26 @@ public class TradeCraft extends JavaPlugin {
 	
 	public void log(Level level, String format, Object... args) {
 		this.log.log(level, TradeCraft.pluginName +": "+ String.format(format, args));
+	}
+	
+	public void useLog(Player player, TradeCraftShop shop, String format, Object... args) {
+		if ( TradeCraft.properties.logShopUse() ) {
+			if ( this.usageLog != null ) {
+				try {
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");					 
+					this.usageLog.write(String.format("%s %s \t%s %s\n",
+							formatter.format(new Date()),
+							shop.toString(),
+							player.getDisplayName(),
+							String.format(format, args)));
+					this.usageLog.flush();
+				} catch (IOException e) {
+					this.log(Level.WARNING, "Failed to write to shop use log file");
+				}
+			} else {
+				this.log(Level.INFO, "not written to log file");
+			}
+		}
 	}
 
 }

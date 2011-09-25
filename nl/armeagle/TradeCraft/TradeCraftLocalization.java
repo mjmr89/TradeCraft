@@ -27,7 +27,7 @@ public class TradeCraftLocalization {
 
 	public TradeCraftLocalization(TradeCraft plugin) {
     	this.plugin = plugin;
-		this.language = plugin.properties.getLanguage();
+		this.language = TradeCraft.properties.getLanguage();
 		
 		// make folder in the plugins dir if it doesn't exist yet
     	File path = new File(filePath);
@@ -43,7 +43,7 @@ public class TradeCraftLocalization {
     	File file = new File(filePath + File.separator + fileName);
     	
     	if ( !file.exists()
-    		 || this.plugin.properties.autoUpdateLanguageFiles()
+    		 || TradeCraft.properties.autoUpdateLanguageFiles()
     		 && TradeCraft.resourceLastModified("/"+ fileName) > file.lastModified() ) {
     		
     		InputStream input = this.getClass().getResourceAsStream("/" + fileName);
@@ -58,7 +58,7 @@ public class TradeCraftLocalization {
 				fileName = String.format(TradeCraftLocalization.filePreName, this.language);
 				file = new File(filePath + File.separator + fileName);
 				// check whether this file already exists, or else copy it over
-		    	if ( !file.exists() || this.plugin.properties.autoUpdateLanguageFiles()
+		    	if ( !file.exists() || TradeCraft.properties.autoUpdateLanguageFiles()
 		       		 && TradeCraft.resourceLastModified("/"+ fileName) > file.lastModified()) {
 		    		input = this.getClass().getResourceAsStream("/" + fileName);
 		    	}

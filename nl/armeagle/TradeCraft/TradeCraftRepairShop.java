@@ -16,7 +16,7 @@ public class TradeCraftRepairShop extends TradeCraftShop {
     public void handleRightClick(Player player) {
         int currencyAmount = chest.getAmountOfCurrencyInChest();
         List<ItemStack> items = chest.getNonCurrencyItems();
-        int repairCost = plugin.properties.getRepairCost();
+        int repairCost = TradeCraft.properties.getRepairCost();
 
         if (currencyAmount == 0 && items.size() == 0) {
             plugin.sendMessage(player, TradeCraftLocalization.get("IT_COSTS_X_A_TO_REPAIR_AN_ITEM"),
