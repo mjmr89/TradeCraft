@@ -12,6 +12,9 @@ public class TradeCraftItem implements Comparable<TradeCraftItem> {
 	TradeCraftItem(int id) {
 		this(id, (short)0);
 	}
+	TradeCraftItem(int id, int data) {
+		this(id, new Integer(data).shortValue());
+	}
 	TradeCraftItem(int id, short data) {
 		this.id = id;
 		this.data = data;

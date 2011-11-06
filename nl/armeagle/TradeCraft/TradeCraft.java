@@ -1,16 +1,17 @@
 package nl.armeagle.TradeCraft;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import nl.armeagle.Configuration.StatefulYamlConfiguration;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -63,6 +64,8 @@ public class TradeCraft extends JavaPlugin {
 	TradeCraftConfigurationFile configuration;
 	public TradeCraftLocalization localization;
 	TradeCraftDataFile data;
+
+	private HashMap<String, StatefulYamlConfiguration> configs = new HashMap<String, StatefulYamlConfiguration>(); 
 
 	private final TradeCraftBlockListener blockListener = new TradeCraftBlockListener(this);
 	private final TradeCraftPlayerListener playerListener = new TradeCraftPlayerListener(this);
@@ -582,34 +585,31 @@ public class TradeCraft extends JavaPlugin {
 			this.log(Level.INFO, "tcreload: "+ TradeCraftLocalization.get("TC_RELOAD"));
 		}
 	}
-
 	
-	/**
-	 * Return the last modified time stamp of a resource with the given file path.
-	 * @param filePath
-	 * @return -1 in case of errors, or else the seconds since epoch at which point this resource was last modified. 
-	 */
-	public static long resourceLastModified(String filePath) {
-		URL resource = TradeCraft.class.getResource(filePath);
-		if ( resource == null) {
-			return -1;
-		}
-		URLConnection resConn;
+	public void saveConfig() {
+		Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "saving config to: "+ this.getConfig("config").getFile().getAbsolutePath());
 		try {
-			resConn = resource.openConnection();
-		} catch ( IOException ioe ) {
-			return -1;
+			this.getConfig("config").save();
+        } catch (IOException ex) {
+            Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Could not save config to " + this.getConfig("config").getFile().getName(), ex);
+        }
+	}
+	public StatefulYamlConfiguration getConfig() {
+		return this.getConfig("config");
+	}
+	public StatefulYamlConfiguration getConfig(String name) {
+		if (name.indexOf(".") < 0) {
+			name += ".yml";
 		}
-		if ( resConn == null ) {
-			return -1;
+		if (this.configs.containsKey(name)) {
+			return this.configs.get(name);
+		} else {
+			File configFile = new File(this.getDataFolder(), name);
+	    	this.log(Level.INFO, configFile.getAbsolutePath());
+			StatefulYamlConfiguration config = new StatefulYamlConfiguration(configFile);
+			this.configs.put(name, config);
+			return config;
 		}
-		long lastModified = resConn.getLastModified();
-		// calling getLastModified apparently opens an InputStream that should be closed
-		try {
-			resConn.getInputStream().close();
-		} catch ( Exception e ) {}
-		// finally return the last modified time code
-		return lastModified;
 	}
 	
 	public void log(Level level, String format, Object... args) {

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * This class, handles the actual configuration of the plugin. The TradeCraftConfiguration class
@@ -18,7 +20,7 @@ public class TradeCraftPropertiesFile {
     public static final String defaultLanguage = "en";
     
     private TradeCraft plugin;
-    private final Configuration properties;
+    private final YamlConfiguration properties;
     
     public TradeCraftPropertiesFile(TradeCraft plugin) {
     	this.plugin = plugin;
@@ -62,8 +64,23 @@ public class TradeCraftPropertiesFile {
 			}
     	}
     	
-        properties = new Configuration(file);
-        properties.load();
+        properties = new YamlConfiguration();
+        try {
+        	properties.load(file);
+        } catch (InvalidConfigurationException e) {
+         	plugin.log(Level.SEVERE, "Failed to load file: %s", file.toURI());
+        } catch (IOException e) {
+         	plugin.log(Level.SEVERE, "Failed to read file: %s", file.toURI());
+        }
+    }
+    
+    protected void save() {
+    	File file = new File(filePath + File.separator + fileName);
+    	try {
+    		properties.save(file);
+    	} catch (IOException e) {
+    		this.plugin.log(Level.SEVERE, "Error saving to file: %s", file.toURI());
+    	}
     }
     
     public TradeCraftItem getCurrencyType(){
@@ -72,9 +89,9 @@ public class TradeCraftPropertiesFile {
     	return new TradeCraftItem(id, data); 
     }
     public void setCurrencyType(TradeCraftItem item) {
-    	properties.setProperty("currency-id", item.id);
-    	properties.setProperty("currency-data", item.data);
-    	properties.save();
+    	properties.set("currency-id", item.id);
+    	properties.set("currency-data", item.data);
+    	this.save();
     }
     public boolean getNormalStackSizeUsed(){
     	return properties.getBoolean("normal-stack-size", true);
