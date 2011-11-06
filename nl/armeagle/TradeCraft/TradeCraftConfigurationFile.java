@@ -23,6 +23,7 @@ import nl.armeagle.Configuration.StatefulYamlConfiguration;
  */
 class TradeCraftConfigurationFile {
     private static final String fileName = TradeCraft.pluginName + ".txt";
+    private static final String configName = "items";
 
     private static final Pattern commentPattern = Pattern.compile("^\\s*#.*$");
     private static final Pattern infoPattern = Pattern.compile(
@@ -40,9 +41,13 @@ class TradeCraftConfigurationFile {
     TradeCraftConfigurationFile(TradeCraft plugin) {
         this.plugin = plugin;
     }
+    
+    public StatefulYamlConfiguration getConfig() {
+    	return this.plugin.getConfig(TradeCraftConfigurationFile.configName);
+    }
 
     void load() {
-    	StatefulYamlConfiguration config = (StatefulYamlConfiguration) this.plugin.getConfig();
+    	StatefulYamlConfiguration config = (StatefulYamlConfiguration) this.getConfig();
     	
     	// if file exists, load the config to it once and then rename the old config
     	File file = new File(plugin.getDataFolder().getAbsolutePath(), fileName);
@@ -123,7 +128,7 @@ class TradeCraftConfigurationFile {
 	            configurationFile.close();
 	            reader.close();
 	            config.save();
-	            if (file.renameTo(new File(file.getAbsolutePath() + ".converted.to.config.yml"))) {
+	            if (file.renameTo(new File(file.getAbsolutePath() + ".converted.to."+ TradeCraftConfigurationFile.configName +".yml"))) {
 	            	plugin.log.info("Converted old config to new style and renamed the old config file");
 	            } else {
 	            	plugin.log.info("FAILED to convert old config to new style");
@@ -153,7 +158,7 @@ class TradeCraftConfigurationFile {
     }
 
     public String[] getNames() {
-        String[] names = plugin.getConfig().getKeys(false).toArray(new String[0]);
+        String[] names = this.getConfig().getKeys(false).toArray(new String[0]);
         Arrays.sort(names);
         return names;
     }
@@ -167,7 +172,7 @@ class TradeCraftConfigurationFile {
     	// though, the otherwise resulting ==: classpath lines aren't very user friendly anyway.
 //    	return (TradeCraftConfigurationInfo) plugin.getConfig().get(name.toUpperCase());
     	String itemName = this.mapItemNames.get(name.toLowerCase());
-    	return new TradeCraftConfigurationInfo(((MemorySection)plugin.getConfig().get(itemName)).getValues(false), name);
+    	return new TradeCraftConfigurationInfo(((MemorySection)this.getConfig().get(itemName)).getValues(false), name);
     }
     public TradeCraftConfigurationInfo get(int id) {
     	return this.get(new TradeCraftItem(id));

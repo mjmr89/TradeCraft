@@ -605,7 +605,6 @@ public class TradeCraft extends JavaPlugin {
 			return this.configs.get(name);
 		} else {
 			File configFile = new File(this.getDataFolder(), name);
-	    	this.log(Level.INFO, configFile.getAbsolutePath());
 			StatefulYamlConfiguration config = new StatefulYamlConfiguration(configFile);
 			this.configs.put(name, config);
 			return config;
