@@ -1,0 +1,153 @@
+COAL:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Coal
+  itemTypeId: 263
+  itemTypeData: 0
+  buyAmount: 4
+  buyValue: 1
+  sellAmount: 4
+  sellValue: 1
+GOLD:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Gold
+  itemTypeId: 266
+  itemTypeData: 0
+  buyAmount: 0
+  buyValue: 0
+  sellAmount: 0
+  sellValue: 0
+GRAVEL:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Gravel
+  itemTypeId: 13
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 0
+  sellValue: 0
+LOG:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Log
+  itemTypeId: 17
+  itemTypeData: 0
+  buyAmount: 8
+  buyValue: 1
+  sellAmount: 8
+  sellValue: 1
+HAM:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: ham
+  itemTypeId: 319
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 32
+  sellValue: 1
+COBBLESTONE:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Cobblestone
+  itemTypeId: 4
+  itemTypeData: 0
+  buyAmount: 3000
+  buyValue: 1
+  sellAmount: 3000
+  sellValue: 1
+DIRT:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Dirt
+  itemTypeId: 3
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 32
+  sellValue: 1
+DIAMOND:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Diamond
+  itemTypeId: 264
+  itemTypeData: 0
+  buyAmount: 1
+  buyValue: 64
+  sellAmount: 1
+  sellValue: 64
+OBSIDIAN:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Obsidian
+  itemTypeId: 49
+  itemTypeData: 0
+  buyAmount: 1
+  buyValue: 32
+  sellAmount: 1
+  sellValue: 32
+SAND:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Sand
+  itemTypeId: 12
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 48
+  sellValue: 1
+LGWOOL:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: LGWool
+  itemTypeId: 35
+  itemTypeData: 8
+  buyAmount: 10
+  buyValue: 1
+  sellAmount: 10
+  sellValue: 1
+CLAY:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Clay
+  itemTypeId: 337
+  itemTypeData: 0
+  buyAmount: 2
+  buyValue: 1
+  sellAmount: 2
+  sellValue: 1
+REDSTONE:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Redstone
+  itemTypeId: 331
+  itemTypeData: 0
+  buyAmount: 16
+  buyValue: 1
+  sellAmount: 16
+  sellValue: 1
+SWORD:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: sword
+  itemTypeId: 267
+  itemTypeData: 0
+  buyAmount: 10
+  buyValue: 1
+  sellAmount: 10
+  sellValue: 1
+BREAD:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Bread
+  itemTypeId: 297
+  itemTypeData: 0
+  buyAmount: 20
+  buyValue: 1
+  sellAmount: 20
+  sellValue: 1
+GLASS:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Glass
+  itemTypeId: 20
+  itemTypeData: 0
+  buyAmount: 0
+  buyValue: 0
+  sellAmount: 0
+  sellValue: 0
+IRON:
+  ==: nl.armeagle.TradeCraft.TradeCraftConfigurationInfo
+  name: Iron
+  itemTypeId: 265
+  itemTypeData: 0
+  buyAmount: 1
+  buyValue: 4
+  sellAmount: 1
+  sellValue: 4
