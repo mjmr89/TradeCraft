@@ -5,7 +5,7 @@ import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
-@SerializableAs("TradeCraftConfiguration")
+@SerializableAs("nl.armeagle.TradeCraft.TradeCraftConfigurationInfo")
 class TradeCraftConfigurationInfo implements ConfigurationSerializable {
 	public String name;
     public TradeCraftItem type;
@@ -49,4 +49,7 @@ class TradeCraftConfigurationInfo implements ConfigurationSerializable {
 	public Map<String, Object> serialize() {
     	return this.toMap();
 	}
+    public static TradeCraftConfigurationInfo deserialize(Map<String, Object> map) {
+    	return new TradeCraftConfigurationInfo(map);
+    }
 }
