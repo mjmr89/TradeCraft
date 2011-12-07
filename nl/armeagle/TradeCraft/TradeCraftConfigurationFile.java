@@ -131,7 +131,7 @@ class TradeCraftConfigurationFile {
 	            if (file.renameTo(new File(file.getAbsolutePath() + ".converted.to."+ TradeCraftConfigurationFile.configName +".yml"))) {
 	            	plugin.log.info("Converted old config to new style and renamed the old config file");
 	            } else {
-	            	plugin.log.info("FAILED to convert old config to new style");
+	            	plugin.log.severe("FAILED to convert old config to new style");
 	            }
 	
 	        } catch (IOException e) {
