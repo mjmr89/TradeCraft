@@ -168,6 +168,7 @@ class TradeCraftConfigurationFile {
     }
 
     public TradeCraftConfigurationInfo get(String name) {
+
     	// @todo, config code doesn't seem to like serialized objects, cannot seem to find the TradeCraftConfigurationInfo class
     	// though, the otherwise resulting ==: classpath lines aren't very user friendly anyway.
 //    	return (TradeCraftConfigurationInfo) plugin.getConfig().get(name.toUpperCase());
@@ -185,6 +186,9 @@ class TradeCraftConfigurationFile {
     	return this.get(new TradeCraftItem(id, data));
     }
     public TradeCraftConfigurationInfo get(TradeCraftItem item) {
+    	if (!TCitemInfoIndex.containsKey(item)) {
+    		return null;
+    	}
         return this.get(TCitemInfoIndex.get(item));
     }
 }
