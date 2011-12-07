@@ -448,7 +448,12 @@ public class TradeCraft extends JavaPlugin {
 			}
 
 			trace(player, "This is an infinite shop.");
-			return new TradeCraftInfiniteShop(this, sign, chest);
+			try {
+				return new TradeCraftInfiniteShop(this, sign, chest);
+			} catch (Exception e) {
+				trace(player, e.getMessage());
+			}
+			return null;
 		}
 
 		trace(player, "The owner name on the sign is %s.", ownerName);

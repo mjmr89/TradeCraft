@@ -7,11 +7,14 @@ import org.bukkit.entity.Player;
 public class TradeCraftInfiniteShop extends TradeCraftItemShop {
     private final TradeCraftConfigurationInfo configurationInfo;
 
-    public TradeCraftInfiniteShop(TradeCraft plugin, Sign sign, Chest chest) {
+    public TradeCraftInfiniteShop(TradeCraft plugin, Sign sign, Chest chest) throws Exception {
         super(plugin, sign, chest);
 
         String itemName = plugin.getItemName(sign.getLines());
         configurationInfo = plugin.configuration.get(itemName);
+        if (null == configurationInfo) {
+        	throw new Exception("Invalid item name on sign: "+ itemName);
+        }
     }
 
     public boolean playerCanDestroy(Player player) {
