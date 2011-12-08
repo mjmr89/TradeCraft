@@ -48,7 +48,7 @@ public class TradeCraftRepairShop extends TradeCraftShop {
         chest.clear();
 
         for (ItemStack item : items) {
-        	short itemData = (item.getData() == null ? (short)0 : item.getData().getData());
+        	short itemData = (item.getData() == null ? (short)0 : item.getDurability());
 
             chest.add(new TradeCraftItem(item.getTypeId(), itemData), 1);
         }
