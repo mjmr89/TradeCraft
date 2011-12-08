@@ -30,7 +30,7 @@ commands:
     tcplayerperms:
         description: Show the permissions of the given player
         permission: TradeCraft.canQueryPlayer
-        usage: "Usage: /tccanplayer [player]"
+        usage: "Usage: /tcplayerperms [player]"
 permissions:
     TradeCraft.canBuy:
         description: Permission to buy from shops.
