@@ -30,7 +30,10 @@ public class TradeCraftLocalization {
         String defaultFilename = String.format(TradeCraftLocalization.filePreName, "en");
         if (TradeCraftLocalization.localization.getKeys(false).isEmpty()) {
         	plugin.log(Level.INFO, "Language file %s does not exist or is empty, defaulting to %s", filename, defaultFilename);
+        } else {
+        	return;
         }
+        
         TradeCraftLocalization.localization = plugin.getConfig(defaultFilename);
         try {
         	TradeCraftLocalization.localization.load(true);
@@ -41,7 +44,6 @@ public class TradeCraftLocalization {
         if (TradeCraftLocalization.localization.getKeys(false).isEmpty()) {
         	plugin.log(Level.SEVERE, "Default language file %s is also empty", defaultFilename);
         }
-
 	}
 
 	public static String get(String key) {
