@@ -6,11 +6,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-
-public class TradeCraftBlockListener extends BlockListener{
+public class TradeCraftBlockListener implements Listener{
 	
 	private TradeCraft plugin;
 	
@@ -21,9 +22,18 @@ public class TradeCraftBlockListener extends BlockListener{
 	public void debug(String str){
 		plugin.getServer().broadcastMessage(str);
 	}
+		
+	@EventHandler
+	public void onNormalBlockBreak(BlockBreakEvent e) {
+		this.onBlockBreak(e, EventPriority.NORMAL);
+    }
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onMonitorBlockBreak(BlockBreakEvent e) {
+		this.onBlockBreak(e, EventPriority.MONITOR);
+	}
 	
-	@Override
-	public void onBlockBreak(BlockBreakEvent e) {
+	private void onBlockBreak(BlockBreakEvent e, EventPriority p) {
 		if ( !this.plugin.isEnabled() ) {
 			return;
 		}
@@ -38,49 +48,47 @@ public class TradeCraftBlockListener extends BlockListener{
 
         // Go through all shops in the list and check whether the player can destroy them all first.
         // Only if that is the case proceed to destroy.
-        for ( TradeCraftShop shop : shops ) {
-        	if (!shop.playerCanDestroy(player) && !plugin.permissions.canDestroyShops(player) ||
-        			shop.shopCanBeWithdrawnFrom() ) {
-        		// cannot destroy this shop, so cancel destruction, use distinct error messages 
-        		if ( shop.shopCanBeWithdrawnFrom() ) {
-                    plugin.sendMessage(player, TradeCraftLocalization.get("ALL_ITEMS_MUST_BE_WITHDRAWN"));
-        		} else {
-        			if ( block.getType() == Material.WALL_SIGN ) {
-        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_SIGN"));
-        			} else if ( block.getType() == Material.CHEST ) {
-        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_CHEST"));
-        			} else {
-        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_BLOCK_ATTACHED"));
-        			}
-        		}
-        		stopDestruction(block,e);
-                return;
-        	}
+        if (EventPriority.NORMAL == p) {
+	        for ( TradeCraftShop shop : shops ) {
+	        	if (!shop.playerCanDestroy(player) && !plugin.permissions.canDestroyShops(player) ||
+	        			shop.shopCanBeWithdrawnFrom() ) {
+	        		// cannot destroy this shop, so cancel destruction, use distinct error messages 
+	        		if ( shop.shopCanBeWithdrawnFrom() ) {
+	                    plugin.sendMessage(player, TradeCraftLocalization.get("ALL_ITEMS_MUST_BE_WITHDRAWN"));
+	        		} else {
+	        			if ( block.getType() == Material.WALL_SIGN ) {
+	        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_SIGN"));
+	        			} else if ( block.getType() == Material.CHEST ) {
+	        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_CHEST"));
+	        			} else {
+	        				plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_DESTROY_THIS_BLOCK_ATTACHED"));
+	        			}
+	        		}
+	        		stopDestruction(block,e);
+	                return;
+	        	}
+	        }
         }
-        // player can destroy all shops, so proceed
-        for ( TradeCraftShop shop : shops ) {
-        	plugin.data.deleteShop(shop);
+        
+        if (EventPriority.MONITOR == p) {
+	        // player can destroy all shops, so proceed
+	        for ( TradeCraftShop shop : shops ) {
+	        	plugin.data.deleteShop(shop);
+	        }
         }
-    }
-	
-	public void stopDestruction(Block b, BlockBreakEvent e){
-		if(b.getState() instanceof Sign){
-			Sign sign = (Sign)b.getState();
-			String[] lines = sign.getLines();
-			e.setCancelled(true);
-			for(int i = 0;i<4;i++){
-				sign.setLine(i, lines[i]);
-			}
-			
-			sign.update(true);
-			return;
-		} else {
-			e.setCancelled(true);			
-		}
-		
 	}
 	
-	public void onSignChange(SignChangeEvent e) {
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onMonitorSignChange(SignChangeEvent e) {
+		this.onSignChange(e, EventPriority.MONITOR);
+	}
+
+	@EventHandler
+	public void onNormalSignChange(SignChangeEvent e) {
+		this.onSignChange(e, EventPriority.NORMAL);
+    }
+	
+	public void onSignChange(SignChangeEvent e, EventPriority p) {
 		if ( !this.plugin.isEnabled() ) {
 			return;
 		}
@@ -119,22 +127,29 @@ public class TradeCraftBlockListener extends BlockListener{
                 plugin.trace(player, "sign change, infinite chest of %s", itemName);
             	return;
             }
-            
-            plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_CREATE_INF_SHOPS"));
-            e.setCancelled(true);
-            return;
+
+            if (EventPriority.NORMAL == p) {
+	            plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_CREATE_INF_SHOPS"));
+	            e.setCancelled(true);
+	            return;
+            }
         }
         // there is a buy rate, so this is a player owned shop
-        if ( !plugin.permissions.canMakePlayerShops(player)){
+
+        if (EventPriority.NORMAL == p && !plugin.permissions.canMakePlayerShops(player)){
 	        plugin.sendMessage(player, TradeCraftLocalization.get("YOU_DONT_HAVE_PERM_CREATE_PLAYER_SHOP"));
 	        e.setCancelled(true);
 	        return;
         }
 
-        plugin.trace(player, "Setting owner of sign to: %s", ownerName);
-        // set the player name on the last line
-        e.setLine(3, "-"+ ownerName.substring(0, Math.min(ownerName.length(), 15)) +"-");
-        plugin.data.createNewSign(ownerName, itemInfo, sign);
+
+        if (EventPriority.MONITOR == p) {
+	        plugin.trace(player, "Setting owner of sign to: %s", ownerName);
+	        // set the player name on the last line
+	        e.setLine(3, "-"+ ownerName.substring(0, Math.min(ownerName.length(), 15)) +"-");
+	        plugin.data.createNewSign(ownerName, itemInfo, sign);
+        }
+        
         /*
         if ( this.plugin.properties.getStrictPlayerShopOwnerNameRequired() ) {
         	if (player.getName().equalsIgnoreCase(ownerName)) {
@@ -148,7 +163,22 @@ public class TradeCraftBlockListener extends BlockListener{
         	}
         }
         */
-        
-        return;
-    }
+	}
+	
+	public void stopDestruction(Block b, BlockBreakEvent e){
+		if(b.getState() instanceof Sign){
+			Sign sign = (Sign)b.getState();
+			String[] lines = sign.getLines();
+			e.setCancelled(true);
+			for(int i = 0;i<4;i++){
+				sign.setLine(i, lines[i]);
+			}
+			
+			sign.update(true);
+			return;
+		} else {
+			e.setCancelled(true);			
+		}
+		
+	}
 }

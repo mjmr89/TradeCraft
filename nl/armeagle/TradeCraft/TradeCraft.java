@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -25,8 +26,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -128,9 +127,8 @@ public class TradeCraft extends JavaPlugin {
 
 		if ( !TradeCraft.hasRegisteredEventListeners ) {
 			PluginManager pm = this.getServer().getPluginManager();
-			pm.registerEvent(Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-			pm.registerEvent(Type.SIGN_CHANGE, blockListener,Priority.Normal, this);
-			pm.registerEvent(Type.BLOCK_BREAK, blockListener,Priority.Normal, this);
+			pm.registerEvents(playerListener, this);
+			pm.registerEvents(blockListener, this);
 			TradeCraft.hasRegisteredEventListeners = true;
 		}
 
@@ -272,7 +270,7 @@ public class TradeCraft extends JavaPlugin {
 	}
 
 	void displayShops(String infoPlayerName, CommandSender displayTo, boolean otherQuery) {
-		ArrayList<TradeCraftDataInfo> list = data.shopsOwned(infoPlayerName);
+		Map<String, TradeCraftDataInfo> list = data.shopsOwned(infoPlayerName);
 		if (list.size() == 0) {
 			if ( otherQuery ) {
 				// elevated player looking for other player's shops
@@ -290,11 +288,18 @@ public class TradeCraft extends JavaPlugin {
 		} else {
 			displayTo.sendMessage(TradeCraftLocalization.get("YOUR_SHOPS"));
 		}
-		for (TradeCraftDataInfo info : list) {
-			displayTo.sendMessage(TradeCraftLocalization.get("ITEM") +": "+ this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
-					+" "+ TradeCraftLocalization.get("AMOUNT") +": "+ info.itemAmount +" "
-					+ this.getCurrencyName() +": "+ info.currencyAmount);
-
+		for (Map.Entry<String, TradeCraftDataInfo> entry : list.entrySet()) {
+			TradeCraftDataInfo info = entry.getValue();
+			String message = "";
+			if (TradeCraft.properties.showShopLocation()) {
+				String location = entry.getKey().replaceFirst(",", "(") +")";
+				message += ChatColor.GRAY + location +" "+ ChatColor.WHITE;
+			}
+			message += TradeCraftLocalization.get("ITEM") +": "+ this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
+				+" "+ TradeCraftLocalization.get("AMOUNT") +": "+ info.itemAmount +" "
+				+ this.getCurrencyName() +": "+ info.currencyAmount;
+			
+			displayTo.sendMessage(message);
 		}
 
 	}

@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -176,12 +175,12 @@ class TradeCraftDataFile {
     	}
     }
     
-    public ArrayList<TradeCraftDataInfo> shopsOwned(String name){
-    	ArrayList<TradeCraftDataInfo> list = new ArrayList<TradeCraftDataInfo>();
+    public Map<String, TradeCraftDataInfo> shopsOwned(String name){
+    	Map<String, TradeCraftDataInfo> list = new HashMap<String, TradeCraftDataInfo>();
     	for (String key : data.keySet()) {
     		TradeCraftDataInfo info = data.get(key);
   			if(info.ownerName.equalsIgnoreCase(name)){
-   				list.add(info);
+   				list.put(key, info);
    			}
     	}
     	

@@ -2,19 +2,21 @@ package nl.armeagle.TradeCraft;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.Listener;
 
 
-public class TradeCraftPlayerListener extends PlayerListener{
+public class TradeCraftPlayerListener implements Listener{
 
 	private TradeCraft plugin;
 	
 	TradeCraftPlayerListener(TradeCraft plugin){
 		this.plugin = plugin;
 	}
-	@Override
+	
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		if ( !this.plugin.isEnabled() ) {
 			return;
