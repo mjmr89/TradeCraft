@@ -129,6 +129,10 @@ public class TradeCraftPropertiesFile {
     	return properties.getBoolean("log-shop-use", false);
     }
     
+    public boolean showShopLocation() {
+    	return properties.getBoolean("show-shop-location", false);
+    }
+    
     public ChatColor getMessageTypeColor(TradeCraft.MessageTypes mtype) {
     	switch (mtype) {
     	case WITHDRAW:
