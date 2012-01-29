@@ -173,11 +173,16 @@ class TradeCraftConfigurationFile {
     	// though, the otherwise resulting ==: classpath lines aren't very user friendly anyway.
 //    	return (TradeCraftConfigurationInfo) plugin.getConfig().get(name.toUpperCase());
     	String itemName = this.mapItemNames.get(name.toLowerCase());
-    	if (null == itemName) {
-    		return null;
-    	} else {
-    		return new TradeCraftConfigurationInfo(((MemorySection)this.getConfig().get(itemName)).getValues(false), name);
+    	if (null != itemName) {
+    		MemorySection item = ((MemorySection)this.getConfig().get(itemName));
+    		if (null != item) {
+    			Map<String, Object> itemData = item.getValues(false);
+    			if (null != itemData) {
+    				return new TradeCraftConfigurationInfo(itemData, name);
+    			}
+    		}
     	}
+    	return null;
     }
     public TradeCraftConfigurationInfo get(int id) {
     	return this.get(new TradeCraftItem(id));
