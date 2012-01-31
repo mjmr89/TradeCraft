@@ -22,7 +22,7 @@ public class TradeCraftLocalization {
         TradeCraftLocalization.localization = plugin.getConfig(filename);
 
         try {
-        	TradeCraftLocalization.localization.load(true);
+        	TradeCraftLocalization.localization.load();
         } catch (IOException e) {
         	plugin.log(Level.SEVERE, "Failed to read file: %s", filename);
         }
@@ -36,7 +36,7 @@ public class TradeCraftLocalization {
         
         TradeCraftLocalization.localization = plugin.getConfig(defaultFilename);
         try {
-        	TradeCraftLocalization.localization.load(true);
+        	TradeCraftLocalization.localization.load();
         } catch (IOException e) {
         	plugin.log(Level.SEVERE, "Failed to read file: %s", defaultFilename);
         }

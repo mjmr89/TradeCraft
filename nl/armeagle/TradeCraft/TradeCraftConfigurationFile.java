@@ -139,7 +139,7 @@ class TradeCraftConfigurationFile {
 	        }
     	} else {
     		try {
-				config.load(true);
+				config.load();
 			} catch (IOException e) {
 				plugin.log.severe("Error loading plugin config file");
 			}
