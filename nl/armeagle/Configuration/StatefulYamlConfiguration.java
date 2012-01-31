@@ -32,12 +32,8 @@ public class StatefulYamlConfiguration extends YamlConfiguration {
 			InputStream defaultInput = this.getClass().getResourceAsStream("/" + file.getName());
 			if ( null != defaultInput ) {
 				YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultInput);
-
-				try {
-					this.loadFromString(defaultConfig.saveToString());
-				} catch (InvalidConfigurationException e) {
-					Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Invalid default configuation");
-				}
+				this.setDefaults(defaultConfig);
+				this.options().copyDefaults(true);
 				this.save();
 			}
 		}
