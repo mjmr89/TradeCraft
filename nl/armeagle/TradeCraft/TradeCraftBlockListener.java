@@ -70,7 +70,7 @@ public class TradeCraftBlockListener implements Listener{
 	        }
         }
         
-        if (EventPriority.MONITOR == p) {
+        if (EventPriority.MONITOR == p && ! e.isCancelled()) {
 	        // player can destroy all shops, so proceed
 	        for ( TradeCraftShop shop : shops ) {
 	        	plugin.data.deleteShop(shop);
@@ -143,7 +143,7 @@ public class TradeCraftBlockListener implements Listener{
         }
 
 
-        if (EventPriority.MONITOR == p) {
+        if (EventPriority.MONITOR == p && !e.isCancelled()) {
 	        plugin.trace(player, "Setting owner of sign to: %s", ownerName);
 	        // set the player name on the last line
 	        e.setLine(3, "-"+ ownerName.substring(0, Math.min(ownerName.length(), 15)) +"-");
