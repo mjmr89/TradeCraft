@@ -47,13 +47,7 @@ public class StatefulYamlConfiguration extends YamlConfiguration {
             }
         }
 
-		try {
-			this.loadFromString(baseConfig.saveToString());
-		} catch (InvalidConfigurationException e) {
-			Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Invalid configuation");
-		}
-		
-		if (notLoaded || forceDefaults) {
+        if (notLoaded || forceDefaults) {
 			InputStream defaultInput = this.getClass().getResourceAsStream("/" + file.getName());
 			if ( null != defaultInput ) {
 				YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultInput);
@@ -65,7 +59,14 @@ public class StatefulYamlConfiguration extends YamlConfiguration {
 				}
 				this.save();
 			}
-		}
+		} else if (! notLoaded) {
+	        try {
+				this.loadFromString(baseConfig.saveToString());
+			} catch (InvalidConfigurationException e) {
+				Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Invalid configuation");
+			}
+        }
+        
 	}
 	
 	public void save() throws IOException {
