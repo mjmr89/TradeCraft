@@ -1,8 +1,7 @@
 TradeCraft
 ==========
 
-This is a plugin for Bukkit that allows you to buy and sell items using gold
-ingots (bars) as a currency.
+This is a plugin for Bukkit that allows you to buy and sell items using any currency.
 
 See also: http://forums.bukkit.org/threads/econ-tradecraft-ae-gold-based-economy.13797/
 
@@ -22,6 +21,8 @@ example file that comes with the plugin to see the properties you can set.
 
 Shops
 =====
+
+A manual with pictures here: http://dev.bukkit.org/server-mods/tradecraft-ae/pages/manual/
 
 Players buy and sell items at "shops".
 
@@ -62,14 +63,12 @@ Or, it could just say this:
 
 The item type has to be on a line all by itself and there can't be any spaces
 outside or inside the square brackets. Case isn't important. The item types are
-defined by you in the TradeCraft.txt file.
+defined by you in the TradeCraft.properties file.
 
 No state is maintained in infinite shops. Players can buy an infinite amount
 of items (assuming they have enough gold) from infinite shops. They can also
 sell an infinite amount of items (earning an infinite amount of gold).
 
-TODO: Allow administrators to disable infinite shops using a command and
-storing that setting in TradeCraft.properties.
 
 Player-owned shops
 ==================
@@ -84,8 +83,8 @@ order to keep it in operation.
 The format for the text on a player-owned shop must look something like this:
 
 [Sand]
-Buy for 32:1
-Sell for 48:1
+Buy 32 for 1
+Sell 48 for 1
 -injektilo-
 
 The first line is the type of item bought and sold at that shop. This has to
@@ -156,12 +155,43 @@ Configuration
 =============
 
 To configure what can be traded and for how much (at infinite shops), you need
-to edit TradeCraft.txt. The file should look like this:
+to edit items.yml. The file should look like this:
 
-# Comments look like this.
-Sand,12,32:1
-Diamond,264,1:64
-LGWool,35;8,10:1
+Cobblestone:
+  itemTypeId: 4
+  itemTypeData: 0
+  buyAmount: 64
+  buyValue: 1
+  sellAmount: 64
+  sellValue: 1
+Gravel:
+  itemTypeId: 13
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 32
+  sellValue: 4
+Sand:
+  itemTypeId: 12
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 32
+  sellValue: 1
+Dirt:
+  itemTypeId: 3
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 32
+  sellValue: 1
+Coal:
+  itemTypeId: 263
+  itemTypeData: 0
+  buyAmount: 3
+  buyValue: 1
+  sellAmount: 4
+  sellValue: 1
 
 The first value is the name of the item as you want it to appear on your signs
 and in the messages the players see when they make their trades.
@@ -172,33 +202,17 @@ values here:
 
 http://www.minecraftwiki.net/wiki/Data_values
 
-The third value is the exchange rate. The number before the colon is how many
-of that item needs to be sold to earn the number of gold specified as the
-number after the colon. In the above example, players have to sell 32 sand
-blocks to get a single gold. They have to pay 64 gold to buy a single diamond.
-
-You don't have to use the number 1 on either side of the colon. For example,
-you could use a ratio like 3:2. That means that selling 3 items will get you 2
-gold. Selling 6 items will get you 4 gold. Likewise, spending 2 gold will get
-you 3 items and spending 4 gold will get you 6 items.
+The values in buyAmount and buyValue is the amount of that item and the 
+amount of currency respectively when the player is buying. Likewise, the 
+values in sellAmount is the exchange rate when the player is selling.
+In the above example, players have to sell 4 Coal to get 1 currency.
+They have to pay 1 currency to buy a 3 Coal.
 
 It's possible to configure separate exchange rates for buying and selling. If
 only a single ratio is specified, that ratio is used for both buying and
 selling. If two ratios are specified, the first is for buying and the second is
 for selling.
 
-For example, to let players buy 32 sand for 1 gold, but only be able to sell 64
-sand for 1 gold, you would configure it like this:
-
-Sand,12,32:1,64:1
-
-If you use a ratio of 0:0, that disables buying or selling of that item type.
-
-For example, to allow players to buy diamonds, but not sell them, you would
-configure it like this:
-
-Diamond,264,1:64,0:0
-
-If you click on a sign above an empty chest, you'll see a message saying what
+If you right click on a sign above an empty chest, you'll see a message saying what
 the exchange rates for both buying and selling are. On player shops you will
 also get information about the amount of items and 'money' still in the shop.
