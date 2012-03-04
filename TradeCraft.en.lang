@@ -30,6 +30,8 @@ YOU_CANT_DESTROY_THIS_CHEST: "You can't destroy this chest!"
 YOU_CANT_DESTROY_THIS_BLOCK_ATTACHED: "You can't destroy this block because there are signs attached to it!"
 YOU_CANT_CREATE_INF_SHOPS: "You can't create infinite shops!"
 YOU_DONT_HAVE_PERM_CREATE_PLAYER_SHOP: "You do not have the permission to create a player shop!"
+TOTAL_SHOP_LIMIT_X: "You already have the maximum amount of shops (%1$d)!"
+WORLD_SHOP_LIMIT_X: "You already have the maximum amount of shops in this world (%1$d)!"
 
 # TradeCraftItemShop.java
 THE_CHEST_HAS_MORE_THAN_ONE_TYPE: "The chest has more than one type of item in it!"

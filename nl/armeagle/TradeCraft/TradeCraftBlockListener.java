@@ -1,11 +1,15 @@
 package nl.armeagle.TradeCraft;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -88,24 +92,24 @@ public class TradeCraftBlockListener implements Listener{
 		this.onSignChange(e, EventPriority.NORMAL);
     }
 	
-	public void onSignChange(SignChangeEvent e, EventPriority p) {
+	public void onSignChange(SignChangeEvent event, EventPriority priority) {
 		if ( !this.plugin.isEnabled() ) {
 			return;
 		}
 	
 		// Check whether this block is (still) a sign. Can be revoked already in case the sign was temporary,
 		// for example when the plugin SimpleSignEdit is being used.
-		if ( e.getBlock().getType() != Material.SIGN_POST &&
-			 e.getBlock().getType() != Material.WALL_SIGN ) {
+		if ( event.getBlock().getType() != Material.SIGN_POST &&
+			 event.getBlock().getType() != Material.WALL_SIGN ) {
 			return;
 		}
 
-		Sign sign = (Sign) e.getBlock().getState();
+		Sign sign = (Sign) event.getBlock().getState();
 
-		Player player = e.getPlayer();
+		Player player = event.getPlayer();
 		String ownerName = player.getName();
 
-        String itemName = plugin.getItemName(e.getLines());
+        String itemName = plugin.getItemName(event.getLines());
 
         if (itemName == null) {
             plugin.trace(player, "sign change, no item name, ignore");
@@ -119,8 +123,8 @@ public class TradeCraftBlockListener implements Listener{
             return;
         }
 
-        TradeCraftExchangeRate buyRate = new TradeCraftExchangeRate(e.getLine(1));
-        TradeCraftExchangeRate sellRate = new TradeCraftExchangeRate(e.getLine(2));
+        TradeCraftExchangeRate buyRate = new TradeCraftExchangeRate(event.getLine(1));
+        TradeCraftExchangeRate sellRate = new TradeCraftExchangeRate(event.getLine(2));
         // no buy rate means this is an infinite shop
         if ( !buyRate.isValid() && !sellRate.isValid() ) {
             if (plugin.permissions.canMakeInfShops(player)){
@@ -128,25 +132,40 @@ public class TradeCraftBlockListener implements Listener{
             	return;
             }
 
-            if (EventPriority.NORMAL == p) {
+            if (EventPriority.NORMAL == priority) {
 	            plugin.sendMessage(player, TradeCraftLocalization.get("YOU_CANT_CREATE_INF_SHOPS"));
-	            e.setCancelled(true);
+	            event.setCancelled(true);
 	            return;
             }
         }
         // there is a buy rate, so this is a player owned shop
 
-        if (EventPriority.NORMAL == p && !plugin.permissions.canMakePlayerShops(player)){
+        if (EventPriority.NORMAL == priority && !plugin.permissions.canMakePlayerShops(player)){
 	        plugin.sendMessage(player, TradeCraftLocalization.get("YOU_DONT_HAVE_PERM_CREATE_PLAYER_SHOP"));
-	        e.setCancelled(true);
+	        event.setCancelled(true);
 	        return;
         }
 
+        // check whether the player doesn't have too many shops
+        if (EventPriority.NORMAL == priority) {
+        	int totalShopLimit = TradeCraft.properties.getPlayerTotalShopLimit();
+        	int worldShopLimit = TradeCraft.properties.getPlayerWorldShopLimit();
+        	if (plugin.data.getPlayerShopCount(player) >= totalShopLimit) {
+        		plugin.sendMessage(player, TradeCraftLocalization.get("TOTAL_SHOP_LIMIT_X"), totalShopLimit);
+        		event.setCancelled(true);
+        		return;
+        	} else if (plugin.data.getPlayerShopCount(player, player.getWorld()) >= worldShopLimit) {
+        		plugin.sendMessage(player, TradeCraftLocalization.get("WORLD_SHOP_LIMIT_X"), worldShopLimit);
+        		event.setCancelled(true);
+        		return;
+        	}
 
-        if (EventPriority.MONITOR == p && !e.isCancelled()) {
+        }
+
+        if (EventPriority.MONITOR == priority && !event.isCancelled()) {
 	        plugin.trace(player, "Setting owner of sign to: %s", ownerName);
 	        // set the player name on the last line
-	        e.setLine(3, "-"+ ownerName.substring(0, Math.min(ownerName.length(), 15)) +"-");
+	        event.setLine(3, "-"+ ownerName.substring(0, Math.min(ownerName.length(), 15)) +"-");
 	        plugin.data.createNewSign(ownerName, itemInfo, sign);
         }
         
@@ -165,20 +184,41 @@ public class TradeCraftBlockListener implements Listener{
         */
 	}
 	
+	// prevent pistons from pushing away (the block behind) a sign. Block all retract and extend events that would move a block behind a sign, also for shop owners
+	@EventHandler
+	public void onNormalBlockPistonRetract(BlockPistonRetractEvent e) {
+		if (e.isSticky()) {
+			Block block = e.getRetractLocation().getBlock();
+			ArrayList<TradeCraftShop> shops = plugin.getShopsFromBlock(null, block);
+            
+	        if (shops.size() != 0) {
+	        	e.setCancelled(true);
+	        }
+		}
+	}
+	@EventHandler
+	public void onNormalBlockPistonExtend(BlockPistonExtendEvent e) {
+		List<Block> blocks = e.getBlocks();
+		for (Block block:blocks) {
+			ArrayList<TradeCraftShop> shops = plugin.getShopsFromBlock(null, block);
+            
+	        if (shops.size() != 0) {
+	        	e.setCancelled(true);
+	        	return;
+	        }
+		}
+	}
+	
 	public void stopDestruction(Block b, BlockBreakEvent e){
 		if(b.getState() instanceof Sign){
 			Sign sign = (Sign)b.getState();
 			String[] lines = sign.getLines();
-			e.setCancelled(true);
 			for(int i = 0;i<4;i++){
 				sign.setLine(i, lines[i]);
 			}
 			
 			sign.update(true);
-			return;
-		} else {
-			e.setCancelled(true);			
 		}
-		
+		e.setCancelled(true);
 	}
 }

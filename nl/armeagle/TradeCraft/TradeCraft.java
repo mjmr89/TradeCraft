@@ -324,7 +324,11 @@ public class TradeCraft extends JavaPlugin {
 
 	void trace(Player player, String format, Object... args) {
 		if (properties.getEnableDebugMessages()) {
-			sendMessage(player, format, args);
+			if (null != player) {
+				sendMessage(player, format, args);
+			} else {
+				this.log(Level.INFO, format, args);
+			}
 		}
 	}
 	/*
@@ -373,8 +377,11 @@ public class TradeCraft extends JavaPlugin {
 	}
 	TradeCraftShop getShopFromSignOrChestBlock(Player player, Block block) {
 		if (block.getType() == Material.CHEST) {
-			block = player.getWorld().getBlockAt(block.getX(),
-					block.getY() + 1, block.getZ());
+			block = block.getWorld().getBlockAt(
+				block.getX(),
+				block.getY() + 1,
+				block.getZ()
+			);
 		}
 
 		return getShopFromSignBlock(player, block);
@@ -389,9 +396,9 @@ public class TradeCraft extends JavaPlugin {
 		int y = block.getY();
 		int z = block.getZ();
 
-		trace(player, "You clicked a sign at %d, %d, %d in world: %s.", x, y, z, player.getWorld().getName());
+		trace(player, "You clicked a sign at %d, %d, %d in world: %s.", x, y, z, block.getWorld().getName());
 
-		Sign sign = (Sign) player.getWorld().getBlockAt(x, y, z).getState();
+		Sign sign = (Sign) block.getWorld().getBlockAt(x, y, z).getState();
 
 		// The sign at this location can be null if it was just destroyed.
 		if (sign == null) {
@@ -410,14 +417,14 @@ public class TradeCraft extends JavaPlugin {
 
 		trace(player, "The item name on the sign is %s.", itemName);
 
-		Block blockBelowSign = player.getWorld().getBlockAt(x, y - 1, z);
+		Block blockBelowSign = block.getRelative(0, -1, 0);
 
 		if (blockBelowSign.getType() != Material.CHEST) {
 			trace(player, "There is no chest beneath the sign.");
 			return null;
 		}
 
-		Chest chest = (Chest) player.getWorld().getBlockAt(x, y - 1, z).getState();
+		Chest chest = (Chest) blockBelowSign.getState();
 
 		if (itemName.toLowerCase().equals("repair")) {
 			if (!properties.getRepairShopsEnabled()) {
@@ -425,7 +432,7 @@ public class TradeCraft extends JavaPlugin {
 				return null;
 			}
 
-			if (!player.isOp()) {
+			if (player == null || !player.isOp()) {
 				trace(player, "You can't use repair shops.");
 				return null;
 			}

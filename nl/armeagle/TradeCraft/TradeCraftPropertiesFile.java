@@ -133,6 +133,13 @@ public class TradeCraftPropertiesFile {
     	return properties.getBoolean("show-shop-location", false);
     }
     
+    public int getPlayerWorldShopLimit() {
+        return properties.getInt("player-world-shop-limit", 5);
+    }
+    public int getPlayerTotalShopLimit() {
+        return properties.getInt("player-total-shop-limit", 10);
+    }
+    
     public ChatColor getMessageTypeColor(TradeCraft.MessageTypes mtype) {
     	switch (mtype) {
     	case WITHDRAW:

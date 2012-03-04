@@ -12,7 +12,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 
 class TradeCraftDataFile {
 	/*
@@ -102,6 +104,7 @@ class TradeCraftDataFile {
                     
                 TradeCraftDataInfo info = new TradeCraftDataInfo();
                 info.ownerName = ownerName;
+                info.worldName = worldName;
                 info.itemAmount = itemAmount;
                 info.currencyAmount = currencyAmount;
 
@@ -175,11 +178,11 @@ class TradeCraftDataFile {
     	}
     }
     
-    public Map<String, TradeCraftDataInfo> shopsOwned(String name){
+    public Map<String, TradeCraftDataInfo> shopsOwned(String playerName){
     	Map<String, TradeCraftDataInfo> list = new HashMap<String, TradeCraftDataInfo>();
     	for (String key : data.keySet()) {
     		TradeCraftDataInfo info = data.get(key);
-  			if(info.ownerName.equalsIgnoreCase(name)){
+  			if(info.ownerName.equalsIgnoreCase(playerName)){
    				list.put(key, info);
    			}
     	}
@@ -219,34 +222,39 @@ class TradeCraftDataFile {
     }
 
     public void depositItems(String ownerName, Sign sign, TradeCraftItem itemType, int itemAmount) {
+        TradeCraftDataInfo info;
         String key = getKeyFromSign(sign);
+        
         if (data.containsKey(key)) {
-            TradeCraftDataInfo info = data.get(key);
-            info.ownerName = ownerName; // For old entries that don't have the name.
-            info.itemType = itemType; // For old entries that don't have the type.
-            info.itemAmount += itemAmount;
+            info = data.get(key);
         } else {
-            TradeCraftDataInfo info = new TradeCraftDataInfo();
-            info.ownerName = ownerName;
-            info.itemType = itemType;
-            info.itemAmount = itemAmount;
-            data.put(key, info);
+            info = new TradeCraftDataInfo();
         }
+        
+        info.ownerName = ownerName;
+        info.worldName = sign.getWorld().getName();
+        info.itemType = itemType;
+        info.itemAmount += itemAmount;
+        data.put(key, info);
+        
         save();
     }
 
     public void depositCurrency(String ownerName, Sign sign, int currencyAmount) {
+    	TradeCraftDataInfo info;    	
         String key = getKeyFromSign(sign);
+        
         if (data.containsKey(key)) {
-            TradeCraftDataInfo info = data.get(key);
-            info.ownerName = ownerName; // For old entries that don't have the name.
-            info.currencyAmount += currencyAmount;
+            info = data.get(key);
         } else {
-            TradeCraftDataInfo info = new TradeCraftDataInfo();
-            info.ownerName = ownerName;
-            info.currencyAmount = currencyAmount;
-            data.put(key, info);
+            info = new TradeCraftDataInfo();
         }
+        
+        info.ownerName = ownerName;
+        info.worldName = sign.getWorld().getName();
+        info.currencyAmount += currencyAmount;
+        data.put(key, info);
+        
         save();
     }
 
@@ -314,21 +322,39 @@ class TradeCraftDataFile {
     }
 
 	public void createNewSign(String ownerName, TradeCraftConfigurationInfo itemInfo, Sign sign) {
+		TradeCraftDataInfo info;
 		String key = getKeyFromSign(sign);
+		
         if (data.containsKey(key)) {
-            TradeCraftDataInfo info = data.get(key);
-            info.ownerName = ownerName;
-            info.currencyAmount = 0;
-            info.itemAmount = 0;
-            info.itemType = itemInfo.type;
+            info = data.get(key);
         } else {
-            TradeCraftDataInfo info = new TradeCraftDataInfo();
-            info.ownerName = ownerName;
-            info.currencyAmount = 0;
-            info.itemAmount = 0;
-            info.itemType = itemInfo.type;
-            data.put(key, info);
+            info = new TradeCraftDataInfo();
         }
+        
+        info.ownerName = ownerName;
+        info.worldName = sign.getWorld().getName();
+        info.currencyAmount = 0;
+        info.itemAmount = 0;
+        info.itemType = itemInfo.type;
+        data.put(key, info);
+
         save();
+	}
+	
+	public int getPlayerShopCount(Player player, World world) {
+		Map<String, TradeCraftDataInfo> list = this.shopsOwned(player.getName());
+		int shopsOwnedCount = 0;
+		
+		for (String key : list.keySet()) {
+    		TradeCraftDataInfo info = data.get(key);
+    		if (info.worldName.equalsIgnoreCase(world.getName())) {
+    			shopsOwnedCount++;
+    		}
+		}
+		
+		return shopsOwnedCount;
+	}
+	public int getPlayerShopCount(Player player) {
+		return this.shopsOwned(player.getName()).size();
 	}
 }
