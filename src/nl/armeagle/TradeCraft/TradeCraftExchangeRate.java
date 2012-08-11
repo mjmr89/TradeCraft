@@ -10,18 +10,18 @@ public class TradeCraftExchangeRate {
     private static final Pattern ratePattern = Pattern.compile("(\\d+)\\D+(\\d+)\\s*");
 
     TradeCraftExchangeRate(String signLine) {
-		Matcher matcher = ratePattern.matcher(signLine);
+        Matcher matcher = ratePattern.matcher(signLine);
 
-		if (matcher.find()) {
-			this.amount = Integer.parseInt(matcher.group(1));
-			this.value = Integer.parseInt(matcher.group(2));
-		} else {
-			this.amount = 0;
-			this.value = 0;
-		}
+        if (matcher.find()) {
+            this.amount = Integer.parseInt(matcher.group(1));
+            this.value = Integer.parseInt(matcher.group(2));
+        } else {
+            this.amount = 0;
+            this.value = 0;
+        }
     }
     
     public boolean isValid() {
-    	return this.amount != 0;
+        return this.amount != 0;
     }
 }

@@ -20,8 +20,8 @@ public class TradeCraftRepairShop extends TradeCraftShop {
 
         if (currencyAmount == 0 && items.size() == 0) {
             plugin.sendMessage(player, TradeCraftLocalization.get("IT_COSTS_X_A_TO_REPAIR_AN_ITEM"),
-            				   repairCost,
-            				   plugin.getCurrencyName());
+                               repairCost,
+                               plugin.getCurrencyName());
             return;
         }
 
@@ -29,26 +29,26 @@ public class TradeCraftRepairShop extends TradeCraftShop {
 
         if (items.size() == 0) {
             plugin.sendMessage(player, TradeCraftLocalization.get("WITH_THIS_MUCH_A_YOU_CAN_REPAIR_Y_ITEMS"),
-            				   plugin.getCurrencyName(),
-            				   currencyAmount / repairCost);
+                               plugin.getCurrencyName(),
+                               currencyAmount / repairCost);
             return;
         }
 
         if (currencyAmount < actualCost) {
             if (currencyAmount > 0) {
                 plugin.sendMessage(player, TradeCraftLocalization.get("THAT_IS_NOT_ENOUGH_A"),
-                		  	       plugin.getCurrencyName());
+                                     plugin.getCurrencyName());
             }
             plugin.sendMessage(player, TradeCraftLocalization.get("YOU_NEED_X_A_TO_REPAIR_ALL_THIS"),
-            		           actualCost,
-            		           plugin.getCurrencyName());
+                               actualCost,
+                               plugin.getCurrencyName());
             return;
         }
 
         chest.clear();
 
         for (ItemStack item : items) {
-        	short itemData = (item.getData() == null ? (short)0 : item.getDurability());
+            short itemData = (item.getData() == null ? (short)0 : item.getDurability());
 
             chest.add(new TradeCraftItem(item.getTypeId(), itemData), 1);
         }
@@ -58,9 +58,9 @@ public class TradeCraftRepairShop extends TradeCraftShop {
         chest.update();
 
         plugin.sendMessage(player, TradeCraftLocalization.get("YOU_REPAIRED_X_ITEMS_FOR_Y_B"),
-        				   items.size(),
-        				   actualCost,
-        				   plugin.getCurrencyName());
+                           items.size(),
+                           actualCost,
+                           plugin.getCurrencyName());
     }
 
     public boolean playerCanDestroy(Player player) {
