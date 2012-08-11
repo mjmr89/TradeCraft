@@ -17,16 +17,16 @@ class TradeCraftChest {
         chest = c.getInventory();
         
         for (ItemStack item : chest.getContents()) {
-            if(item != null){
-                short itemData = (item.getData() == null ? (short)0 : item.getDurability());
-                if(type.id != 0 && (type.id != item.getTypeId() || type.data != itemData) ){
-                    diffFlag = true;
-                    return;
-                }
-                type.id = item.getTypeId();
-                type.data = itemData;
-                total += item.getAmount();
-            }
+        	if(item != null){
+            	short itemData = (item.getData() == null ? (short)0 : item.getDurability());
+        		if(type.id != 0 && (type.id != item.getTypeId() || type.data != itemData) ){
+        			diffFlag = true;
+        			return;
+        		}
+        		type.id = item.getTypeId();
+        		type.data = itemData;
+        		total += item.getAmount();
+        	}
         }
     }
 
@@ -66,7 +66,7 @@ class TradeCraftChest {
         int amount = 0;
         for (ItemStack item : ((Inventory)chest).getContents()) {
             if (item != null) {
-                short itemData = (item.getData() == null ? (short)0 : item.getDurability());
+            	short itemData = (item.getData() == null ? (short)0 : item.getDurability());
                 if (item.getTypeId() == TradeCraft.currency.id && itemData == TradeCraft.currency.data) {
                     amount += item.getAmount();
                 }
@@ -79,7 +79,7 @@ class TradeCraftChest {
         List<ItemStack> items = new ArrayList<ItemStack>();
         for (ItemStack item : chest.getContents()) {
             if (item != null) {
-                short itemData = (item.getData() == null ? (short)0 : item.getDurability());
+            	short itemData = (item.getData() == null ? (short)0 : item.getDurability());
                 if (item.getTypeId() != TradeCraft.currency.id || itemData != TradeCraft.currency.data) {
                     items.add(item);
                 }
@@ -89,6 +89,6 @@ class TradeCraftChest {
     }
     
     public int getSize() {
-        return (this.chest == null ? 0 : this.chest.getSize());
+    	return (this.chest == null ? 0 : this.chest.getSize());
     }
 }

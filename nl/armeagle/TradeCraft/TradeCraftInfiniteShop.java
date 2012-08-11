@@ -13,12 +13,12 @@ public class TradeCraftInfiniteShop extends TradeCraftItemShop {
         String itemName = plugin.getItemName(sign.getLines());
         configurationInfo = plugin.configuration.get(itemName);
         if (null == configurationInfo) {
-            throw new Exception("Invalid item name on sign: "+ itemName);
+        	throw new Exception("Invalid item name on sign: "+ itemName);
         }
     }
 
     public boolean playerCanDestroy(Player player) {
-        return plugin.permissions.canDestroyShops(player);
+    	return plugin.permissions.canDestroyShops(player);
     }
 
     public boolean shopCanBeWithdrawnFrom() {

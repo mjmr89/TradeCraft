@@ -14,18 +14,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.error.YAMLException;
 
 public class StatefulYamlConfiguration extends YamlConfiguration {
-    protected File file;
-    
-    public StatefulYamlConfiguration(File file) {
-        this.file = file;
-    }
-    
-    public void load() throws IOException {
-        this.load(false);
-    }
-    public void load(boolean forceDefaults) throws IOException {
-        boolean notLoaded = false;
-        if (this.file == null) {
+	protected File file;
+	
+	public StatefulYamlConfiguration(File file) {
+		this.file = file;
+	}
+	
+	public void load() throws IOException {
+		this.load(false);
+	}
+	public void load(boolean forceDefaults) throws IOException {
+		boolean notLoaded = false;
+		if (this.file == null) {
             throw new IllegalArgumentException("File cannot be null");
         }
 
@@ -34,8 +34,8 @@ public class StatefulYamlConfiguration extends YamlConfiguration {
         try {
             baseConfig.load(this.file);
         } catch (FileNotFoundException fnf) {
-            notLoaded = true;
-        } catch (IOException ex) {
+			notLoaded = true;
+		} catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + this.file, ex);
         } catch (InvalidConfigurationException ex) {
             if (ex.getCause() instanceof YAMLException) {
@@ -48,32 +48,32 @@ public class StatefulYamlConfiguration extends YamlConfiguration {
         }
 
         if (notLoaded || forceDefaults) {
-            InputStream defaultInput = this.getClass().getResourceAsStream("/" + file.getName());
-            if ( null != defaultInput ) {
-                YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultInput);
+			InputStream defaultInput = this.getClass().getResourceAsStream("/" + file.getName());
+			if ( null != defaultInput ) {
+				YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultInput);
 
-                try {
-                    this.loadFromString(defaultConfig.saveToString());
-                } catch (InvalidConfigurationException e) {
-                    Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Invalid default configuation");
-                }
-                this.save();
-            }
-        } else if (! notLoaded) {
-            try {
-                this.loadFromString(baseConfig.saveToString());
-            } catch (InvalidConfigurationException e) {
-                Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Invalid configuation");
-            }
+				try {
+					this.loadFromString(defaultConfig.saveToString());
+				} catch (InvalidConfigurationException e) {
+					Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Invalid default configuation");
+				}
+				this.save();
+			}
+		} else if (! notLoaded) {
+	        try {
+				this.loadFromString(baseConfig.saveToString());
+			} catch (InvalidConfigurationException e) {
+				Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Invalid configuation");
+			}
         }
         
-    }
-    
-    public void save() throws IOException {
-        super.save(this.file);
-    }
-    
-    public File getFile() {
-        return this.file;
-    }
+	}
+	
+	public void save() throws IOException {
+		super.save(this.file);
+	}
+	
+	public File getFile() {
+		return this.file;
+	}
 }

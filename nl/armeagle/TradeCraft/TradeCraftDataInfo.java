@@ -8,10 +8,10 @@ class TradeCraftDataInfo {
     public int currencyAmount;
     
     public TradeCraftDataInfo() {
-        this.ownerName = null;
-        this.worldName = null;
-        this.itemType = null;
-        this.itemAmount = 0;
-        this.currencyAmount = 0;
-    }
+		this.ownerName = null;
+		this.worldName = null;
+		this.itemType = null;
+		this.itemAmount = 0;
+		this.currencyAmount = 0;
+	}
 }
