@@ -10,34 +10,34 @@ import org.bukkit.event.Listener;
 
 public class TradeCraftPlayerListener implements Listener{
 
-	private TradeCraft plugin;
-	
-	TradeCraftPlayerListener(TradeCraft plugin){
-		this.plugin = plugin;
-	}
-	
-	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent e) {
-		if ( !this.plugin.isEnabled() ) {
-			return;
-		}
-		if ( e.getAction() == Action.RIGHT_CLICK_BLOCK ) {
-			Block blockClicked = e.getClickedBlock();
-			Player player = e.getPlayer();
-			
-	        TradeCraftShop shop = plugin.getShopFromSignBlock(player, blockClicked);
-	        
-	        if (shop == null) {
-	            return;
-	        }
+    private TradeCraft plugin;
+    
+    TradeCraftPlayerListener(TradeCraft plugin){
+        this.plugin = plugin;
+    }
+    
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent e) {
+        if ( !this.plugin.isEnabled() ) {
+            return;
+        }
+        if ( e.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+            Block blockClicked = e.getClickedBlock();
+            Player player = e.getPlayer();
+            
+            TradeCraftShop shop = plugin.getShopFromSignBlock(player, blockClicked);
+            
+            if (shop == null) {
+                return;
+            }
 
-	        shop.handleRightClick(player);
-	        e.setCancelled(true);
-		}
-	}
-	
+            shop.handleRightClick(player);
+            e.setCancelled(true);
+        }
+    }
+    
     @SuppressWarnings("unused")
-	private void displayItems(Player player) {
+    private void displayItems(Player player) {
         String[] names = plugin.configuration.getNames();
         StringBuilder sb = new StringBuilder(); 
         for (String name : names) {

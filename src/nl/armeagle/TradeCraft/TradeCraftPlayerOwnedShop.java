@@ -30,11 +30,11 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     }
 
     public boolean isOwnedByPlayer(Player player) {
-    	if ( ownerName == null ) {
-    		return false;
-    	} else {
-    		return player.getName().equals(ownerName);
-    	}
+        if ( ownerName == null ) {
+            return false;
+        } else {
+            return player.getName().equals(ownerName);
+        }
     }
 
     public TradeCraftItem getItemType() {

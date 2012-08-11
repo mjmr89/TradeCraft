@@ -17,13 +17,13 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 class TradeCraftDataFile {
-	/*
-	 * As of version 1.0.5 there is support for multiple worlds.
-	 * Newly created shops will add the world name to the information stored.
-	 * Old shops will be converted when first interacted with. 
-	 */
+    /*
+     * As of version 1.0.5 there is support for multiple worlds.
+     * Newly created shops will add the world name to the information stored.
+     * Old shops will be converted when first interacted with. 
+     */
 
-	private static final String fileName = "plugins" + File.separator + TradeCraft.pluginName+ File.separator + TradeCraft.pluginName + ".data";
+    private static final String fileName = "plugins" + File.separator + TradeCraft.pluginName+ File.separator + TradeCraft.pluginName + ".data";
     private static final Pattern infoPatternNoWorld = Pattern.compile(
             "^\\s*([^,]+)\\s*," + // ownerName
             "\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*,\\s*(-?\\d+)\\s*," + // x,y,z
@@ -50,7 +50,7 @@ class TradeCraftDataFile {
 
     public void load() {
         try {
-        	dFile.createNewFile();
+            dFile.createNewFile();
             data.clear();
 
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -82,15 +82,15 @@ class TradeCraftDataFile {
                     itemAmount = Integer.parseInt(infoMatcher2.group(6));
                     currencyAmount = Integer.parseInt(infoMatcher2.group(7));
                 } else {
-                 	// support for multiple worlds 
-                 	Matcher infoMatcher3 = infoPatternWorld.matcher(line);
-                 	if ( !infoMatcher3.matches()) {
-                 		plugin.log.warning(
+                     // support for multiple worlds 
+                     Matcher infoMatcher3 = infoPatternWorld.matcher(line);
+                     if ( !infoMatcher3.matches()) {
+                         plugin.log.warning(
                                 "Failed to parse line number " + lineNumber +
                                 " in " + fileName +
                                 ": " + line);
                         continue;
-                 	}
+                     }
 
                     ownerName = infoMatcher3.group(1);
                     worldName = infoMatcher3.group(2);
@@ -116,12 +116,12 @@ class TradeCraftDataFile {
                 if ( IdSplitData.matches() ) {
                     int itemId = Integer.parseInt(IdSplitData.group(1));
                     if ( IdSplitData.group(2) != null ) {
-                    	info.itemType = new TradeCraftItem(itemId, Short.parseShort(IdSplitData.group(2)));
+                        info.itemType = new TradeCraftItem(itemId, Short.parseShort(IdSplitData.group(2)));
                     } else {
-                    	info.itemType = new TradeCraftItem(itemId);
+                        info.itemType = new TradeCraftItem(itemId);
                     }
                 } else {
-                	plugin.log.warning(
+                    plugin.log.warning(
                             "Failed to parse line number " + lineNumber +
                             " in " + fileName +
                             ": " + line);
@@ -138,13 +138,13 @@ class TradeCraftDataFile {
     }
 
     public void save() {
-    	if ( ! this.wasLoaded ) {
-    		this.plugin.log.severe("TradeCraft: failed to load data file when plugin was enabled, will not save to prevent loss of items.");
-    		// The failure should have been such that no interaction with shops would have been possible, so no items should have been lost since the plugin was
-    		// loaded till this save point. TODO, make sure that no items are lost, when save is actually called after motations, even though that situation
-    		// should never possibly occur.
-    		return;
-    	}
+        if ( ! this.wasLoaded ) {
+            this.plugin.log.severe("TradeCraft: failed to load data file when plugin was enabled, will not save to prevent loss of items.");
+            // The failure should have been such that no interaction with shops would have been possible, so no items should have been lost since the plugin was
+            // loaded till this save point. TODO, make sure that no items are lost, when save is actually called after motations, even though that situation
+            // should never possibly occur.
+            return;
+        }
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
@@ -170,24 +170,24 @@ class TradeCraftDataFile {
     }
     
     public void deleteShop(TradeCraftShop shop){
-    	Location l = shop.sign.getBlock().getLocation();
-    	String key = getKey(shop.sign.getWorld().getName(), l.getBlockX(),l.getBlockY(),l.getBlockZ());
-    	if(data.containsKey(key)){
-    		data.remove(key);
-    		save();    		
-    	}
+        Location l = shop.sign.getBlock().getLocation();
+        String key = getKey(shop.sign.getWorld().getName(), l.getBlockX(),l.getBlockY(),l.getBlockZ());
+        if(data.containsKey(key)){
+            data.remove(key);
+            save();            
+        }
     }
     
     public Map<String, TradeCraftDataInfo> shopsOwned(String playerName){
-    	Map<String, TradeCraftDataInfo> list = new HashMap<String, TradeCraftDataInfo>();
-    	for (String key : data.keySet()) {
-    		TradeCraftDataInfo info = data.get(key);
-  			if(info.ownerName.equalsIgnoreCase(playerName)){
-   				list.put(key, info);
-   			}
-    	}
-    	
-    	return list;
+        Map<String, TradeCraftDataInfo> list = new HashMap<String, TradeCraftDataInfo>();
+        for (String key : data.keySet()) {
+            TradeCraftDataInfo info = data.get(key);
+              if(info.ownerName.equalsIgnoreCase(playerName)){
+                   list.put(key, info);
+               }
+        }
+        
+        return list;
     }
 
     public void setOwnerOfSign(String ownerName, Sign sign) {
@@ -241,7 +241,7 @@ class TradeCraftDataFile {
     }
 
     public void depositCurrency(String ownerName, Sign sign, int currencyAmount) {
-    	TradeCraftDataInfo info;    	
+        TradeCraftDataInfo info;        
         String key = getKeyFromSign(sign);
         
         if (data.containsKey(key)) {
@@ -301,30 +301,30 @@ class TradeCraftDataFile {
         String keyWithWorld = getKey(sign.getWorld().getName(), sign.getX(), sign.getY(), sign.getZ());
         // convert old style keys (without world name) to new style and return the new key
         if ( !data.containsKey(keyWithWorld) ) {
-        	// try the old style key, without the world part
-        	String keyWithoutWorld = getKey(null, sign.getX(), sign.getY(), sign.getZ());
-        	if ( data.containsKey(keyWithoutWorld) ) {
-        		TradeCraftDataInfo shopInfo = data.get(keyWithoutWorld);
-        		data.remove(keyWithoutWorld);
-        		data.put(keyWithWorld, shopInfo);
-        	}
+            // try the old style key, without the world part
+            String keyWithoutWorld = getKey(null, sign.getX(), sign.getY(), sign.getZ());
+            if ( data.containsKey(keyWithoutWorld) ) {
+                TradeCraftDataInfo shopInfo = data.get(keyWithoutWorld);
+                data.remove(keyWithoutWorld);
+                data.put(keyWithWorld, shopInfo);
+            }
         }
         return keyWithWorld;
     }
 
     private String getKey(String world, int x, int y, int z) {
-    	// support for multiple words now, optionally accepting a world passed on.
-    	if ( world == null ) {
-    		return x + "," + y + "," + z;
-    	} else {
-    		return world + "," + x + "," + y + "," + z;
-    	}
+        // support for multiple words now, optionally accepting a world passed on.
+        if ( world == null ) {
+            return x + "," + y + "," + z;
+        } else {
+            return world + "," + x + "," + y + "," + z;
+        }
     }
 
-	public void createNewSign(String ownerName, TradeCraftConfigurationInfo itemInfo, Sign sign) {
-		TradeCraftDataInfo info;
-		String key = getKeyFromSign(sign);
-		
+    public void createNewSign(String ownerName, TradeCraftConfigurationInfo itemInfo, Sign sign) {
+        TradeCraftDataInfo info;
+        String key = getKeyFromSign(sign);
+        
         if (data.containsKey(key)) {
             info = data.get(key);
         } else {
@@ -339,22 +339,22 @@ class TradeCraftDataFile {
         data.put(key, info);
 
         save();
-	}
-	
-	public int getPlayerShopCount(Player player, World world) {
-		Map<String, TradeCraftDataInfo> list = this.shopsOwned(player.getName());
-		int shopsOwnedCount = 0;
-		
-		for (String key : list.keySet()) {
-    		TradeCraftDataInfo info = data.get(key);
-    		if (info.worldName.equalsIgnoreCase(world.getName())) {
-    			shopsOwnedCount++;
-    		}
-		}
-		
-		return shopsOwnedCount;
-	}
-	public int getPlayerShopCount(Player player) {
-		return this.shopsOwned(player.getName()).size();
-	}
+    }
+    
+    public int getPlayerShopCount(Player player, World world) {
+        Map<String, TradeCraftDataInfo> list = this.shopsOwned(player.getName());
+        int shopsOwnedCount = 0;
+        
+        for (String key : list.keySet()) {
+            TradeCraftDataInfo info = data.get(key);
+            if (info.worldName.equalsIgnoreCase(world.getName())) {
+                shopsOwnedCount++;
+            }
+        }
+        
+        return shopsOwnedCount;
+    }
+    public int getPlayerShopCount(Player player) {
+        return this.shopsOwned(player.getName()).size();
+    }
 }
