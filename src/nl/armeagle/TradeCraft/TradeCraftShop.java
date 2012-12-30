@@ -1,4 +1,4 @@
-package com.mjmr89.TradeCraft;
+package nl.armeagle.TradeCraft;
 
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
@@ -20,4 +20,12 @@ public abstract class TradeCraftShop {
     public abstract boolean playerCanDestroy(Player player);
 
     public abstract boolean shopCanBeWithdrawnFrom();
+    
+    public String toString() {
+        return String.format("Shop(%s:%d,%d,%d)",
+                             this.sign.getWorld().getName(),
+                             this.sign.getX(),
+                             this.sign.getY(),
+                             this.sign.getZ());
+    }
 }

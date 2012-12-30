@@ -14,3 +14,4 @@ Obsidian,    49,  1:32
 Diamond,    264,  1:64
 Bread,      297,  4:1
 Glass,       20
+LGWool,	   35;8,  10:1

@@ -1,0 +1,61 @@
+name: TradeCraft
+version: AE-1.4.2
+description: Setup shops with a combination of chest and sign.
+author: ArmEagle
+main: nl.armeagle.TradeCraft.TradeCraft
+commands:
+    tc:
+        description: Show TradeCraft command help
+        usage: "Usage: /tc"
+    tchelp:
+        description: Show TradeCraft command help
+        usage: "Usage: /tchelp"
+    tcshops:
+        description: See a printout of any personal shops you have
+        usage: "Usage: /tcshops"
+    tcpshops:
+        description: See a printout of shops of a specific player
+        usage: "Usage: /tcpshops [player]"
+    tcgetcurrency:
+        description: Get the currency used
+        usage: "Usage: /tcgetcurrency"
+    tcsetcurrency:
+        description: Set the currency used
+        permission: TradeCraft.canSetCurrency
+        usage: "Usage: /tcsetcurrency [item id;data]"
+    tcreload:
+        description: reload the script and with that all the configuration files
+        permission: TradeCraft.canReload
+        usage: "Usage: /tcreload"
+    tcplayerperms:
+        description: Show the permissions of the given player
+        permission: TradeCraft.canQueryPlayer
+        usage: "Usage: /tcplayerperms [player]"
+permissions:
+    TradeCraft.canBuy:
+        description: Permission to buy from shops.
+        default: true
+    TradeCraft.canSell:
+        description: Permission to sell to shops.
+        default: true
+    TradeCraft.canMakePlayerShops:
+        description: Permission to make normal shops
+        default: true
+    TradeCraft.canMakeInfShops:
+        description: Permission to make infinite shops
+        default: op
+    TradeCraft.canDestroyShops:
+        description: Permission to destroy (any) shop
+        default: op
+    TradeCraft.canSetCurrency:
+        description: Permission to set the currency item type
+        default: op
+    TradeCraft.canReload:
+        description: Permission to reload the configuration
+        default: op
+    TradeCraft.canQueryOtherShops:
+        description: Permission to list the shops of other players
+        default: op
+    TradeCraft.canQueryPlayer:
+        description: Permission to show the permissions of a given player
+        default: op

@@ -1,0 +1,98 @@
+Cobblestone:
+  itemTypeId: 4
+  itemTypeData: 0
+  buyAmount: 64
+  buyValue: 1
+  sellAmount: 64
+  sellValue: 1
+Gravel:
+  itemTypeId: 13
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 0
+  sellValue: 0
+Sand:
+  itemTypeId: 12
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 48
+  sellValue: 1
+Dirt:
+  itemTypeId: 3
+  itemTypeData: 0
+  buyAmount: 32
+  buyValue: 1
+  sellAmount: 32
+  sellValue: 1
+Redstone:
+  itemTypeId: 331
+  itemTypeData: 0
+  buyAmount: 16
+  buyValue: 1
+  sellAmount: 16
+  sellValue: 1
+Log:
+  itemTypeId: 17
+  itemTypeData: 0
+  buyAmount: 8
+  buyValue: 1
+  sellAmount: 8
+  sellValue: 1
+Coal:
+  itemTypeId: 263
+  itemTypeData: 0
+  buyAmount: 4
+  buyValue: 1
+  sellAmount: 4
+  sellValue: 1
+Clay:
+  itemTypeId: 337
+  itemTypeData: 0
+  buyAmount: 2
+  buyValue: 1
+  sellAmount: 2
+  sellValue: 1
+Iron:
+  itemTypeId: 265
+  itemTypeData: 0
+  buyAmount: 1
+  buyValue: 4
+  sellAmount: 1
+  sellValue: 4
+Obsidian:
+  itemTypeId: 49
+  itemTypeData: 0
+  buyAmount: 1
+  buyValue: 32
+  sellAmount: 1
+  sellValue: 32
+Diamond:
+  itemTypeId: 264
+  itemTypeData: 0
+  buyAmount: 1
+  buyValue: 64
+  sellAmount: 1
+  sellValue: 64
+Bread:
+  itemTypeId: 297
+  itemTypeData: 0
+  buyAmount: 4
+  buyValue: 1
+  sellAmount: 4
+  sellValue: 1
+Glass:
+  itemTypeId: 20
+  itemTypeData: 0
+  buyAmount: 0
+  buyValue: 0
+  sellAmount: 0
+  sellValue: 0
+LGWool:
+  itemTypeId: 35
+  itemTypeData: 8
+  buyAmount: 10
+  buyValue: 1
+  sellAmount: 10
+  sellValue: 1

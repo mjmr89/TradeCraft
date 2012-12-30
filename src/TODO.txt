@@ -1,0 +1,34 @@
+- repairshop has it's own handling code  /  enable repair shop
+
+
+Digi said:
+ - Also, could you add a feature to place signs ON chests (like Lockette) ?
+ - Protection of chest contents while you're using it... or something, so other people don't just sit by and wait for you to buy and steal your stuff.
+ -- Can be done by implementing features like VirtualChest has. This used CraftBukkit code to open a virtual inventory.
+ 
+ - limit currency and configured items to valid data values
+ - Allow administrators to disable infinite shops using a command and storing that setting in TradeCraft.properties.
+ - warn when config files use old format?
+ 
+ 
+ - Customer right-clicking telling about rates and availability only display the amount of items. Could perhaps display "up to 12 Logs" instead of "up to 12".
+ 
+ Coding issue:
+ - items with 'damage' bits too high will act as the basic item, but cannot be traded or stacked as such. Be careful not to create these.
+ -- The server will automatically stack items that do not have actually existing multiple version through the damage bit.
+ 
+ Done: 
+ - [launch player]  triggers infinite shop check
+ - (gsand) Would it be possible to make it so players can buy 6 items for 2 gold, but not 3 for 1 gold.
+ - The wool, dye, log, etc sub-items (just re-mentioning, I understand it's gonna be possible in #564+)
+ - Additional information about current amount of items and currency available when right clicking as client.
+ - You don't have to write your name on the sign of a player shop anymore. Also, too long names will be stored just fine, but will show abbreviated on the sign.    
+ - The sign labels would be better understood if they're: "Buy 5 for 1" and "Sell 5 for 1" and you should suppot texts like "Buy 5 for 1g" or "Buy5for1" etc.
+ - No message is shown when a customer places too few currency/items in the chest and right-clicks.
+ - Allow setting of currency by name, as defined in config.
+
+Food for thought, answered:
+ - What happens when a sign/chest is removed while the plugin is disabled .. / with the entry in the .data file later.. when a shop is placed in the exact same spot again?
+ -- A new shop (sign on placement) overwrites the old one in the collection, since that uses only coordinates as key.
+ - Messages after right-clicking use the item name as on the sign, not as in TradeCraft.txt (capitalization issue only).
+ -- Just part of how the plugin works. Could perhaps change it, but it's a minor issue. 

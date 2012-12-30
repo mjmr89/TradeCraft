@@ -1,4 +1,4 @@
-package com.mjmr89.TradeCraft;
+package nl.armeagle.TradeCraft;
 
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
@@ -7,22 +7,18 @@ import org.bukkit.entity.Player;
 public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     private final String ownerName;
     private final String itemName;
-    private final int itemType;
+    private final TradeCraftItem itemType;
     private final TradeCraftExchangeRate buyRate;
     private final TradeCraftExchangeRate sellRate;
 
     public TradeCraftPlayerOwnedShop(TradeCraft plugin, Sign sign, Chest chest, String ownerName) {
         super(plugin, sign, chest);
 
-//        ownerName = plugin.data.getOwnerOfSign(sign);
         this.ownerName = ownerName;
-        itemName = plugin.getItemName(sign);
-        itemType = plugin.configuration.get(itemName).id;
-        buyRate = plugin.getExchangeRate(sign, 1);
-        sellRate = plugin.getExchangeRate(sign, 2);
-        
-//        plugin.getServer().broadcastMessage("owner" + ownerName + " itemname " + itemName + 
-//        		" item type " + itemType + " buyrate " + buyRate + " sell rate" + sellRate);
+        this.itemName = plugin.getItemName(sign.getLines());
+        this.itemType = plugin.configuration.get(this.itemName).type;
+        this.buyRate = new TradeCraftExchangeRate(sign.getLine(1));
+        this.sellRate = new TradeCraftExchangeRate(sign.getLine(2));
     }
 
     public boolean playerCanDestroy(Player player) {
@@ -34,10 +30,14 @@ public class TradeCraftPlayerOwnedShop extends TradeCraftItemShop {
     }
 
     public boolean isOwnedByPlayer(Player player) {
-        return ownerName != null && player.getName().equals(ownerName);
+        if ( ownerName == null ) {
+            return false;
+        } else {
+            return player.getName().equals(ownerName);
+        }
     }
 
-    public int getItemType() {
+    public TradeCraftItem getItemType() {
         return itemType;
     }
 

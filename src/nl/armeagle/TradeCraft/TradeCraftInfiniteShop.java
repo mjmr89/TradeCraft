@@ -1,4 +1,4 @@
-package com.mjmr89.TradeCraft;
+package nl.armeagle.TradeCraft;
 
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
@@ -7,15 +7,18 @@ import org.bukkit.entity.Player;
 public class TradeCraftInfiniteShop extends TradeCraftItemShop {
     private final TradeCraftConfigurationInfo configurationInfo;
 
-    public TradeCraftInfiniteShop(TradeCraft plugin, Sign sign, Chest chest) {
+    public TradeCraftInfiniteShop(TradeCraft plugin, Sign sign, Chest chest) throws Exception {
         super(plugin, sign, chest);
 
-        String itemName = plugin.getItemName(sign);
+        String itemName = plugin.getItemName(sign.getLines());
         configurationInfo = plugin.configuration.get(itemName);
+        if (null == configurationInfo) {
+            throw new Exception("Invalid item name on sign: "+ itemName);
+        }
     }
 
     public boolean playerCanDestroy(Player player) {
-    	return plugin.permissions.canDestroyShops(player);
+        return plugin.permissions.canDestroyShops(player);
     }
 
     public boolean shopCanBeWithdrawnFrom() {
@@ -26,8 +29,8 @@ public class TradeCraftInfiniteShop extends TradeCraftItemShop {
         return false;
     }
 
-    public int getItemType() {
-        return configurationInfo.id;
+    public TradeCraftItem getItemType() {
+        return configurationInfo.type;
     }
 
     public String getItemName() {
