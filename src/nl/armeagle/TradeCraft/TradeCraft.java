@@ -34,7 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class TradeCraft extends JavaPlugin {
     public static enum MessageTypes {WITHDRAW, DEPOSIT};
-    
+
     // The plugin name.
     static final String pluginName = "TradeCraft";
 
@@ -63,12 +63,12 @@ public class TradeCraft extends JavaPlugin {
     public TradeCraftLocalization localization;
     TradeCraftDataFile data;
 
-    private HashMap<String, StatefulYamlConfiguration> configs = new HashMap<String, StatefulYamlConfiguration>(); 
+    private HashMap<String, StatefulYamlConfiguration> configs = new HashMap<String, StatefulYamlConfiguration>();
 
     private final TradeCraftBlockListener blockListener = new TradeCraftBlockListener(this);
     private final TradeCraftPlayerListener playerListener = new TradeCraftPlayerListener(this);
     public TradeCraftPermissions permissions = new TradeCraftPermissions(this);
-    
+
     // prevent the script from registering the event listeners multiple times (by dis-/enable)
     public static boolean hasRegisteredEventListeners = false;
 
@@ -98,7 +98,7 @@ public class TradeCraft extends JavaPlugin {
         configuration = new TradeCraftConfigurationFile(this);
         data = new TradeCraftDataFile(this);
         this.localization = new TradeCraftLocalization(this);
-        
+
         if ( TradeCraft.properties.logShopUse() ) {
             File usageLogFile = new File(this.getDataFolder(), "shopUsage.log");
             try {
@@ -115,7 +115,7 @@ public class TradeCraft extends JavaPlugin {
                 this.log(Level.WARNING, "Failed to open shop usage log file: "+ usageLogFile.toString());
             }
         }
-        
+
         configuration.load();
         data.load();
         currency = properties.getCurrencyType();
@@ -129,7 +129,7 @@ public class TradeCraft extends JavaPlugin {
 
         PluginDescriptionFile pdfFile = this.getDescription();
         this.log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
-        
+
     }
 
     @Override
@@ -144,7 +144,7 @@ public class TradeCraft extends JavaPlugin {
                         TradeCraftItem testCurrency = null;
                         // try to split ID and Data, separated by a semicolon mark
                         Matcher IdSplitData = TradeCraft.itemPatternIdSplitData.matcher(args[0]);
-                        
+
                         if ( !IdSplitData.matches() ) {
                             // try to match the parameter to item names from the configuration
                             TradeCraftConfigurationInfo setCurr = this.configuration.get(args[0]);
@@ -176,7 +176,7 @@ public class TradeCraft extends JavaPlugin {
                                 return false;
                             }
                         }
-                        
+
                         TradeCraft.properties.setCurrencyType(currency);
                         this.sendMessage(p, TradeCraftLocalization.get("CURRENCY_IS_SET_TO_A_IDDATA"),
                                             this.getCurrencyName(),
@@ -228,7 +228,7 @@ public class TradeCraft extends JavaPlugin {
                 }
             } else if ( sender instanceof ConsoleCommandSender ) {
                 switch (command) {
-                case tcplayerperms: 
+                case tcplayerperms:
                     if ( args.length == 1 ) {
                         permissions.debug(sender, args[0]);
                     } else {
@@ -253,7 +253,7 @@ public class TradeCraft extends JavaPlugin {
                     sender.sendMessage(String.format(TradeCraftLocalization.get("RESTARTING_PLUGIN_DONE"),
                                                       TradeCraft.pluginName));
                     return true;
-                default: 
+                default:
                     displayCommandHelpText(null);
                     return true;
                 }
@@ -276,7 +276,7 @@ public class TradeCraft extends JavaPlugin {
             }
             return;
         }
-        
+
         if ( otherQuery ) {
             displayTo.sendMessage(String.format(TradeCraftLocalization.get("SHOPS_OF_A"),
                                                  infoPlayerName));
@@ -293,7 +293,7 @@ public class TradeCraft extends JavaPlugin {
             message += TradeCraftLocalization.get("ITEM") +": "+ this.configuration.get(info.itemType).name +"("+ info.itemType.toShortString() +")"
                 +" "+ TradeCraftLocalization.get("AMOUNT") +": "+ info.itemAmount +" "
                 + this.getCurrencyName() +": "+ info.currencyAmount;
-            
+
             displayTo.sendMessage(message);
         }
 
@@ -307,7 +307,7 @@ public class TradeCraft extends JavaPlugin {
             player.sendMessage(TradeCraftLocalization.get("ERROR_IN_FORMAT_STRING") +" "+ format);
         }
     }
-    
+
     void sendMessage(Player player, String format, Object... args) {
         try {
             String message = String.format(format, args);
@@ -330,10 +330,10 @@ public class TradeCraft extends JavaPlugin {
      * When a block behind a shop sign is destroyed, the sign would be destroyed too.
      * Check all side faces of this block, for a sign attached to this block. Then
      * pass that sign block to getShopFromSignBlock.
-     * 
+     *
      * This should only be used for checking whether a normal block can be destroyed, for there not being any
      * signs attached to it, or this block being a chest or sign itself.
-     * Since one block can 
+     * Since one block can
      */
     ArrayList<TradeCraftShop> getShopsFromBlock(Player player, Block block) {
         ArrayList<TradeCraftShop> shops = new ArrayList<TradeCraftShop>();
@@ -356,7 +356,7 @@ public class TradeCraft extends JavaPlugin {
                     org.bukkit.material.Sign materialSign = new org.bukkit.material.Sign(Material.WALL_SIGN, sideBlock.getData());
                     /* Now, for easy comparison, we'll compare to the direction the sign is facing. If that's
                      * the same as the current face (of the 4 we're looping through), then this sign is attached
-                     * to the block that is being destroyed. 
+                     * to the block that is being destroyed.
                      */
                     if ( materialSign.getFacing() == side ) {
                         TradeCraftShop shop = this.getShopFromSignBlock(player, sideBlock);
@@ -364,7 +364,7 @@ public class TradeCraft extends JavaPlugin {
                             shops.add(shop);
                         }
                     }
-                    
+
                 }
             }
         }
@@ -528,15 +528,16 @@ public class TradeCraft extends JavaPlugin {
 
     static int getMaxStackSize(int itemType) {
         if ( TradeCraft.properties.getNormalStackSizeUsed() ) {
-            return Material.getMaterial(itemType).getMaxStackSize();
+            int stackSize = Material.getMaterial(itemType).getMaxStackSize();
+            return (stackSize == 0 ? 64 : Material.getMaterial(itemType).getMaxStackSize());
         } else {
             return 64;
         }
     }
-    
+
     /**
      * Get a CamelCased string based on the current currency.
-     * 
+     *
      * @return a string representing the currency.
      */
     public String getCurrencyName() {
@@ -545,16 +546,16 @@ public class TradeCraft extends JavaPlugin {
         if ( configInfo != null ) {
             return configInfo.name;
         } else {
-            
+
             ItemStack currencyStack = new ItemStack(TradeCraft.currency.id, 1, TradeCraft.currency.data); // weird that there's no Material.getMaterial(id, short/byte)
             MaterialData currencyData = currencyStack.getType().getNewData((byte)TradeCraft.currency.data);
-            String currencyString; 
+            String currencyString;
             if ( currencyData == null ) {
                 currencyString = currencyStack.getType().name();
             } else {
                 currencyString = currencyData.toString();
             }
-            
+
             //String baseName = stack.getType().name();
             String[] words = currencyString.replace("null ", "").split("\\(")[0].split("[ _]{1}");
             String name = "";
@@ -598,7 +599,7 @@ public class TradeCraft extends JavaPlugin {
             this.log(Level.INFO, "tcreload: "+ TradeCraftLocalization.get("TC_RELOAD"));
         }
     }
-    
+
     public void saveConfig() {
         Logger.getLogger(JavaPlugin.class.getName()).log(Level.INFO, "saving config to: "+ this.getConfig("config").getFile().getAbsolutePath());
         try {
@@ -623,16 +624,16 @@ public class TradeCraft extends JavaPlugin {
             return config;
         }
     }
-    
+
     public void log(Level level, String format, Object... args) {
         this.log.log(level, TradeCraft.pluginName +": "+ String.format(format, args));
     }
-    
+
     public void useLog(Player player, TradeCraftShop shop, String format, Object... args) {
         if ( TradeCraft.properties.logShopUse() ) {
             if ( this.usageLog != null ) {
                 try {
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");                     
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     this.usageLog.write(String.format("%s %s \t%s %s\n",
                             formatter.format(new Date()),
                             shop.toString(),
